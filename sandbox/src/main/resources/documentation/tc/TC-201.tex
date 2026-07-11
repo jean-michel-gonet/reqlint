@@ -1,0 +1,11 @@
+\testcase{TC-201}{Low Power Sleep Mode Trigger}
+\label{TC-201}
+\paragraph{Links} \nameref{SRS-102}
+
+Verify that the system enters sleep mode exactly 500ms after input drops to 17.5V.
+\paragraph{Procedure:}
+\begin{enumerate}
+    \item Apply 24V supply.
+    \item Step down voltage to 17.5V.
+    \item Measure GPIO pin 4 delta-time using an oscilloscope.
+\end{enumerate}

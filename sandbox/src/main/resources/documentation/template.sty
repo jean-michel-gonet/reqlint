@@ -1,0 +1,42 @@
+\NeedsTeXFormat{LaTeX2e}
+
+% --- Required Packages ---
+\RequirePackage{import}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx} % For diagrams/images if needed
+\RequirePackage{booktabs} % For beautiful tables
+\RequirePackage{nameref} % To display the label values, handy when referring to ER, SR and TC.
+\RequirePackage{etoolbox}
+\RequirePackage{xcolor}
+\RequirePackage{amsopn}
+
+% --- Error Handling for Empty Fields ---
+\newcommand{\CheckNotEmpty}[2]{%
+  \ifblank{#1}{%
+    \PackageError{template}{The ID field cannot be empty}{Please provide a valid identifier.}%
+  }{}%
+  \ifblank{#2}{%
+    \PackageError{template}{The description for ID '#1' cannot be empty}{Please provide a short descriptive title.}%
+  }{}%
+}
+
+% --- Custom Command Definitions ---
+
+% 1. Equipment Requirement (ER)
+\newcommand{\equipmentrequirement}[2]{%
+  \CheckNotEmpty{#1}{#2}%
+  \subsubsection{\textcolor{blue!75!black}{#1:} #2}%
+}
+
+% 2. Software Requirement (SR)
+\newcommand{\softwarerequirement}[2]{%
+  \CheckNotEmpty{#1}{#2}%
+  \subsubsection{\textcolor{green!60!black}{#1:} #2}%
+}
+
+% 3. Test Case (TC)
+\newcommand{\testcase}[2]{%
+  \CheckNotEmpty{#1}{#2}%
+  \subsubsection{\textcolor{orange!75!black}{#1:} #2}%
+}
