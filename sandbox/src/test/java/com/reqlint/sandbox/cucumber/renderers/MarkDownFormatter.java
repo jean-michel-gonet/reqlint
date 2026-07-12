@@ -3,11 +3,23 @@ package com.reqlint.sandbox.cucumber.renderers;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Renders the provided list of entities as a mark-down table
+ * using the provided {@link Tablifier}.
+ * The rendering is done in the {@link #toString()} method, so it is optimized for logging.
+ * @param <T> The rendered entity.
+ * @see Tablifier
+ */
 public class MarkDownFormatter<T> {
 
     private final List<String> headers;
     private final List<List<String>> rows = new ArrayList<>();
 
+    /**
+     * Use this constructor if you have a list of entities to render.
+     * @param data The data to render.
+     * @param tablifier The tablifier to use.
+     */
     public MarkDownFormatter(List<T> data, Tablifier<T> tablifier) {
         this.headers = tablifier.getHeaders();
         for (T item : data) {
@@ -15,6 +27,11 @@ public class MarkDownFormatter<T> {
         }
     }
 
+    /**
+     * Use this constructor if you have a single entity to render.
+     * @param data The data to render.
+     * @param tablifier The tablifier to use.
+     */
     public MarkDownFormatter(T data, Tablifier<T> tablifier) {
         this(List.of(data), tablifier);
     }

@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * Defines the contract for turning any collection of entities into a raw grid of strings
  * @param <T> The entity to render.
+ * @see MarkDownFormatter
  */
 public interface Tablifier<T> {
 
