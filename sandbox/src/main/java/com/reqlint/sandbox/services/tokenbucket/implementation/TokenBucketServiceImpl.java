@@ -1,19 +1,21 @@
 package com.reqlint.sandbox.services.tokenbucket.implementation;
 
+import com.reqlint.sandbox.services.ResetEvent;
 import com.reqlint.sandbox.services.customer.CustomerAccount;
 import com.reqlint.sandbox.services.customer.CustomerService;
 import com.reqlint.sandbox.services.time.TimeService;
-import com.reqlint.sandbox.services.tokenbucket.TokenBucketConsumptionResponse;
+import com.reqlint.sandbox.services.tokenbucket.TokenConsumptionResponse;
 import com.reqlint.sandbox.services.tokenbucket.TokenBucketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class TokenBucketServiceImpl implements TokenBucketService {
+public class TokenBucketServiceImpl implements TokenBucketService, ApplicationListener<ResetEvent> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenBucketServiceImpl.class);
 
     private final CustomerService customerService;
@@ -27,19 +29,19 @@ public class TokenBucketServiceImpl implements TokenBucketService {
     }
 
     @Override
-    public TokenBucketConsumptionResponse consumeOneToken(String customerId) {
+    public TokenConsumptionResponse consumeOneToken(String customerId) {
         return consumeTokens(customerId, 1);
     }
 
     @Override
-    public TokenBucketConsumptionResponse consumeTokens(String customerId, int tokensToConsume) {
+    public TokenConsumptionResponse consumeTokens(String customerId, int tokensToConsume) {
         LOGGER.info("Customer {} requests to consume {} tokens", customerId, tokensToConsume);
         TokenBucket bucket = obtainBucket(customerId);
 
         synchronized (bucket) {
             bucket.replenish(timeService.now());
             int availableTokens = bucket.consume(tokensToConsume);
-            TokenBucketConsumptionResponse response = new TokenBucketConsumptionResponse(
+            TokenConsumptionResponse response = new TokenConsumptionResponse(
                     customerId,
                     tokensToConsume,
                     availableTokens);
@@ -63,5 +65,12 @@ public class TokenBucketServiceImpl implements TokenBucketService {
             }
         }
         return tokenBucket;
+    }
+
+    @Override
+    public void onApplicationEvent(ResetEvent event) {
+        synchronized (buckets) {
+            buckets.clear();
+        }
     }
 }

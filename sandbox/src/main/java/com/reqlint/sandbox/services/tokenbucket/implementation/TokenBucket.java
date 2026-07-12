@@ -61,7 +61,10 @@ class TokenBucket {
     public int consume(int tokensToConsume) {
         BigDecimal bdTokensToConsume = BigDecimal.valueOf(tokensToConsume);
         if (bdTokensToConsume.compareTo(availableTokens) > 0) {
-            throw new NotEnoughTokensAvailableException(bdTokensToConsume, availableTokens);
+            throw new NotEnoughTokensAvailableException(
+                    customerId,
+                    bdTokensToConsume.intValue(),
+                    availableTokens.intValue());
         }
         availableTokens = availableTokens.subtract(bdTokensToConsume);
         return availableTokens.intValue();

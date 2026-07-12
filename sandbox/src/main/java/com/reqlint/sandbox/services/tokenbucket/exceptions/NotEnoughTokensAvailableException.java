@@ -3,9 +3,29 @@ package com.reqlint.sandbox.services.tokenbucket.exceptions;
 import java.math.BigDecimal;
 
 public class NotEnoughTokensAvailableException extends TokenBucketException {
-    public NotEnoughTokensAvailableException(BigDecimal tokensToConsume, BigDecimal availableTokens) {
-        super("Not enough tokens available - tried to consume "
+    private final String customerId;
+    private final int tokensToConsume;
+    private final int availableTokens;
+
+    public NotEnoughTokensAvailableException(String customerId, int tokensToConsume, int availableTokens) {
+        super("Not enough tokens available - '"
+                + customerId + "' tried to consume "
                 + tokensToConsume + ", but only "
                 + availableTokens + " are available");
+        this.customerId = customerId;
+        this.tokensToConsume = tokensToConsume;
+        this.availableTokens = availableTokens;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public int getTokensToConsume() {
+        return tokensToConsume;
+    }
+
+    public int getAvailableTokens() {
+        return availableTokens;
     }
 }

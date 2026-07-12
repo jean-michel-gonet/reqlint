@@ -9,12 +9,12 @@ public interface TokenBucketService {
      * @param customerId The customer identifier.
      * @return The result of the consumption.
      */
-    TokenBucketConsumptionResponse consumeOneToken(String customerId);
+    TokenConsumptionResponse consumeOneToken(String customerId);
 
     /**
      * Consumes a number of tokens from the specified customer bucket.
      * @param customerId The customer identifier.
      * @return The result of the consumption.
      */
-    TokenBucketConsumptionResponse consumeTokens(String customerId, int tokensToConsume);
+    TokenConsumptionResponse consumeTokens(String customerId, int tokensToConsume);
 }

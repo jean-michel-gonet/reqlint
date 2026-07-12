@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 /**
  * Default implementation for {@link TimeService}.
  */
-@Service
 public class TimeServiceImpl implements TimeService {
     @Override
     public LocalDateTime now() {

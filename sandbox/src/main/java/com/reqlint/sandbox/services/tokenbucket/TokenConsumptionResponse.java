@@ -6,7 +6,7 @@ package com.reqlint.sandbox.services.tokenbucket;
  * @param grantedTokens The number of granted tokens.
  * @param availableTokes The number of tokens immediately available.
  */
-public record TokenBucketConsumptionResponse(
+public record TokenConsumptionResponse(
         String clientId,
         int grantedTokens,
         int availableTokes) {
