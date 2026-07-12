@@ -1,6 +1,6 @@
 package com.reqlint.sandbox.cucumber.steps;
 
-import com.reqlint.sandbox.services.TokenBucketService;
+import com.reqlint.sandbox.services.tokenbucket.TokenBucketService;
 import io.cucumber.java.en.Given;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
