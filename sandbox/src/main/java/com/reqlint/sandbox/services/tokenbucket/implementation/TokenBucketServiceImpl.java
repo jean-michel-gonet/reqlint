@@ -4,6 +4,7 @@ import com.reqlint.sandbox.services.ResetEvent;
 import com.reqlint.sandbox.services.customer.CustomerAccount;
 import com.reqlint.sandbox.services.customer.CustomerService;
 import com.reqlint.sandbox.services.time.TimeService;
+import com.reqlint.sandbox.services.tokenbucket.TokenAvailabilityResponse;
 import com.reqlint.sandbox.services.tokenbucket.TokenConsumptionResponse;
 import com.reqlint.sandbox.services.tokenbucket.TokenBucketService;
 import org.slf4j.Logger;
@@ -51,6 +52,24 @@ public class TokenBucketServiceImpl implements TokenBucketService, ApplicationLi
         }
     }
 
+    @Override
+    public TokenAvailabilityResponse obtainTokenAvailability(String customerId) {
+        LOGGER.info("Customer {} requests its token availability", customerId);
+        TokenBucket bucket = obtainBucket(customerId);
+
+        synchronized (bucket) {
+            bucket.replenish(timeService.now());
+            TokenAvailabilityResponse response = new TokenAvailabilityResponse(
+                    customerId,
+                    bucket.getAvailableTokens().intValue(),
+                    bucket.getReplenishmentRate().intValue(),
+                    bucket.getLastUpdate());
+
+            LOGGER.info("{}", response);
+            return response;
+        }
+    }
+
     private TokenBucket obtainBucket(String customerId) {
         TokenBucket tokenBucket;
         synchronized (buckets) {
@@ -60,7 +79,7 @@ public class TokenBucketServiceImpl implements TokenBucketService, ApplicationLi
                 tokenBucket = new TokenBucket(
                         customerId,
                         customerAccount.tokenCapacity(),
-                        customerAccount.replenishmentRatePerSecond());
+                        customerAccount.replenishmentRate());
                 buckets.put(customerId, tokenBucket);
             }
         }

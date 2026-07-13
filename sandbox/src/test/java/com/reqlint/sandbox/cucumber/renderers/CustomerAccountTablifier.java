@@ -15,8 +15,8 @@ public class CustomerAccountTablifier implements Tablifier<CustomerAccount> {
     @Override
     public List<String> getRow(CustomerAccount entity) {
         return List.of(
-                ValueRenderer.parseString(entity::customerId),
-                ValueRenderer.parseInteger(entity::tokenCapacity),
-                ValueRenderer.parseInteger(entity::replenishmentRatePerSecond));
+                ValueRenderer.renderString(entity::customerId),
+                ValueRenderer.renderInteger(entity::tokenCapacity),
+                ValueRenderer.renderInteger(entity::replenishmentRate));
     }
 }

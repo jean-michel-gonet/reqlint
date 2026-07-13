@@ -1,17 +1,19 @@
 package com.reqlint.sandbox.cucumber.steps;
 
 import com.reqlint.sandbox.cucumber.beans.DataTableNotEnoughTokensAvailableException;
+import com.reqlint.sandbox.cucumber.beans.DataTableTokenAvailabilityResponse;
 import com.reqlint.sandbox.cucumber.beans.DataTableTokenConsumptionResponse;
 import com.reqlint.sandbox.cucumber.renderers.MarkDownFormatter;
 import com.reqlint.sandbox.cucumber.renderers.NotEnoughTokensAvailableExceptionTablifier;
+import com.reqlint.sandbox.cucumber.renderers.TokenAvailabilityResponseTablifier;
 import com.reqlint.sandbox.cucumber.renderers.TokenConsumptionResponseTablifier;
-import com.reqlint.sandbox.services.tokenbucket.TokenConsumptionResponse;
+import com.reqlint.sandbox.services.time.TimeService;
+import com.reqlint.sandbox.services.tokenbucket.TokenAvailabilityResponse;
 import com.reqlint.sandbox.services.tokenbucket.TokenBucketService;
+import com.reqlint.sandbox.services.tokenbucket.TokenConsumptionResponse;
 import com.reqlint.sandbox.services.tokenbucket.exceptions.NotEnoughTokensAvailableException;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
-import io.cucumber.java.it.Ma;
 import org.assertj.core.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -27,9 +29,17 @@ public class TokenBucketSteps {
     @Autowired
     private TokenBucketService tokenBucketService;
 
+    @Autowired
+    private TimeService timeService;
+
     @DataTableType
     public TokenConsumptionResponse tokenConsumptionResponse(Map<String, String> entry) {
         return DataTableTokenConsumptionResponse.of(entry);
+    }
+
+    @DataTableType
+    public TokenAvailabilityResponse tokenAvailabilityResponse(Map<String, String> entry) {
+        return DataTableTokenAvailabilityResponse.of(timeService.now(), entry);
     }
 
     @DataTableType
@@ -53,10 +63,9 @@ public class TokenBucketSteps {
         }
     }
 
-    @When("Customer {string} fails to consume {int} tokens with error")
-    public void customerFailsToConsumeTokensWithError(String customerId, int tokensToConsume, List<NotEnoughTokensAvailableException> expected) {
-        LOGGER.info("Customer should receive the following error: {}",
-                new MarkDownFormatter<>(expected, new NotEnoughTokensAvailableExceptionTablifier()));
+    @Given("Customer {string} fails to consume {int} tokens with error")
+    public void customer_fails_to_consume_tokens(String customerId, int tokensToConsume, List<NotEnoughTokensAvailableException> expected) {
+        LOGGER.info("{}", new MarkDownFormatter<>(expected, new NotEnoughTokensAvailableExceptionTablifier()));
         try {
             TokenConsumptionResponse response = tokenBucketService.consumeTokens(customerId, tokensToConsume);
             LOGGER.error("Customer succeeded in consuming tokens: {}", new MarkDownFormatter<>(response, new TokenConsumptionResponseTablifier()));
@@ -65,6 +74,20 @@ public class TokenBucketSteps {
             LOGGER.info("Customer was prevented to consume tokens with the following exception:\n{}",
                     new MarkDownFormatter<>(actual, new NotEnoughTokensAvailableExceptionTablifier()));
             Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected.getFirst());
+        }
+    }
+
+    @Given("Customer {string} has the following token availability")
+    public void customer_has_the_following_availability(String customerId, List<TokenAvailabilityResponse> expected) {
+        LOGGER.info("{}", new MarkDownFormatter<>(expected, new TokenAvailabilityResponseTablifier()));
+        TokenAvailabilityResponse actual = tokenBucketService.obtainTokenAvailability(customerId);
+        try {
+            Assertions.assertThat(expected.getFirst()).isEqualTo(actual);
+            LOGGER.info("Availability is as expected");
+        } catch (AssertionFailedError e) {
+            LOGGER.error("Actual availability is: {}",
+                    new MarkDownFormatter<>(actual, new TokenAvailabilityResponseTablifier()));
+            throw e;
         }
     }
 }

@@ -15,9 +15,9 @@ public class TokenConsumptionResponseTablifier implements Tablifier<TokenConsump
     @Override
     public List<String> getRow(TokenConsumptionResponse entity) {
         return List.of(
-                ValueRenderer.parseString(entity::clientId),
-                ValueRenderer.parseInteger(entity::grantedTokens),
-                ValueRenderer.parseInteger(entity::availableTokes)
+                ValueRenderer.renderString(entity::customerId),
+                ValueRenderer.renderInteger(entity::grantedTokens),
+                ValueRenderer.renderInteger(entity::availableTokes)
         );
     }
 }

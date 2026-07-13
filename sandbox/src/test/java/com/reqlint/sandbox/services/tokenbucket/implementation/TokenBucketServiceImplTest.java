@@ -3,6 +3,7 @@ package com.reqlint.sandbox.services.tokenbucket.implementation;
 import com.reqlint.sandbox.services.customer.CustomerAccount;
 import com.reqlint.sandbox.services.customer.CustomerService;
 import com.reqlint.sandbox.services.time.TimeService;
+import com.reqlint.sandbox.services.tokenbucket.TokenAvailabilityResponse;
 import com.reqlint.sandbox.services.tokenbucket.TokenConsumptionResponse;
 import com.reqlint.sandbox.services.tokenbucket.exceptions.NotEnoughTokensAvailableException;
 import org.assertj.core.api.Assertions;
@@ -88,5 +89,42 @@ class TokenBucketServiceImplTest {
                         CUSTOMER_1_CLIENT_ID,
                         CUSTOMER_1_TOKEN_CAPACITY,
                         0));
+    }
+
+    @Test
+    public void can_obtain_the_token_availability() {
+        Assertions.assertThat(underTest.obtainTokenAvailability(CUSTOMER_1_CLIENT_ID))
+                .isEqualTo(new TokenAvailabilityResponse(
+                        CUSTOMER_1_CLIENT_ID,
+                        CUSTOMER_1_TOKEN_CAPACITY,
+                        CUSTOMER_1_REPLENISHMENT_RATE,
+                        NOW));
+
+        underTest.consumeTokens(CUSTOMER_1_CLIENT_ID, CUSTOMER_1_TOKEN_CAPACITY);
+
+        Assertions.assertThat(underTest.obtainTokenAvailability(CUSTOMER_1_CLIENT_ID))
+                .isEqualTo(new TokenAvailabilityResponse(
+                        CUSTOMER_1_CLIENT_ID,
+                        0,
+                        CUSTOMER_1_REPLENISHMENT_RATE,
+                        NOW));
+
+        Mockito.when(timeService.now()).thenReturn(NOW.plus(HALF_A_SECOND));
+
+        Assertions.assertThat(underTest.obtainTokenAvailability(CUSTOMER_1_CLIENT_ID))
+                .isEqualTo(new TokenAvailabilityResponse(
+                        CUSTOMER_1_CLIENT_ID,
+                        CUSTOMER_1_REPLENISHMENT_RATE / 2,
+                        CUSTOMER_1_REPLENISHMENT_RATE,
+                        NOW.plus(HALF_A_SECOND)));
+
+        Mockito.when(timeService.now()).thenReturn(NOW.plus(FIVE_SECONDS));
+
+        Assertions.assertThat(underTest.obtainTokenAvailability(CUSTOMER_1_CLIENT_ID))
+                .isEqualTo(new TokenAvailabilityResponse(
+                        CUSTOMER_1_CLIENT_ID,
+                        CUSTOMER_1_TOKEN_CAPACITY,
+                        CUSTOMER_1_REPLENISHMENT_RATE,
+                        NOW.plus(FIVE_SECONDS)));
     }
 }

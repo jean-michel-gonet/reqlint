@@ -14,7 +14,7 @@ class TokenBucket {
     private static final BigDecimal MILLISECOND = new BigDecimal("0.001");
     private final String customerId;
     private final BigDecimal tokenCapacity;
-    private final BigDecimal replenishmentRatePerSecond;
+    private final BigDecimal replenishmentRate;
 
     private BigDecimal availableTokens;
     private LocalDateTime lastUpdate;
@@ -23,25 +23,26 @@ class TokenBucket {
      * Class constructor.
      * @param customerId The identifier of the customer owning the bucket.
      * @param tokenCapacity The maximum number of tokens available.
+     * @param replenishmentRate The replenishment rate per second.
      */
-    public TokenBucket(String customerId, Integer tokenCapacity, Integer replenishmentRatePerSecond) {
+    public TokenBucket(String customerId, Integer tokenCapacity, Integer replenishmentRate) {
         this.customerId = customerId;
         this.tokenCapacity = BigDecimal.valueOf(tokenCapacity);
         this.availableTokens = BigDecimal.valueOf(tokenCapacity);
-        this.replenishmentRatePerSecond = BigDecimal.valueOf(replenishmentRatePerSecond);
+        this.replenishmentRate = BigDecimal.valueOf(replenishmentRate);
     }
 
     /**
      * Replenishes this bucket at the specified time stamp.
      * The number of tokens added is calculated based on the {@link #lastUpdate}, the provided
-     * time stamp, and the {@link #replenishmentRatePerSecond}.
+     * time stamp, and the {@link #replenishmentRate}.
      * @param timeStamp The time stamp.
      */
     public void replenish(LocalDateTime timeStamp) {
         if (lastUpdate != null) {
             Duration durationSinceLastConsumption = Duration.between(lastUpdate, timeStamp);
             BigDecimal millisSinceLastConsumption = BigDecimal.valueOf(durationSinceLastConsumption.toMillis());
-            BigDecimal replenishedTokens = replenishmentRatePerSecond
+            BigDecimal replenishedTokens = replenishmentRate
                     .multiply(millisSinceLastConsumption)
                     .multiply(MILLISECOND);
 
@@ -68,5 +69,17 @@ class TokenBucket {
         }
         availableTokens = availableTokens.subtract(bdTokensToConsume);
         return availableTokens.intValue();
+    }
+
+    public BigDecimal getReplenishmentRate() {
+        return replenishmentRate;
+    }
+
+    public BigDecimal getAvailableTokens() {
+        return availableTokens;
+    }
+
+    public LocalDateTime getLastUpdate() {
+        return lastUpdate;
     }
 }

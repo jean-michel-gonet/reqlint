@@ -15,9 +15,9 @@ public class NotEnoughTokensAvailableExceptionTablifier implements Tablifier<Not
     @Override
     public List<String> getRow(NotEnoughTokensAvailableException entity) {
         return List.of(
-                ValueRenderer.parseString(entity::getCustomerId),
-                ValueRenderer.parseInteger(entity::getTokensToConsume),
-                ValueRenderer.parseInteger(entity::getAvailableTokens)
+                ValueRenderer.renderString(entity::getCustomerId),
+                ValueRenderer.renderInteger(entity::getTokensToConsume),
+                ValueRenderer.renderInteger(entity::getAvailableTokens)
         );
     }
 }
