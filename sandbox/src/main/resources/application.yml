@@ -1,0 +1,8 @@
+customers:
+  accounts:
+    - customer-id: customer-1
+      token-capacity: 10
+      replenishment-rate-per-second: 5
+    - customer-id: customer-2
+      token-capacity: 20
+      replenishment-rate-per-second: 10

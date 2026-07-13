@@ -10,6 +10,7 @@
 \RequirePackage{etoolbox}
 \RequirePackage{xcolor}
 \RequirePackage{amsopn}
+\RequirePackage{enumitem}
 
 % --- Error Handling for Empty Fields ---
 \newcommand{\CheckNotEmpty}[2]{%
@@ -39,4 +40,18 @@
 \newcommand{\testcase}[2]{%
   \CheckNotEmpty{#1}{#2}%
   \subsubsection{\textcolor{orange!75!black}{#1:} #2}%
+}
+
+% Links between elements
+\newcommand{\childof}[1]{%
+  \nameref{#1} - page~\pageref{#1}
+}
+
+% Define the testprocedure environment mapping \stage to \item
+\newlist{testprocedure}{enumerate}{1}
+\setlist[testprocedure]{%
+    label=\textbf{Stage \arabic*}:, % Format: Stage 1:, Stage 2:
+    ref=Stage \arabic*,            % How it looks if you \ref{} it
+    leftmargin=*,                  % Clean indentation align
+    before=\let\stage\item         % The magic: map \stage to \item locally
 }
