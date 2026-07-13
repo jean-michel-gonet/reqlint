@@ -17,7 +17,7 @@ public class NotEnoughTokensAvailableExceptionTablifier implements Tablifier<Not
         return List.of(
                 ValueRenderer.renderString(entity::getCustomerId),
                 ValueRenderer.renderInteger(entity::getTokensToConsume),
-                ValueRenderer.renderInteger(entity::getAvailableTokens)
+                ValueRenderer.renderInteger(entity::availableTokens)
         );
     }
 }

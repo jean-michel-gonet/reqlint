@@ -1,7 +1,5 @@
 package com.reqlint.sandbox.services.tokenbucket.exceptions;
 
-import java.math.BigDecimal;
-
 public class NotEnoughTokensAvailableException extends TokenBucketException {
     private final String customerId;
     private final int tokensToConsume;
@@ -25,7 +23,7 @@ public class NotEnoughTokensAvailableException extends TokenBucketException {
         return tokensToConsume;
     }
 
-    public int getAvailableTokens() {
+    public int availableTokens() {
         return availableTokens;
     }
 }

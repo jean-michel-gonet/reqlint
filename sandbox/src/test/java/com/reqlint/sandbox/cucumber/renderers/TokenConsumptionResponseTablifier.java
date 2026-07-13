@@ -17,7 +17,7 @@ public class TokenConsumptionResponseTablifier implements Tablifier<TokenConsump
         return List.of(
                 ValueRenderer.renderString(entity::customerId),
                 ValueRenderer.renderInteger(entity::grantedTokens),
-                ValueRenderer.renderInteger(entity::availableTokes)
+                ValueRenderer.renderInteger(entity::availableTokens)
         );
     }
 }
