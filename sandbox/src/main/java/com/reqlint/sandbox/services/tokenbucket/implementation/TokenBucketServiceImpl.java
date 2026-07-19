@@ -4,14 +4,15 @@ import com.reqlint.sandbox.services.ResetEvent;
 import com.reqlint.sandbox.services.customer.CustomerAccount;
 import com.reqlint.sandbox.services.customer.CustomerService;
 import com.reqlint.sandbox.services.time.TimeService;
-import com.reqlint.sandbox.services.tokenbucket.TokenAvailabilityResponse;
-import com.reqlint.sandbox.services.tokenbucket.TokenConsumptionResponse;
+import com.reqlint.sandbox.services.tokenbucket.TokenBucketResponse;
 import com.reqlint.sandbox.services.tokenbucket.TokenBucketService;
+import com.reqlint.sandbox.services.tokenbucket.exceptions.NotEnoughTokensAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,40 +31,50 @@ public class TokenBucketServiceImpl implements TokenBucketService, ApplicationLi
     }
 
     @Override
-    public TokenConsumptionResponse consumeOneToken(String customerId) {
+    public TokenBucketResponse consumeOneToken(String customerId) {
         return consumeTokens(customerId, 1);
     }
 
     @Override
-    public TokenConsumptionResponse consumeTokens(String customerId, int tokensToConsume) {
+    public TokenBucketResponse consumeTokens(String customerId, int tokensToConsume) {
         LOGGER.info("Customer {} requests to consume {} tokens", customerId, tokensToConsume);
         TokenBucket bucket = obtainBucket(customerId);
 
         synchronized (bucket) {
-            bucket.replenish(timeService.now());
-            int availableTokens = bucket.consume(tokensToConsume);
-            TokenConsumptionResponse response = new TokenConsumptionResponse(
+            bucket.update(timeService.now());
+            int grantedTokens = bucket.consume(tokensToConsume);
+            TokenBucketResponse response = new TokenBucketResponse(
                     customerId,
-                    tokensToConsume,
-                    availableTokens);
-
-            LOGGER.info("{}", response);
+                    bucket.tokenCapacity().intValue(),
+                    bucket.refillRate().intValue(),
+                    grantedTokens,
+                    bucket.availableTokens().intValue(),
+                    bucket.computeResetTime(),
+                    bucket.lastUpdate());
+            if (grantedTokens < tokensToConsume) {
+                LOGGER.info("Customer has not enough available tokens: {}", response);
+                throw new NotEnoughTokensAvailableException(tokensToConsume, response);
+            }
+            LOGGER.info("Customer receives requested tokens: {}", response);
             return response;
         }
     }
 
     @Override
-    public TokenAvailabilityResponse obtainTokenAvailability(String customerId) {
+    public TokenBucketResponse obtainTokenAvailability(String customerId) {
         LOGGER.info("Customer {} requests its token availability", customerId);
         TokenBucket bucket = obtainBucket(customerId);
 
         synchronized (bucket) {
-            bucket.replenish(timeService.now());
-            TokenAvailabilityResponse response = new TokenAvailabilityResponse(
+            bucket.update(timeService.now());
+            TokenBucketResponse response = new TokenBucketResponse(
                     customerId,
-                    bucket.getAvailableTokens().intValue(),
-                    bucket.getReplenishmentRate().intValue(),
-                    bucket.getLastUpdate());
+                    bucket.tokenCapacity().intValue(),
+                    bucket.refillRate().intValue(),
+                    0,
+                    bucket.availableTokens().intValue(),
+                    bucket.computeResetTime(),
+                    bucket.lastUpdate());
 
             LOGGER.info("{}", response);
             return response;
@@ -77,7 +88,6 @@ public class TokenBucketServiceImpl implements TokenBucketService, ApplicationLi
             if (tokenBucket == null) {
                 CustomerAccount customerAccount = customerService.obtainCustomerAccount(customerId);
                 tokenBucket = new TokenBucket(
-                        customerId,
                         customerAccount.tokenCapacity(),
                         customerAccount.replenishmentRate());
                 buckets.put(customerId, tokenBucket);
