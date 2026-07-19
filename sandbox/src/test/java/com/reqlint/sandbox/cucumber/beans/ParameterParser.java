@@ -160,6 +160,49 @@ public class ParameterParser {
         return parseMandatoryLocalTime(sName, entry.get(sName));
     }
 
+    /**
+     * Parses an optional local time.
+     * @param name The name of the parameter, to raise an explicit exception.
+     * @param value The value of the parameter.
+     * @return The value.
+     */
+    public static BigDecimal parseOptionalBigDecimal(Object name, String value) {
+        if (StringUtils.isBlank(value)) {
+            return null;
+        }
+        try {
+            return new BigDecimal(value);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Cannot parse " + name + " as a big decimal: " + value + " - " + e.getMessage());
+        }
+    }
+
+    /**
+     * Parses a mandatory local time.
+     * @param name The name of the parameter, to raise an explicit exception.
+     * @param value The value of the parameter.
+     * @return The value.
+     */
+    public static BigDecimal parseMandatoryBigDecimal(Object name, String value) {
+        BigDecimal bigDecimal = parseOptionalBigDecimal(name, value);
+        if (bigDecimal == null) {
+            throw new IllegalArgumentException("Missing " + name + " field, which is a mandatory string");
+        }
+        return bigDecimal;
+    }
+
+    /**
+     * Alias to {@link #parseMandatoryLocalTime}
+     * @param name The name of the field in the entry.
+     * @param entry The entry.
+     * @return The value.
+     */
+    public static BigDecimal parseMandatoryBigDecimal(Object name, Map<String, String> entry) {
+        String sName = name.toString();
+        return parseMandatoryBigDecimal(sName, entry.get(sName));
+    }
+
+
     private ParameterParser() {
         // This is a utility class
     }
