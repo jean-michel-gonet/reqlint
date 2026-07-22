@@ -23,24 +23,26 @@
 }
 
 % --- Custom Command Definitions ---
-
 % 1. Equipment Requirement (ER)
-\newcommand{\equipmentrequirement}[2]{%
-  \CheckNotEmpty{#1}{#2}%
-  \subsubsection{\textcolor{blue!75!black}{#1:} #2}%
-}
+\newenvironment{equipmentrequirement}[2]{
+    \CheckNotEmpty{#1}{#2}%
+    \subsubsection{\textcolor{blue!75!black}{#1:} #2}%
+    \label{#1}
+}{}
 
 % 2. Software Requirement (SR)
-\newcommand{\softwarerequirement}[2]{%
-  \CheckNotEmpty{#1}{#2}%
-  \subsubsection{\textcolor{green!60!black}{#1:} #2}%
-}
+\newenvironment{softwarerequirement}[2]{
+    \CheckNotEmpty{#1}{#2}
+    \subsubsection{\textcolor{green!60!black}{#1:} #2}
+    \label{#1}
+}{}
 
 % 3. Test Case (TC)
-\newcommand{\testcase}[2]{%
-  \CheckNotEmpty{#1}{#2}%
-  \subsubsection{\textcolor{orange!75!black}{#1:} #2}%
-}
+\newenvironment{testcase}[2]{
+  \CheckNotEmpty{#1}{#2}
+  \subsubsection{\textcolor{orange!75!black}{#1:} #2}
+  \label{#1}
+}{}
 
 % Links between elements
 \newcommand{\childof}[1]{%

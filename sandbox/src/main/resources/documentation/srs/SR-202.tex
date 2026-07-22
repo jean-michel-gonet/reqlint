@@ -1,5 +1,4 @@
-\softwarerequirement{SR-202}{Maximum Capacity Cap}
-\label{SR-202}
+\begin{softwarerequirement}{SR-202}{Maximum Capacity Cap}
 \paragraph{Links} \childof{ER-200}
 
 The server shall ensure the updated token count $T_{updated}$ never exceeds $B_{max}$:
@@ -8,3 +7,4 @@ The server shall ensure the updated token count $T_{updated}$ never exceeds $B_{
     T_{updated} = \min(B_{max}, T + \Delta T)
     \label{eq:maximum-capacity-cap}
 \end{equation}
+\end{softwarerequirement}
