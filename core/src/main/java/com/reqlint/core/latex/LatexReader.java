@@ -41,7 +41,7 @@ public class LatexReader extends Reader implements TokenReader {
      * Class constructor.
      * @param basePath The base folder, to interpret path found in the LaTeX document.
      * @param inputFile The root LaTeX document.
-     * @throws FileNotFoundException If the root document does not exist.
+     * @throws FileNotFoundException If the root LaTeX document does not exist.
      */
     public LatexReader(File basePath, File inputFile) throws FileNotFoundException {
         if (!inputFile.isFile()) {
