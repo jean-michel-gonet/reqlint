@@ -10,11 +10,12 @@ import java.util.regex.Pattern;
  * {@code \include{path-to-file}}, {@code \import{path-to-file}} and {@code \input{path-to-file}}
  * by their actual content.
  */
-public class LatexTokenReader extends Reader implements TokenReader {
-    private static final Pattern IMPORT_PATTERN = Pattern.compile("\\\\(import)\\{([^}]+)}\\{([^}]+)}");
-    private static final Pattern INPUT_PATTERN = Pattern.compile("\\\\(input)\\{([^}]+)}");
-    private static final Pattern INCLUDE_PATTERN = Pattern.compile("\\\\(include)\\{([^}]+)}");
-    private static final Pattern[] EXPANSION_COMMAND_PATTERNS = {IMPORT_PATTERN, INPUT_PATTERN, INCLUDE_PATTERN};
+public class LatexReader extends Reader implements TokenReader {
+    private static final Pattern IMPORT_PATTERN = Pattern.compile("(\\\\)(import)\\{([^}]+)}\\{([^}]+)}");
+    private static final Pattern INPUT_PATTERN = Pattern.compile("(\\\\)(input)\\{([^}]+)}");
+    private static final Pattern INCLUDE_PATTERN = Pattern.compile("(\\\\)(include)\\{([^}]+)}");
+    private static final Pattern COMMENT_PATTERN = Pattern.compile("(^|[^\\\\])(%)(.*)");
+    private static final Pattern[] EXPANSION_COMMAND_PATTERNS = {IMPORT_PATTERN, INPUT_PATTERN, INCLUDE_PATTERN, COMMENT_PATTERN};
 
     private final File inputFile;
     private final File basePath;
@@ -25,13 +26,14 @@ public class LatexTokenReader extends Reader implements TokenReader {
     private final char[] buffer = new char[8096];
     private int bufferLength = 0;
     private int bufferPosition = bufferLength;
+    private int lineNumber = 0;
 
     /**
      * Class constructor.
      * @param inputFile A root LaTeX document.
      * @throws FileNotFoundException If the specified file does not exist.
      */
-    public LatexTokenReader(File inputFile) throws FileNotFoundException {
+    public LatexReader(File inputFile) throws FileNotFoundException {
         this(inputFile.getParentFile(), inputFile);
     }
 
@@ -41,9 +43,13 @@ public class LatexTokenReader extends Reader implements TokenReader {
      * @param inputFile The root LaTeX document.
      * @throws FileNotFoundException If the root document does not exist.
      */
-    public LatexTokenReader(File basePath, File inputFile) throws FileNotFoundException {
+    public LatexReader(File basePath, File inputFile) throws FileNotFoundException {
+        if (!inputFile.isFile()) {
+            throw new FileNotFoundException(inputFile + " is not a file or does not exist.");
+        }
         this.basePath = basePath;
         this.inputFile = inputFile;
+
     }
 
     @Override
@@ -94,15 +100,22 @@ public class LatexTokenReader extends Reader implements TokenReader {
         StringBuilder stringBuilder = new StringBuilder();
         char c;
         do {
-            // Fetch more chars:
+            // Fetch more chars if we've read the whole buffer (or we never loaded the buffer):
             if (bufferPosition >= bufferLength) {
+                // If not yet done, open the file:
                 if (reader == null) {
+                    // We've checked the existence of the file in the constructor:
                     reader = new FileReader(inputFile);
                 }
+                // Fill in the buffer:
                 bufferLength = reader.read(buffer, 0, buffer.length);
+
+                // This is the EOF:
                 if (bufferLength < 0) {
                     break;
                 }
+
+                // Reset the reading position to the beginning of the buffer:
                 bufferPosition = 0;
             }
             c = buffer[bufferPosition++];
@@ -112,13 +125,19 @@ public class LatexTokenReader extends Reader implements TokenReader {
             stringBuilder.append(c);
         } while (c != '\n');
 
+        // Increment the current line number:
+        lineNumber++;
+
+        // We've found nothing, this is the EOF:
         if (stringBuilder.isEmpty()) {
             return null;
         }
+
+        // We've found content:
         return stringBuilder.toString();
     }
 
-    private Collection<? extends TokenReader> extractTokenReaders(String line) {
+    private Collection<? extends TokenReader> extractTokenReaders(String line) throws FileNotFoundException {
         List<TokenReader> extractedTokenReaders = new ArrayList<>();
         do {
             Matcher closestMatcher = closestExpansionCommand(line);
@@ -131,7 +150,7 @@ public class LatexTokenReader extends Reader implements TokenReader {
 
             // The first token starts at position 0, and ends at the beginning of the first expansion command:
             if (closestMatcher.start() > 0) {
-                extractedTokenReaders.add(new StringTokenReader(line.substring(0, closestMatcher.start() - 1)));
+                extractedTokenReaders.add(new StringTokenReader(line.substring(0, closestMatcher.start())));
             }
 
             // The second token is the expansion command:
@@ -157,34 +176,39 @@ public class LatexTokenReader extends Reader implements TokenReader {
         return closestMatcher;
     }
 
-    private TokenReader createExpansionCommand(Matcher matcher) {
-        String command = matcher.group(1);
+    private TokenReader createExpansionCommand(Matcher matcher) throws FileNotFoundException {
+        String command = matcher.group(2);
         return switch (command) {
-            case "input", "include" -> createInputCommand(matcher.group(2));
-            case "import" -> createImportCommand(matcher.group(2), matcher.group(3));
+            case "input", "include" -> createInputCommand(matcher.group(3));
+            case "import" -> createImportCommand(matcher.group(3), matcher.group(4));
+            case "%" -> createComment(matcher.group(3));
             default -> throw new RuntimeException("Unknown expansion command: " + command);
         };
     }
 
-    private TokenReader createInputCommand(String filePath) {
+    private TokenReader createInputCommand(String filePath) throws FileNotFoundException {
         String filePathWithExtension = appendTexExtension(filePath);
         File newFilePath = new File(basePath, filePathWithExtension);
         try {
-            return new LatexTokenReader(basePath, newFilePath);
+            return new LatexReader(basePath, newFilePath);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("File " + newFilePath + " does not exist, or is not a file");
+            throw new FileNotFoundException(inputFile + ", line " + lineNumber + ": " + e.getMessage());
         }
     }
 
-    private TokenReader createImportCommand(String basePath, String filePath) {
+    private TokenReader createImportCommand(String basePath, String filePath) throws FileNotFoundException {
         File newBasePath = new File(this.basePath, basePath);
         String filePathWithExtension = appendTexExtension(filePath);
         File newFilePath = new File(newBasePath, filePathWithExtension);
         try {
-            return new LatexTokenReader(newBasePath, newFilePath);
+            return new LatexReader(newBasePath, newFilePath);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("File " + newFilePath + " does not exist, or is not a file");
+            throw new FileNotFoundException(inputFile + ", line " + lineNumber + ": " + e.getMessage());
         }
+    }
+
+    private TokenReader createComment(String comment) {
+        return new StringTokenReader("%" + comment);
     }
 
     private String appendTexExtension(String filePath) {
@@ -202,9 +226,7 @@ public class LatexTokenReader extends Reader implements TokenReader {
 
     @Override
     public void close() throws IOException {
-        if (reader != null) {
-            reader.close();
-        }
+        reader.close();
         isClosed = true;
     }
 
