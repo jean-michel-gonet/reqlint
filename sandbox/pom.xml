@@ -80,16 +80,14 @@
                 <groupId>com.reqlint</groupId>
                 <artifactId>reqlint-maven-plugin</artifactId>
                 <version>${project.version}</version>
-                <configuration>
-                    <outputDirectory>Somewhere</outputDirectory>
-                    <verbose>false</verbose>
-                </configuration>
                 <executions>
                     <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
+                        <id>traceability-matrix-config</id> <!-- Give it a memorable ID -->
+                        <goals><goal>traceability-matrix</goal></goals>
+                        <configuration>
+                            <inputFilePath>classes/documentation/root.tex</inputFilePath>
+                            <outputFilePath>traceability-matrix.tex</outputFilePath>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

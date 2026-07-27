@@ -36,7 +36,7 @@ public class SpecificationTreeLoader {
         this.latexReader = latexReader;
     }
 
-    SpecificationTree load() throws IOException {
+    public SpecificationTree load() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(latexReader);
         SpecificationTree specificationTree = new SpecificationTree();
         String line;
