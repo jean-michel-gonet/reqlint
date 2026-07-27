@@ -1,17 +1,24 @@
-package com.reqlint.core.latex;
+package com.reqlint.core.latex.reader;
+
+import java.io.File;
 
 /**
  * A token reader based on a simple {@link String}.
  */
 public class StringTokenReader implements TokenReader {
     private final String tokenContent;
+    private final File file;
+    private final int lineNumber;
+
     int readingPosition = 0;
 
     /**
      * Class constructor.
      * @param tokenContent The content.
      */
-    public StringTokenReader(String tokenContent) {
+    public StringTokenReader(File file, int lineNumber, String tokenContent) {
+        this.file = file;
+        this.lineNumber = lineNumber;
         this.tokenContent = tokenContent;
     }
 
@@ -29,6 +36,16 @@ public class StringTokenReader implements TokenReader {
             cbuf[n + off] = c;
         }
         return n;
+    }
+
+    @Override
+    public File file() {
+        return file;
+    }
+
+    @Override
+    public int lineNumber() {
+        return lineNumber;
     }
 
     @Override

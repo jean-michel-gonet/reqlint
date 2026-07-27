@@ -1,9 +1,10 @@
-package com.reqlint.core.latex;
+package com.reqlint.core.latex.reader;
+
+import com.reqlint.core.utils.FindMatchingLiteral;
+import com.reqlint.core.utils.MatchingLiteral;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Reads a LaTeX file, replacing all
@@ -11,12 +12,6 @@ import java.util.regex.Pattern;
  * by their actual content.
  */
 public class LatexReader extends Reader implements TokenReader {
-    private static final Pattern IMPORT_PATTERN = Pattern.compile("(\\\\)(import)\\{([^}]+)}\\{([^}]+)}");
-    private static final Pattern INPUT_PATTERN = Pattern.compile("(\\\\)(input)\\{([^}]+)}");
-    private static final Pattern INCLUDE_PATTERN = Pattern.compile("(\\\\)(include)\\{([^}]+)}");
-    private static final Pattern COMMENT_PATTERN = Pattern.compile("(^|[^\\\\])(%)(.*)");
-    private static final Pattern[] EXPANSION_COMMAND_PATTERNS = {IMPORT_PATTERN, INPUT_PATTERN, INCLUDE_PATTERN, COMMENT_PATTERN};
-
     private final File inputFile;
     private final File basePath;
     private Reader reader;
@@ -58,13 +53,13 @@ public class LatexReader extends Reader implements TokenReader {
             return -1;
         }
 
-        int n = -1;
         // Look for chars in the current token:
         if (currentToken != null) {
-            n = currentToken.read(cbuf, off, len);
+            int n = currentToken.read(cbuf, off, len);
             if (n >= 0) {
                 return n;
             }
+            currentToken = null;
         }
 
         // Look for chars in the next token:
@@ -82,6 +77,16 @@ public class LatexReader extends Reader implements TokenReader {
 
         // Try again:
         return read(cbuf, off, len);
+    }
+
+    @Override
+    public File file() {
+        return currentToken == null ? this.inputFile : currentToken.file();
+    }
+
+    @Override
+    public int lineNumber() {
+        return currentToken == null ? lineNumber : currentToken.lineNumber();
     }
 
     private void fetchMoreTokens() throws IOException {
@@ -140,49 +145,41 @@ public class LatexReader extends Reader implements TokenReader {
     private Collection<? extends TokenReader> extractTokenReaders(String line) throws FileNotFoundException {
         List<TokenReader> extractedTokenReaders = new ArrayList<>();
         do {
-            Matcher closestMatcher = closestExpansionCommand(line);
+            MatchingLiteral<ExpansionCommand> matchingLiteral =
+                    FindMatchingLiteral.findClosestMatch(ExpansionCommand.class, line);
 
             // If there are no more expansion commands in the line, then the token is the whole line:
-            if (closestMatcher == null) {
-                extractedTokenReaders.add(new StringTokenReader(line));
+            if (matchingLiteral == null) {
+                extractedTokenReaders.add(new StringTokenReader(
+                        inputFile,
+                        lineNumber,
+                        line));
                 break;
             }
 
             // The first token starts at position 0, and ends at the beginning of the first expansion command:
-            if (closestMatcher.start() > 0) {
-                extractedTokenReaders.add(new StringTokenReader(line.substring(0, closestMatcher.start())));
+            if (matchingLiteral.start() > 0) {
+                extractedTokenReaders.add(new StringTokenReader(
+                        inputFile,
+                        lineNumber,
+                        line.substring(0, matchingLiteral.start())));
             }
 
             // The second token is the expansion command:
-            extractedTokenReaders.add(createExpansionCommand(closestMatcher));
+            extractedTokenReaders.add(createExpansionCommand(matchingLiteral));
 
             // Look after the expansion command:
-            line = line.substring(closestMatcher.end());
+            line = line.substring(matchingLiteral.end());
         } while (!line.isEmpty());
 
         return extractedTokenReaders;
     }
 
-    private Matcher closestExpansionCommand(String line) {
-        int closestStart = line.length();
-        Matcher closestMatcher = null;
-        for (Pattern pattern : EXPANSION_COMMAND_PATTERNS) {
-            Matcher matcher = pattern.matcher(line);
-            if (matcher.find() && matcher.start() < closestStart) {
-                closestStart = matcher.start();
-                closestMatcher = matcher;
-            }
-        }
-        return closestMatcher;
-    }
-
-    private TokenReader createExpansionCommand(Matcher matcher) throws FileNotFoundException {
-        String command = matcher.group(2);
-        return switch (command) {
-            case "input", "include" -> createInputCommand(matcher.group(3));
-            case "import" -> createImportCommand(matcher.group(3), matcher.group(4));
-            case "%" -> createComment(matcher.group(3));
-            default -> throw new RuntimeException("Unknown expansion command: " + command);
+    private TokenReader createExpansionCommand(MatchingLiteral<ExpansionCommand> match) throws FileNotFoundException {
+        return switch (match.literal()) {
+            case INPUT, INCLUDE -> createInputCommand(match.group(3));
+            case IMPORT -> createImportCommand(match.group(3), match.group(4));
+            case COMMENT -> createComment(match.group(3));
         };
     }
 
@@ -208,7 +205,7 @@ public class LatexReader extends Reader implements TokenReader {
     }
 
     private TokenReader createComment(String comment) {
-        return new StringTokenReader("%" + comment);
+        return new StringTokenReader(file(), lineNumber(), "%" + comment);
     }
 
     private String appendTexExtension(String filePath) {

@@ -1,4 +1,4 @@
-package com.reqlint.core.util;
+package com.reqlint.core.testutils;
 
 public enum LogLevel {
     DEBUG,

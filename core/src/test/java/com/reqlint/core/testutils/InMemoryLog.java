@@ -1,10 +1,10 @@
-package com.reqlint.core.util;
+package com.reqlint.core.testutils;
 
 import org.apache.maven.plugin.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.reqlint.core.util.LogLevel.*;
+import static com.reqlint.core.testutils.LogLevel.*;
 
 /**
  * Simple in‑memory implementation of {@link Log} for unit tests.

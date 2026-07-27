@@ -1,4 +1,4 @@
-package com.reqlint.core.util;
+package com.reqlint.core.testutils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

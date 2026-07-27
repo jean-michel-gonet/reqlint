@@ -1,8 +1,8 @@
 package com.reqlint.core;
 
-import com.reqlint.core.util.InMemoryLog;
-import com.reqlint.core.util.LogLevel;
-import com.reqlint.core.util.LogRecord;
+import com.reqlint.core.testutils.InMemoryLog;
+import com.reqlint.core.testutils.LogLevel;
+import com.reqlint.core.testutils.LogRecord;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
