@@ -48,6 +48,7 @@ public class SpecificationTreeLoader {
 
                 // If none, then continue to the next line:
                 if (closestMatch == null) {
+                    line = "";
                     continue;
                 }
 
@@ -68,6 +69,6 @@ public class SpecificationTreeLoader {
                 line = specificationItem.load(line, bufferedReader);
             } while (!line.isEmpty());
         }
-        return null;
+        return specificationTree;
     }
 }
