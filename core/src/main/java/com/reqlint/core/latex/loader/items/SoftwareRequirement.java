@@ -1,25 +1,20 @@
 package com.reqlint.core.latex.loader.items;
 
 import com.reqlint.core.latex.loader.SpecificationItem;
-import com.reqlint.core.latex.loader.SpecificationTree;
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemMissingArgumentsException;
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemNotClosedException;
 import com.reqlint.core.utils.AssociatedPattern;
 import com.reqlint.core.utils.FindMatchingLiteral;
 import com.reqlint.core.utils.MatchingLiteral;
-import org.jspecify.annotations.NonNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SoftwareRequirement implements SpecificationItem, Comparable<SoftwareRequirement> {
-    private static final Comparator<SoftwareRequirement> COMPARATOR = Comparator
-            .comparing(SoftwareRequirement::identifier, Comparator.nullsLast(Comparator.naturalOrder()));
+public class SoftwareRequirement extends SpecificationItem {
     private static final Pattern ARGUMENTS = Pattern.compile("\\{([^}]+)}\\{([^}]+)}");
     private enum Patterns implements AssociatedPattern {
         CLOSE(Pattern.compile("\\\\end\\{softwarerequirement}")),
@@ -41,11 +36,20 @@ public class SoftwareRequirement implements SpecificationItem, Comparable<Softwa
 
     private final List<TestCase> testCases = new ArrayList<>();
 
-    private String identifier;
-    private String title;
+    /**
+     * Default class constructor.
+     */
+    public SoftwareRequirement() {
+        super();
+    }
 
-    public SoftwareRequirement(SpecificationTree specificationTree) {
-        specificationTree.attach(this);
+    /**
+     * Class constructor setting properties.
+     * @param identifier The identifier.
+     * @param title The title.
+     */
+    public SoftwareRequirement(String identifier, String title) {
+        super(identifier, title);
     }
 
     @Override
@@ -55,8 +59,8 @@ public class SoftwareRequirement implements SpecificationItem, Comparable<Softwa
         if (!matcher.find()) {
             throw new SpecificationItemMissingArgumentsException(line);
         }
-        identifier = matcher.group(1);
-        title = matcher.group(2);
+        setIdentifier(matcher.group(1));
+        setTitle(matcher.group(2));
 
         // The content of the requirement starts at the end of the arguments:
         line = line.substring(matcher.end());
@@ -82,21 +86,19 @@ public class SoftwareRequirement implements SpecificationItem, Comparable<Softwa
         throw new SpecificationItemNotClosedException(this);
     }
 
-    @Override
-    public String identifier() {
-        return identifier;
-    }
-
-    @Override
-    public String title() {
-        return title;
-    }
-
     /**
      * @return The list of {@link EquipmentRequirement#identifier()} this software requirement is child of.
      */
     public List<String> childOf() {
         return childOf.stream().sorted().toList();
+    }
+
+    /**
+     * Directly adds an identifier in the list of {@link #childOf()}.
+     * @param identifier The identifier to add.
+     */
+    public void addChildOf(String identifier) {
+        this.childOf.add(identifier);
     }
 
     /**
@@ -112,15 +114,5 @@ public class SoftwareRequirement implements SpecificationItem, Comparable<Softwa
      */
     public List<TestCase> testCases() {
         return testCases.stream().sorted().toList();
-    }
-
-    @Override
-    public int compareTo(@NonNull SoftwareRequirement o) {
-        return COMPARATOR.compare(this, o);
-    }
-
-    @Override
-    public String toString() {
-        return "Software requirement: " + identifier + " - " + title;
     }
 }

@@ -1,25 +1,20 @@
 package com.reqlint.core.latex.loader.items;
 
 import com.reqlint.core.latex.loader.SpecificationItem;
-import com.reqlint.core.latex.loader.SpecificationTree;
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemMissingArgumentsException;
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemNotClosedException;
 import com.reqlint.core.utils.AssociatedPattern;
 import com.reqlint.core.utils.FindMatchingLiteral;
 import com.reqlint.core.utils.MatchingLiteral;
-import org.jspecify.annotations.NonNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TestCase implements SpecificationItem, Comparable<TestCase> {
-    private static final Comparator<TestCase> COMPARATOR = Comparator
-            .comparing(TestCase::identifier, Comparator.nullsLast(Comparator.naturalOrder()));
+public class TestCase extends SpecificationItem {
     private static final Pattern ARGUMENTS = Pattern.compile("\\{([^}]+)}\\{([^}]+)}");
     private enum Patterns implements AssociatedPattern {
         CLOSE(Pattern.compile("\\\\end\\{testcase}")),
@@ -42,11 +37,20 @@ public class TestCase implements SpecificationItem, Comparable<TestCase> {
 
     private TestProcedure testProcedure;
 
-    private String identifier;
-    private String title;
+    /**
+     * Default class constructor.
+     */
+    public TestCase() {
+        super();
+    }
 
-    public TestCase(SpecificationTree specificationTree) {
-        specificationTree.attach(this);
+    /**
+     * Class constructor
+     * @param identifier The identifier.
+     * @param title The title.
+     */
+    public TestCase(String identifier, String title) {
+        super(identifier, title);
     }
 
     @Override
@@ -56,8 +60,8 @@ public class TestCase implements SpecificationItem, Comparable<TestCase> {
         if (!matcher.find()) {
             throw new SpecificationItemMissingArgumentsException(line);
         }
-        identifier = matcher.group(1);
-        title = matcher.group(2);
+        setIdentifier(matcher.group(1));
+        setTitle(matcher.group(2));
 
         // The content of the requirement starts at the end of the arguments:
         line = line.substring(matcher.end());
@@ -74,7 +78,7 @@ public class TestCase implements SpecificationItem, Comparable<TestCase> {
                 switch (matchingLiteral.literal()) {
                     case CHILD_OF -> childOf.add(matchingLiteral.group(1));
                     case TEST_PROCEDURE -> {
-                        testProcedure = new TestProcedure(identifier);
+                        testProcedure = new TestProcedure(identifier());
                         line = testProcedure.load(line, reader);
                     }
                     case CLOSE -> {
@@ -87,16 +91,6 @@ public class TestCase implements SpecificationItem, Comparable<TestCase> {
         throw new SpecificationItemNotClosedException(this);
     }
 
-    @Override
-    public String identifier() {
-        return identifier;
-    }
-
-    @Override
-    public String title() {
-        return title;
-    }
-
     /**
      * @return The list of {@link SoftwareRequirement#identifier()} this software requirement is child of.
      */
@@ -105,19 +99,17 @@ public class TestCase implements SpecificationItem, Comparable<TestCase> {
     }
 
     /**
+     * Directly adds an identifier in the list of {@link #childOf()}.
+     * @param identifier The identifier to add.
+     */
+    public void addChildOf(String identifier) {
+        this.childOf.add(identifier);
+    }
+
+    /**
      * @return A list with all attached test cases.
      */
     public TestProcedure testCaseProcedure() {
         return testProcedure;
-    }
-
-    @Override
-    public int compareTo(@NonNull TestCase o) {
-        return COMPARATOR.compare(this, o);
-    }
-
-    @Override
-    public String toString() {
-        return "Test case: " + identifier + " - " + title;
     }
 }

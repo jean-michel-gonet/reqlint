@@ -20,19 +20,11 @@ class SoftwareRequirementTest {
     private static final String TITLE = "TITLE";
     private static final String EXPECTED_REMAINDER = "Expected remainder";
 
-    private SpecificationTree specificationTree;
     private SoftwareRequirement underTest;
 
     @BeforeEach
     public void setUp() {
-        specificationTree = new SpecificationTree();
-        underTest = new SoftwareRequirement(specificationTree);
-    }
-
-    @Test
-    public void can_attach_itself_to_the_specification_tree() {
-        Assertions.assertThat(specificationTree.softwareRequirements())
-                .contains(underTest);
+        underTest = new SoftwareRequirement();
     }
 
     @Test
@@ -98,23 +90,8 @@ class SoftwareRequirementTest {
 
     @Test
     public void can_attach_test_cases() {
-        TestCase testCase = new TestCase(specificationTree);
+        TestCase testCase = new TestCase();
         underTest.attach(testCase);
         Assertions.assertThat(underTest.testCases()).contains(testCase);
-    }
-
-    @Test
-    public void can_sort_alphabetically_by_identifier() throws Exception {
-        SoftwareRequirement underTest1 = new SoftwareRequirement(specificationTree);
-        underTest1.load(String.format("{%s}{%s}\\end{softwarerequirement}", "CCC", TITLE), null);
-
-        SoftwareRequirement underTest2 = new SoftwareRequirement(specificationTree);
-        underTest2.load(String.format("{%s}{%s}\\end{softwarerequirement}", "AAA", TITLE), null);
-
-        SoftwareRequirement underTest3 = new SoftwareRequirement(specificationTree);
-        underTest3.load(String.format("{%s}{%s}\\end{softwarerequirement}", "BBB", TITLE), null);
-
-        Assertions.assertThat(specificationTree.softwareRequirements())
-                .containsExactly(underTest2, underTest3, underTest1, underTest);
     }
 }

@@ -23,14 +23,7 @@ class EquipmentRequirementTest {
 
     @BeforeEach
     public void setUp() {
-        specificationTree = new SpecificationTree();
-        underTest = new EquipmentRequirement(specificationTree);
-    }
-
-    @Test
-    public void can_attach_itself_to_the_specification_tree() {
-        Assertions.assertThat(specificationTree.equipmentRequirements())
-                .contains(underTest);
+        underTest = new EquipmentRequirement();
     }
 
     @Test
@@ -83,24 +76,9 @@ class EquipmentRequirementTest {
 
     @Test
     public void can_attach_software_requirements() {
-        SoftwareRequirement softwareRequirement = new SoftwareRequirement(specificationTree);
+        SoftwareRequirement softwareRequirement = new SoftwareRequirement();
         underTest.attach(softwareRequirement);
         Assertions.assertThat(underTest.softwareRequirements()).contains(softwareRequirement);
-    }
-
-    @Test
-    public void can_sort_alphabetically_by_identifier() throws Exception {
-        EquipmentRequirement underTest1 = new EquipmentRequirement(specificationTree);
-        underTest1.load(String.format("{%s}{%s}\\end{equipmentrequirement}", "CCC", TITLE), null);
-
-        EquipmentRequirement underTest2 = new EquipmentRequirement(specificationTree);
-        underTest2.load(String.format("{%s}{%s}\\end{equipmentrequirement}", "AAA", TITLE), null);
-
-        EquipmentRequirement underTest3 = new EquipmentRequirement(specificationTree);
-        underTest3.load(String.format("{%s}{%s}\\end{equipmentrequirement}", "BBB", TITLE), null);
-
-        Assertions.assertThat(specificationTree.equipmentRequirements())
-                .containsExactly(underTest2, underTest3, underTest1, underTest);
     }
 
 }

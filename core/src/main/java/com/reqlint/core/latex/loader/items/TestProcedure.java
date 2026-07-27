@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TestProcedure implements SpecificationItem {
+public class TestProcedure extends SpecificationItem {
     protected static final String TITLE = "Test procedure";
 
     private enum Patterns implements AssociatedPattern {
@@ -33,11 +33,11 @@ public class TestProcedure implements SpecificationItem {
     }
 
     private final List<TestStage> stages = new ArrayList<>();
-    private final String identifier;
 
     public TestProcedure(String identifier) {
-        this.identifier = identifier;
+        super(identifier, TITLE);
     }
+
     public String load(String line, BufferedReader reader) throws IOException {
         int stagePosition = 0;
         StringBuilder stageDescription = new StringBuilder();
@@ -69,16 +69,6 @@ public class TestProcedure implements SpecificationItem {
         } while ( (line = reader.readLine()) != null);
 
         throw new SpecificationItemNotClosedException(this);
-    }
-
-    @Override
-    public String identifier() {
-        return identifier;
-    }
-
-    @Override
-    public String title() {
-        return TITLE;
     }
 
     public List<TestStage> stages() {

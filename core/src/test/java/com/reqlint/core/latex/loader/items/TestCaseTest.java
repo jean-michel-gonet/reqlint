@@ -1,6 +1,5 @@
 package com.reqlint.core.latex.loader.items;
 
-import com.reqlint.core.latex.loader.SpecificationTree;
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemMissingArgumentsException;
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemNotClosedException;
 import org.assertj.core.api.Assertions;
@@ -23,19 +22,11 @@ class TestCaseTest {
     private static final String STAGE_1 = "Stage 1";
     private static final String STAGE_2 = "Stage 2";
 
-    private SpecificationTree specificationTree;
     private TestCase underTest;
 
     @BeforeEach
     public void setUp() {
-        specificationTree = new SpecificationTree();
-        underTest = new TestCase(specificationTree);
-    }
-
-    @Test
-    public void can_attach_itself_to_the_specification_tree() {
-        Assertions.assertThat(specificationTree.testCases())
-                .contains(underTest);
+        underTest = new TestCase();
     }
 
     @Test
@@ -97,21 +88,6 @@ class TestCaseTest {
 
         Assertions.assertThatExceptionOfType(SpecificationItemNotClosedException.class)
                 .isThrownBy(() -> underTest.load(line, reader));
-    }
-
-    @Test
-    public void can_sort_alphabetically_by_identifier() throws Exception {
-        TestCase underTest1 = new TestCase(specificationTree);
-        underTest1.load(String.format("{%s}{%s}\\end{testcase}", "CCC", TITLE), null);
-
-        TestCase underTest2 = new TestCase(specificationTree);
-        underTest2.load(String.format("{%s}{%s}\\end{testcase}", "AAA", TITLE), null);
-
-        TestCase underTest3 = new TestCase(specificationTree);
-        underTest3.load(String.format("{%s}{%s}\\end{testcase}", "BBB", TITLE), null);
-
-        Assertions.assertThat(specificationTree.testCases())
-                .containsExactly(underTest2, underTest3, underTest1, underTest);
     }
 
     @Test
