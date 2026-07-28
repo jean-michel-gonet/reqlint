@@ -12,8 +12,9 @@ import java.util.*;
  * by their actual content.
  */
 public class LatexReader extends Reader implements TokenReader {
+    private final File rootDirectory;
+    private final File searchPath;
     private final File inputFile;
-    private final File basePath;
     private Reader reader;
     private TokenReader currentToken;
     private final Queue<TokenReader> tokenReaders = new ArrayDeque<>();
@@ -29,20 +30,22 @@ public class LatexReader extends Reader implements TokenReader {
      * @throws FileNotFoundException If the specified file does not exist.
      */
     public LatexReader(File inputFile) throws FileNotFoundException {
-        this(inputFile.getParentFile(), inputFile);
+        this(inputFile.getParentFile(), inputFile.getParentFile(), inputFile);
     }
 
     /**
      * Class constructor.
-     * @param basePath The base folder, to interpret path found in the LaTeX document.
-     * @param inputFile The root LaTeX document.
+     * @param rootDirectory The folder where the latex compilation was launched.
+     * @param searchPath Internal latex search path, used by {@code \input} and {@code \include} commands.
+     * @param inputFile The file to read.
      * @throws FileNotFoundException If the root LaTeX document does not exist.
      */
-    public LatexReader(File basePath, File inputFile) throws FileNotFoundException {
+    protected LatexReader(File rootDirectory, File searchPath, File inputFile) throws FileNotFoundException {
         if (!inputFile.isFile()) {
             throw new FileNotFoundException(inputFile + " is not a file or does not exist.");
         }
-        this.basePath = basePath;
+        this.rootDirectory = rootDirectory;
+        this.searchPath = searchPath;
         this.inputFile = inputFile;
 
     }
@@ -179,28 +182,40 @@ public class LatexReader extends Reader implements TokenReader {
         return switch (match.literal()) {
             case INPUT, INCLUDE -> createInputCommand(match.group(3));
             case IMPORT -> createImportCommand(match.group(3), match.group(4));
+            case SUBIMPORT -> createSubImportCommand(match.group(3), match.group(4));
             case COMMENT -> createComment(match.group(3));
         };
     }
 
     private TokenReader createInputCommand(String filePath) throws FileNotFoundException {
         String filePathWithExtension = appendTexExtension(filePath);
-        File newFilePath = new File(basePath, filePathWithExtension);
+        File newFilePath = new File(searchPath, filePathWithExtension);
         try {
-            return new LatexReader(basePath, newFilePath);
+            return new LatexReader(rootDirectory, searchPath, newFilePath);
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException(inputFile + ", line " + lineNumber + ": " + e.getMessage());
         }
     }
 
-    private TokenReader createImportCommand(String basePath, String filePath) throws FileNotFoundException {
-        File newBasePath = new File(this.basePath, basePath);
-        String filePathWithExtension = appendTexExtension(filePath);
-        File newFilePath = new File(newBasePath, filePathWithExtension);
+    private TokenReader createImportCommand(String searchPath, String inputFile) throws FileNotFoundException {
+        File newSearchPath = new File(this.rootDirectory, searchPath);
+        String inputFileWithExtension = appendTexExtension(inputFile);
+        File newInputFile = new File(newSearchPath, inputFileWithExtension);
         try {
-            return new LatexReader(newBasePath, newFilePath);
+            return new LatexReader(rootDirectory, newSearchPath, newInputFile);
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException(inputFile + ", line " + lineNumber + ": " + e.getMessage());
+            throw new FileNotFoundException(this.inputFile + ", line " + lineNumber + ": " + e.getMessage());
+        }
+    }
+
+    private TokenReader createSubImportCommand(String searchPath, String inputFile) throws FileNotFoundException {
+        File newSearchPath = new File(this.rootDirectory, searchPath);
+        String inputFileWithExtension = appendTexExtension(inputFile);
+        File newInputFile = new File(newSearchPath, inputFileWithExtension);
+        try {
+            return new LatexReader(newSearchPath, newSearchPath, newInputFile);
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException(this.inputFile + ", line " + lineNumber + ": " + e.getMessage());
         }
     }
 

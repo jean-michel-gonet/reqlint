@@ -34,7 +34,6 @@ class TraceabilityMatrixOutputTest {
 
     @Test
     public void can_output_the_traceability_matrix() throws Exception {
-
         specificationTree.attach(new EquipmentRequirement("ER1", "Equipment Requirement 1"));
         specificationTree.attach(new SoftwareRequirement("SR1", "Software Requirement 1").childOf("ER1"));
         specificationTree.attach(new TestCase("TC1", "Test Case 1").childOf("SR1"));
@@ -51,9 +50,32 @@ class TraceabilityMatrixOutputTest {
         "    \\toprule",
         "    Equipment requirement & Software requirement & Test case \\\\* \\midrule",
         "    \\endhead",
-        "    \\nameref{ER1} & \\nameref{SR1} & \\nameref{TC1} \\\\* \\midrule",
-        "    \\bottomrule",
+        "    ER1 & SR1 & TC1 \\\\* \\bottomrule",
         "\\end{longtable}");
     }
 
+    @Test
+    public void can_omit_repeated_equipment_requirements() throws Exception {
+        specificationTree.attach(new EquipmentRequirement("ER1", "Equipment Requirement 1"));
+        specificationTree.attach(new SoftwareRequirement("SR1", "Software Requirement 1").childOf("ER1"));
+        specificationTree.attach(new SoftwareRequirement("SR2", "Software Requirement 2").childOf("ER1"));
+        specificationTree.attach(new TestCase("TC1", "Test Case 1").childOf("SR1"));
+        specificationTree.attach(new TestCase("TC2", "Test Case 2").childOf("SR2"));
+        specificationTree.verify();
+
+        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(traceabilityMatrixFile));
+        underTest.writeTraceabilityMatrix(writer);
+        writer.close();
+
+        List<String> lines = TextFileContent.readLinesFromFile(new FileReader(traceabilityMatrixFile));
+
+        Assertions.assertThat(lines).containsExactly(
+                "\\begin{longtable}[l]{@{}lll@{}}",
+                "    \\toprule",
+                "    Equipment requirement & Software requirement & Test case \\\\* \\midrule",
+                "    \\endhead",
+                "    ER1 & SR1 & TC1 \\\\* \\cmidrule{2-3}",
+                "     & SR2 & TC2 \\\\* \\bottomrule",
+                "\\end{longtable}");
+    }
 }

@@ -30,7 +30,7 @@ class TokenBucketControllerTest {
     private static final int AVAILABLE_TOKENS = TOKEN_CAPACITY - TOKENS_TO_CONSUME;
     private static final int REFILL_RATE = 20;
     private static final BigDecimal RESET_TIME = BigDecimal.ONE.setScale(1, RoundingMode.UP);
-    private static final LocalDateTime TIME_STAMP = LocalDateTime.now();
+    private static final LocalDateTime TIME_STAMP = LocalDateTime.now().withNano(0);
 
     private static final TokenBucketResponse RESPONSE =
             new TokenBucketResponse(
@@ -50,7 +50,7 @@ class TokenBucketControllerTest {
 
 
     @Test
-    public void can_consume_tokens() throws Exception {
+    public void TC_101_can_consume_tokens() throws Exception {
         Mockito.when(tokenBucketService.consumeTokens(CUSTOMER_ID, TOKENS_TO_CONSUME))
                 .thenReturn(RESPONSE);
 

@@ -21,22 +21,42 @@ public class TraceabilityMatrixOutput {
         writer.write("    Equipment requirement & Software requirement & Test case \\\\* \\midrule\r\n");
         writer.write("    \\endhead\r\n");
 
+        TraceabilityMatrixItem previousItem = null;
         for (TraceabilityMatrixItem item : specificationTree.buildTraceabilityMatrix()) {
-            writer.write(String.format("    \\nameref{%s} & \\nameref{%s} & \\nameref{%s} \\\\* \\midrule\r\n",
-                    item.equipmentRequirement().identifier(),
-                    item.softwareRequirement().identifier(),
-                    item.testCase().identifier()));
+            String erId = item.equipmentRequirement().identifier();
+            String srId = item.softwareRequirement().identifier();
+            String tcId = item.testCase().identifier();
+            String midrule = "";
+
+            if (previousItem != null) {
+                midrule = "\\midrule";
+                if (erId.equals(previousItem.equipmentRequirement().identifier())) {
+                    erId = "";
+                    midrule = "\\cmidrule{2-3}";
+                    if (srId.equals(previousItem.softwareRequirement().identifier())) {
+                        srId = "";
+                        midrule = "\\cmidrule{3-3}";
+                    }
+                }
+                writer.write(midrule + "\r\n");
+            }
+            previousItem = item;
+            writer.write(String.format("    %s & %s & %s \\\\* ", erId, srId, tcId));
         }
-        writer.write("    \\bottomrule\r\n");
+        writer.write("\\bottomrule\r\n");
         writer.write("\\end{longtable}\r\n");
     }
 
     public void writeWarnings(Writer writer) throws IOException {
         writer.write("\\begin{itemize}\r\n");
-        for (SpecificationTreeWarning warning : specificationTree.warnings()) {
-            writer.write(String.format("    \\item \\nameref{%s} -- %s\r\n",
-                    warning.specificationItem().identifier(),
-                    warning.description()));
+        if (specificationTree.warnings().isEmpty()) {
+            writer.write("    \\item No warnings detected.\r\n");
+        } else {
+            for (SpecificationTreeWarning warning : specificationTree.warnings()) {
+                writer.write(String.format("    \\item \\nameref{%s} -- %s\r\n",
+                        warning.specificationItem().identifier(),
+                        warning.description()));
+            }
         }
         writer.write("\\end{itemize}\r\n");
     }

@@ -10,9 +10,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
 @Mojo(name = "traceability-matrix", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresProject = true)
 public class TraceabilityMatrixMojo extends AbstractMojo {
@@ -23,37 +21,58 @@ public class TraceabilityMatrixMojo extends AbstractMojo {
     @Parameter(name = "inputFilePath")
     private String inputFilePath;
 
-    @Parameter(name = "outputFilePath")
-    private String outputFilePath;
+    @Parameter(name = "traceabilityMatrixFilePath")
+    private String traceabilityMatrixFilePath;
+
+    @Parameter(name = "traceabilityWarningsFilePath")
+    private String traceabilityWarningsFilePath;
 
     @Override
     public void execute() throws MojoExecutionException {
         try {
-            File baseFolder = new File(basePath);
-            File inputFile = new File(baseFolder, inputFilePath);
-            if (!inputFile.isFile()) {
-                throw new IllegalArgumentException(inputFile.getAbsolutePath() + " does not exist or is not a file");
-            }
-
-            LatexReader latexReader = new LatexReader(inputFile);
-            SpecificationTreeLoader specificationTreeLoader = new SpecificationTreeLoader(latexReader);
-            SpecificationTree specificationTree = specificationTreeLoader.load();
+            SpecificationTree specificationTree = readSpecificationTree();
             specificationTree.verify();
-
-            File outputFile = new File(baseFolder, outputFilePath);
-            if (outputFile.exists()) {
-                if (!outputFile.delete()) {
-                    throw new IllegalArgumentException("Cannot overwrite " + outputFile.getAbsolutePath());
-                }
-            }
-
-            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputFile));
-            TraceabilityMatrixOutput traceabilityMatrixOutput = new TraceabilityMatrixOutput(specificationTree);
-            traceabilityMatrixOutput.writeTraceabilityMatrix(writer);
-            traceabilityMatrixOutput.writeWarnings(writer);
-            writer.close();
+            writeTraceabilityMatrix(specificationTree);
+            writeTraceabilityWarnings(specificationTree);
         } catch (Exception e) {
             throw new MojoExecutionException("Failed to run traceability-matrix goal", e);
+        }
+    }
+
+    private SpecificationTree readSpecificationTree() throws IOException {
+        File inputFile = new File(new File(basePath), inputFilePath);
+        if (!inputFile.isFile()) {
+            throw new IllegalArgumentException(inputFile.getAbsolutePath() + " does not exist or is not a file");
+        }
+
+        LatexReader latexReader = new LatexReader(inputFile);
+        SpecificationTreeLoader specificationTreeLoader = new SpecificationTreeLoader(latexReader);
+        return specificationTreeLoader.load();
+    }
+
+    private void writeTraceabilityMatrix(SpecificationTree specificationTree) throws IOException {
+        File traceabilityMatrixFile = new File(new File(basePath), traceabilityMatrixFilePath);
+        if (traceabilityMatrixFile.exists()) {
+            if (!traceabilityMatrixFile.delete()) {
+                throw new IllegalArgumentException("Cannot overwrite " + traceabilityMatrixFile.getAbsolutePath());
+            }
+        }
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(traceabilityMatrixFile))) {
+            TraceabilityMatrixOutput traceabilityMatrixOutput = new TraceabilityMatrixOutput(specificationTree);
+            traceabilityMatrixOutput.writeTraceabilityMatrix(writer);
+        }
+    }
+
+    private void writeTraceabilityWarnings(SpecificationTree specificationTree) throws  IOException {
+        File traceabilityMatrixFile = new File(new File(basePath), traceabilityWarningsFilePath);
+        if (traceabilityMatrixFile.exists()) {
+            if (!traceabilityMatrixFile.delete()) {
+                throw new IllegalArgumentException("Cannot overwrite " + traceabilityMatrixFile.getAbsolutePath());
+            }
+        }
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(traceabilityMatrixFile))) {
+            TraceabilityMatrixOutput traceabilityMatrixOutput = new TraceabilityMatrixOutput(specificationTree);
+            traceabilityMatrixOutput.writeWarnings(writer);
         }
     }
 }

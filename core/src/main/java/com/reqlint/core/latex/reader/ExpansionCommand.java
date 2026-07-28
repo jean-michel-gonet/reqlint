@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 public enum ExpansionCommand implements AssociatedPattern {
     IMPORT(Pattern.compile("(\\\\)(import)\\{([^}]+)}\\{([^}]+)}")),
+    SUBIMPORT(Pattern.compile("(\\\\)(subimport)\\{([^}]+)}\\{([^}]+)}")),
     INPUT(Pattern.compile("(\\\\)(input)\\{([^}]+)}")),
     INCLUDE(Pattern.compile("(\\\\)(include)\\{([^}]+)}")),
     COMMENT(Pattern.compile("(^|[^\\\\])(%)(.*)"));

@@ -64,11 +64,53 @@ class LatexReaderTest {
         createFileWithLines(new File(temporaryFolder, "/subfolder/two.tex"), List.of(
                 CONTENT_2,
                 CRLF,
-                "\\import{subsubfolder/}{three}"));
+                "\\import{otherfolder/}{three}"));
+        createFileWithLines(new File(temporaryFolder, "/otherfolder/three.tex"), List.of(
+                CONTENT_3));
+        createFileWithLines(rootFile, List.of(
+                "\\import{subfolder/}{one}",
+                CRLF,
+                CONTENT_4));
+
+        LatexReader underTest = new LatexReader(rootFile);
+        Assertions.assertThat(readLinesFromFile(underTest)).containsExactly(CONTENT_1, CONTENT_2, CONTENT_3, CONTENT_4);
+    }
+
+    @Test
+    public void can_follow_nested_imports() throws Exception {
+        createFileWithLines(new File(temporaryFolder, "/subfolder/one.tex"), List.of(
+                CONTENT_1,
+                CRLF,
+                "\\import{/subfolder/subsubfolder/}{two}"));
+        createFileWithLines(new File(temporaryFolder, "/subfolder/subsubfolder/two.tex"), List.of(
+                CONTENT_2,
+                CRLF,
+                "\\input{three}"));
         createFileWithLines(new File(temporaryFolder, "/subfolder/subsubfolder/three.tex"), List.of(
                 CONTENT_3));
         createFileWithLines(rootFile, List.of(
                 "\\import{subfolder/}{one}",
+                CRLF,
+                CONTENT_4));
+
+        LatexReader underTest = new LatexReader(rootFile);
+        Assertions.assertThat(readLinesFromFile(underTest)).containsExactly(CONTENT_1, CONTENT_2, CONTENT_3, CONTENT_4);
+    }
+
+    @Test
+    public void can_follow_sub_imports() throws Exception {
+        createFileWithLines(new File(temporaryFolder, "/subfolder/one.tex"), List.of(
+                CONTENT_1,
+                CRLF,
+                "\\subimport{/subsubfolder/}{two}"));
+        createFileWithLines(new File(temporaryFolder, "/subfolder/subsubfolder/two.tex"), List.of(
+                CONTENT_2,
+                CRLF,
+                "\\input{three}"));
+        createFileWithLines(new File(temporaryFolder, "/subfolder/subsubfolder/three.tex"), List.of(
+                CONTENT_3));
+        createFileWithLines(rootFile, List.of(
+                "\\subimport{subfolder/}{one}",
                 CRLF,
                 CONTENT_4));
 
