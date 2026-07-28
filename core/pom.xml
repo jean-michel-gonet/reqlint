@@ -20,6 +20,12 @@
             <artifactId>maven-plugin-api</artifactId>
         </dependency>
 
+        <!-- Third party dependencies -->
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+        </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
