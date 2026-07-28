@@ -31,4 +31,18 @@ public class SpecificationTreeWarning {
     public String toString() {
         return specificationItem + ": " + description;
     }
+
+    /**
+     * @return The specification item associated with this warning.
+     */
+    public SpecificationItem specificationItem() {
+        return specificationItem;
+    }
+
+    /**
+     * @return The description of the warning.
+     */
+    public String description() {
+        return description;
+    }
 }

@@ -102,8 +102,9 @@ public class TestCase extends SpecificationItem {
      * Directly adds an identifier in the list of {@link #childOf()}.
      * @param identifier The identifier to add.
      */
-    public void addChildOf(String identifier) {
+    public TestCase childOf(String identifier) {
         this.childOf.add(identifier);
+        return this;
     }
 
     /**

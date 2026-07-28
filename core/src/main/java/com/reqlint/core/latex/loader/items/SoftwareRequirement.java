@@ -97,8 +97,9 @@ public class SoftwareRequirement extends SpecificationItem {
      * Directly adds an identifier in the list of {@link #childOf()}.
      * @param identifier The identifier to add.
      */
-    public void addChildOf(String identifier) {
+    public SoftwareRequirement childOf(String identifier) {
         this.childOf.add(identifier);
+        return this;
     }
 
     /**

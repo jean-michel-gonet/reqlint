@@ -42,21 +42,21 @@ class SpecificationTreeTest {
         underTest.attach(er2);
 
         sr1 = new SoftwareRequirement(SR_1, TITLE + SR_1);
-        sr1.addChildOf(ER_1);
+        sr1.childOf(ER_1);
         sr2 = new SoftwareRequirement(SR_2, TITLE + SR_2);
-        sr2.addChildOf(ER_2);
+        sr2.childOf(ER_2);
         sr3 = new SoftwareRequirement(SR_3, TITLE + SR_3);
-        sr3.addChildOf(ER_3);
+        sr3.childOf(ER_3);
         underTest.attach(sr3);
         underTest.attach(sr1);
         underTest.attach(sr2);
 
         tc1 = new TestCase(TC_1, TITLE + TC_1);
-        tc1.addChildOf(SR_1);
+        tc1.childOf(SR_1);
         tc2 = new TestCase(TC_2, TITLE + TC_2);
-        tc2.addChildOf(SR_2);
+        tc2.childOf(SR_2);
         tc3 = new TestCase(TC_3, TITLE + TC_3);
-        tc3.addChildOf(SR_3);
+        tc3.childOf(SR_3);
         underTest.attach(tc3);
         underTest.attach(tc1);
         underTest.attach(tc2);
@@ -79,8 +79,8 @@ class SpecificationTreeTest {
     @Test
     public void can_build_the_traceability_matrix_with_n_n_relationships() {
 
-        sr1.addChildOf(ER_2);
-        tc3.addChildOf(SR_1);
+        sr1.childOf(ER_2);
+        tc3.childOf(SR_1);
 
         underTest.verify();
 
@@ -152,7 +152,7 @@ class SpecificationTreeTest {
 
     @Test
     public void can_detect_broken_childof_links_in_software_requirements() {
-        sr1.addChildOf(I_AM_UNKNOWN);
+        sr1.childOf(I_AM_UNKNOWN);
 
         underTest.verify();
 
@@ -185,7 +185,7 @@ class SpecificationTreeTest {
 
     @Test
     public void can_detect_broken_childof_links_in_test_cases() {
-        tc1.addChildOf(I_AM_UNKNOWN);
+        tc1.childOf(I_AM_UNKNOWN);
 
         underTest.verify();
 

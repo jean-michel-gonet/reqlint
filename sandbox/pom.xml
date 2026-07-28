@@ -86,7 +86,7 @@
                         <goals><goal>traceability-matrix</goal></goals>
                         <configuration>
                             <inputFilePath>classes/documentation/root.tex</inputFilePath>
-                            <outputFilePath>traceability-matrix.tex</outputFilePath>
+                            <outputFilePath>classes/documentation/traceability-matrix.tex</outputFilePath>
                         </configuration>
                     </execution>
                 </executions>

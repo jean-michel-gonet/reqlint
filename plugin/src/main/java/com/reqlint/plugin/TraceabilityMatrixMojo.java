@@ -2,6 +2,7 @@ package com.reqlint.plugin;
 
 import com.reqlint.core.latex.loader.SpecificationTree;
 import com.reqlint.core.latex.loader.SpecificationTreeLoader;
+import com.reqlint.core.latex.output.TraceabilityMatrixOutput;
 import com.reqlint.core.latex.reader.LatexReader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -46,10 +47,11 @@ public class TraceabilityMatrixMojo extends AbstractMojo {
                 }
             }
 
-            FileOutputStream fos = new FileOutputStream(outputFile);
-            OutputStreamWriter osw = new OutputStreamWriter(fos);
-            osw.write("Hi there!");
-            osw.close();
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputFile));
+            TraceabilityMatrixOutput traceabilityMatrixOutput = new TraceabilityMatrixOutput(specificationTree);
+            traceabilityMatrixOutput.writeTraceabilityMatrix(writer);
+            traceabilityMatrixOutput.writeWarnings(writer);
+            writer.close();
         } catch (Exception e) {
             throw new MojoExecutionException("Failed to run traceability-matrix goal", e);
         }
