@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.reqlint.sandbox.cucumber.CucumberIntegrationTest" time="0.964" tests="5" errors="0" skipped="0" failures="1">
+  <properties>
+    <property name="java.specification.version" value="24"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="D:\dev\java\reqlint\sandbox\target\test-classes;D:\dev\java\reqlint\sandbox\target\classes;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-web\3.5.0\spring-boot-starter-web-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter\3.5.0\spring-boot-starter-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot\3.5.0\spring-boot-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-autoconfigure\3.5.0\spring-boot-autoconfigure-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-logging\3.5.0\spring-boot-starter-logging-3.5.0.jar;C:\Users\gonetjd\.m2\repository\ch\qos\logback\logback-classic\1.5.18\logback-classic-1.5.18.jar;C:\Users\gonetjd\.m2\repository\ch\qos\logback\logback-core\1.5.18\logback-core-1.5.18.jar;C:\Users\gonetjd\.m2\repository\org\apache\logging\log4j\log4j-to-slf4j\2.24.3\log4j-to-slf4j-2.24.3.jar;C:\Users\gonetjd\.m2\repository\org\apache\logging\log4j\log4j-api\2.24.3\log4j-api-2.24.3.jar;C:\Users\gonetjd\.m2\repository\org\slf4j\jul-to-slf4j\2.0.17\jul-to-slf4j-2.0.17.jar;C:\Users\gonetjd\.m2\repository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;C:\Users\gonetjd\.m2\repository\org\yaml\snakeyaml\2.4\snakeyaml-2.4.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-json\3.5.0\spring-boot-starter-json-3.5.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.19.0\jackson-databind-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.19.0\jackson-annotations-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.19.0\jackson-core-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.19.0\jackson-datatype-jdk8-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.19.0\jackson-datatype-jsr310-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.19.0\jackson-module-parameter-names-2.19.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-tomcat\3.5.0\spring-boot-starter-tomcat-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\10.1.41\tomcat-embed-core-10.1.41.jar;C:\Users\gonetjd\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\10.1.41\tomcat-embed-el-10.1.41.jar;C:\Users\gonetjd\.m2\repository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.41\tomcat-embed-websocket-10.1.41.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-web\6.2.7\spring-web-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-beans\6.2.7\spring-beans-6.2.7.jar;C:\Users\gonetjd\.m2\repository\io\micrometer\micrometer-observation\1.15.0\micrometer-observation-1.15.0.jar;C:\Users\gonetjd\.m2\repository\io\micrometer\micrometer-commons\1.15.0\micrometer-commons-1.15.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-webmvc\6.2.7\spring-webmvc-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-aop\6.2.7\spring-aop-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-context\6.2.7\spring-context-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-expression\6.2.7\spring-expression-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\apache\commons\commons-lang3\3.20.0\commons-lang3-3.20.0.jar;C:\Users\gonetjd\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.12.2\junit-jupiter-api-5.12.2.jar;C:\Users\gonetjd\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-commons\1.12.2\junit-platform-commons-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-suite\1.12.2\junit-platform-suite-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-suite-api\1.12.2\junit-platform-suite-api-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-suite-engine\1.12.2\junit-platform-suite-engine-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-suite-commons\1.12.2\junit-platform-suite-commons-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-launcher\1.12.2\junit-platform-launcher-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.12.2\junit-jupiter-engine-5.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-engine\1.12.2\junit-platform-engine-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\assertj\assertj-core\3.27.3\assertj-core-3.27.3.jar;C:\Users\gonetjd\.m2\repository\net\bytebuddy\byte-buddy\1.17.5\byte-buddy-1.17.5.jar;C:\Users\gonetjd\.m2\repository\org\mockito\mockito-core\5.17.0\mockito-core-5.17.0.jar;C:\Users\gonetjd\.m2\repository\net\bytebuddy\byte-buddy-agent\1.17.5\byte-buddy-agent-1.17.5.jar;C:\Users\gonetjd\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-java\7.23.0\cucumber-java-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-core\7.23.0\cucumber-core-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-gherkin\7.23.0\cucumber-gherkin-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-gherkin-messages\7.23.0\cucumber-gherkin-messages-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\gherkin\32.1.1\gherkin-32.1.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\messages\27.2.0\messages-27.2.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\testng-xml-formatter\0.3.1\testng-xml-formatter-0.3.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\query\13.2.0\query-13.2.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\tag-expressions\6.1.2\tag-expressions-6.1.2.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-expressions\18.0.1\cucumber-expressions-18.0.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\datatable\7.23.0\datatable-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-plugin\7.23.0\cucumber-plugin-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\docstring\7.23.0\docstring-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\html-formatter\21.10.1\html-formatter-21.10.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\junit-xml-formatter\0.7.1\junit-xml-formatter-0.7.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\ci-environment\10.0.1\ci-environment-10.0.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-spring\7.23.0\cucumber-spring-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-junit-platform-engine\7.23.0\cucumber-junit-platform-engine-7.23.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-test\3.5.0\spring-boot-starter-test-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-test\3.5.0\spring-boot-test-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-test-autoconfigure\3.5.0\spring-boot-test-autoconfigure-3.5.0.jar;C:\Users\gonetjd\.m2\repository\com\jayway\jsonpath\json-path\2.9.0\json-path-2.9.0.jar;C:\Users\gonetjd\.m2\repository\org\slf4j\slf4j-api\2.0.17\slf4j-api-2.0.17.jar;C:\Users\gonetjd\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.2\jakarta.xml.bind-api-4.0.2.jar;C:\Users\gonetjd\.m2\repository\jakarta\activation\jakarta.activation-api\2.1.3\jakarta.activation-api-2.1.3.jar;C:\Users\gonetjd\.m2\repository\net\minidev\json-smart\2.5.2\json-smart-2.5.2.jar;C:\Users\gonetjd\.m2\repository\net\minidev\accessors-smart\2.5.2\accessors-smart-2.5.2.jar;C:\Users\gonetjd\.m2\repository\org\ow2\asm\asm\9.7.1\asm-9.7.1.jar;C:\Users\gonetjd\.m2\repository\org\awaitility\awaitility\4.3.0\awaitility-4.3.0.jar;C:\Users\gonetjd\.m2\repository\org\hamcrest\hamcrest\3.0\hamcrest-3.0.jar;C:\Users\gonetjd\.m2\repository\org\junit\jupiter\junit-jupiter\5.12.2\junit-jupiter-5.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.12.2\junit-jupiter-params-5.12.2.jar;C:\Users\gonetjd\.m2\repository\org\mockito\mockito-junit-jupiter\5.17.0\mockito-junit-jupiter-5.17.0.jar;C:\Users\gonetjd\.m2\repository\org\skyscreamer\jsonassert\1.5.3\jsonassert-1.5.3.jar;C:\Users\gonetjd\.m2\repository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-core\6.2.7\spring-core-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-jcl\6.2.7\spring-jcl-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-test\6.2.7\spring-test-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\xmlunit\xmlunit-core\2.10.1\xmlunit-core-2.10.1.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Etc/UTC"/>
+    <property name="user.country.format" value="CH"/>
+    <property name="os.name" value="Windows 10"/>
+    <property name="java.vm.specification.version" value="24"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="D:\external\jdk-24.0.1\bin"/>
+    <property name="sun.java.command" value="C:\Users\gonetjd\AppData\Local\Temp\surefire17149308980090851825\surefirebooter-20260728130846014_6.jar C:\Users\gonetjd\AppData\Local\Temp\surefire17149308980090851825 2026-07-28T13-08-43_068-jvmRun1 surefire-20260728130846014_4tmp surefire_1-20260728130846014_5tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="D:\dev\java\reqlint\sandbox\target\test-classes;D:\dev\java\reqlint\sandbox\target\classes;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-web\3.5.0\spring-boot-starter-web-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter\3.5.0\spring-boot-starter-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot\3.5.0\spring-boot-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-autoconfigure\3.5.0\spring-boot-autoconfigure-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-logging\3.5.0\spring-boot-starter-logging-3.5.0.jar;C:\Users\gonetjd\.m2\repository\ch\qos\logback\logback-classic\1.5.18\logback-classic-1.5.18.jar;C:\Users\gonetjd\.m2\repository\ch\qos\logback\logback-core\1.5.18\logback-core-1.5.18.jar;C:\Users\gonetjd\.m2\repository\org\apache\logging\log4j\log4j-to-slf4j\2.24.3\log4j-to-slf4j-2.24.3.jar;C:\Users\gonetjd\.m2\repository\org\apache\logging\log4j\log4j-api\2.24.3\log4j-api-2.24.3.jar;C:\Users\gonetjd\.m2\repository\org\slf4j\jul-to-slf4j\2.0.17\jul-to-slf4j-2.0.17.jar;C:\Users\gonetjd\.m2\repository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;C:\Users\gonetjd\.m2\repository\org\yaml\snakeyaml\2.4\snakeyaml-2.4.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-json\3.5.0\spring-boot-starter-json-3.5.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.19.0\jackson-databind-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.19.0\jackson-annotations-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.19.0\jackson-core-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.19.0\jackson-datatype-jdk8-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.19.0\jackson-datatype-jsr310-2.19.0.jar;C:\Users\gonetjd\.m2\repository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.19.0\jackson-module-parameter-names-2.19.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-tomcat\3.5.0\spring-boot-starter-tomcat-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\10.1.41\tomcat-embed-core-10.1.41.jar;C:\Users\gonetjd\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\10.1.41\tomcat-embed-el-10.1.41.jar;C:\Users\gonetjd\.m2\repository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.41\tomcat-embed-websocket-10.1.41.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-web\6.2.7\spring-web-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-beans\6.2.7\spring-beans-6.2.7.jar;C:\Users\gonetjd\.m2\repository\io\micrometer\micrometer-observation\1.15.0\micrometer-observation-1.15.0.jar;C:\Users\gonetjd\.m2\repository\io\micrometer\micrometer-commons\1.15.0\micrometer-commons-1.15.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-webmvc\6.2.7\spring-webmvc-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-aop\6.2.7\spring-aop-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-context\6.2.7\spring-context-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-expression\6.2.7\spring-expression-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\apache\commons\commons-lang3\3.20.0\commons-lang3-3.20.0.jar;C:\Users\gonetjd\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.12.2\junit-jupiter-api-5.12.2.jar;C:\Users\gonetjd\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-commons\1.12.2\junit-platform-commons-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-suite\1.12.2\junit-platform-suite-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-suite-api\1.12.2\junit-platform-suite-api-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-suite-engine\1.12.2\junit-platform-suite-engine-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-suite-commons\1.12.2\junit-platform-suite-commons-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-launcher\1.12.2\junit-platform-launcher-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.12.2\junit-jupiter-engine-5.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\platform\junit-platform-engine\1.12.2\junit-platform-engine-1.12.2.jar;C:\Users\gonetjd\.m2\repository\org\assertj\assertj-core\3.27.3\assertj-core-3.27.3.jar;C:\Users\gonetjd\.m2\repository\net\bytebuddy\byte-buddy\1.17.5\byte-buddy-1.17.5.jar;C:\Users\gonetjd\.m2\repository\org\mockito\mockito-core\5.17.0\mockito-core-5.17.0.jar;C:\Users\gonetjd\.m2\repository\net\bytebuddy\byte-buddy-agent\1.17.5\byte-buddy-agent-1.17.5.jar;C:\Users\gonetjd\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-java\7.23.0\cucumber-java-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-core\7.23.0\cucumber-core-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-gherkin\7.23.0\cucumber-gherkin-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-gherkin-messages\7.23.0\cucumber-gherkin-messages-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\gherkin\32.1.1\gherkin-32.1.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\messages\27.2.0\messages-27.2.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\testng-xml-formatter\0.3.1\testng-xml-formatter-0.3.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\query\13.2.0\query-13.2.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\tag-expressions\6.1.2\tag-expressions-6.1.2.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-expressions\18.0.1\cucumber-expressions-18.0.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\datatable\7.23.0\datatable-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-plugin\7.23.0\cucumber-plugin-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\docstring\7.23.0\docstring-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\html-formatter\21.10.1\html-formatter-21.10.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\junit-xml-formatter\0.7.1\junit-xml-formatter-0.7.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\ci-environment\10.0.1\ci-environment-10.0.1.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-spring\7.23.0\cucumber-spring-7.23.0.jar;C:\Users\gonetjd\.m2\repository\io\cucumber\cucumber-junit-platform-engine\7.23.0\cucumber-junit-platform-engine-7.23.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-starter-test\3.5.0\spring-boot-starter-test-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-test\3.5.0\spring-boot-test-3.5.0.jar;C:\Users\gonetjd\.m2\repository\org\springframework\boot\spring-boot-test-autoconfigure\3.5.0\spring-boot-test-autoconfigure-3.5.0.jar;C:\Users\gonetjd\.m2\repository\com\jayway\jsonpath\json-path\2.9.0\json-path-2.9.0.jar;C:\Users\gonetjd\.m2\repository\org\slf4j\slf4j-api\2.0.17\slf4j-api-2.0.17.jar;C:\Users\gonetjd\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.2\jakarta.xml.bind-api-4.0.2.jar;C:\Users\gonetjd\.m2\repository\jakarta\activation\jakarta.activation-api\2.1.3\jakarta.activation-api-2.1.3.jar;C:\Users\gonetjd\.m2\repository\net\minidev\json-smart\2.5.2\json-smart-2.5.2.jar;C:\Users\gonetjd\.m2\repository\net\minidev\accessors-smart\2.5.2\accessors-smart-2.5.2.jar;C:\Users\gonetjd\.m2\repository\org\ow2\asm\asm\9.7.1\asm-9.7.1.jar;C:\Users\gonetjd\.m2\repository\org\awaitility\awaitility\4.3.0\awaitility-4.3.0.jar;C:\Users\gonetjd\.m2\repository\org\hamcrest\hamcrest\3.0\hamcrest-3.0.jar;C:\Users\gonetjd\.m2\repository\org\junit\jupiter\junit-jupiter\5.12.2\junit-jupiter-5.12.2.jar;C:\Users\gonetjd\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.12.2\junit-jupiter-params-5.12.2.jar;C:\Users\gonetjd\.m2\repository\org\mockito\mockito-junit-jupiter\5.17.0\mockito-junit-jupiter-5.17.0.jar;C:\Users\gonetjd\.m2\repository\org\skyscreamer\jsonassert\1.5.3\jsonassert-1.5.3.jar;C:\Users\gonetjd\.m2\repository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-core\6.2.7\spring-core-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-jcl\6.2.7\spring-jcl-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\springframework\spring-test\6.2.7\spring-test-6.2.7.jar;C:\Users\gonetjd\.m2\repository\org\xmlunit\xmlunit-core\2.10.1\xmlunit-core-2.10.1.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\gonetjd"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-04-15"/>
+    <property name="java.home" value="D:\external\jdk-24.0.1"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="D:\dev\java\reqlint\sandbox"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="FILE_LOG_CHARSET" value="UTF-8"/>
+    <property name="java.awt.headless" value="true"/>
+    <property name="surefire.real.class.path" value="C:\Users\gonetjd\AppData\Local\Temp\surefire17149308980090851825\surefirebooter-20260728130846014_6.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="24.0.1+9-30"/>
+    <property name="user.name" value="GONETJD"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\gonetjd\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\gonetjd\AppData\Local\Temp\"/>
+    <property name="java.version" value="24.0.1"/>
+    <property name="user.dir" value="D:\dev\java\reqlint\sandbox"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="PID" value="11424"/>
+    <property name="user.language.format" value="fr"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="CONSOLE_LOG_CHARSET" value="windows-1252"/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="D:\external\jdk-24.0.1\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Users\gonetjd\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\gonetjd\bin;C:\GNATPRO\24.2\bin;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0;C:\windows\System32\OpenSSH;C:\Program Files\Git\cmd;D:\external\jdk-24.0.1\bin;D:\external\apache-maven-3.9.9\bin;C:\Program Files\TortoiseSVN\bin;D:\skyguide\analyze_v3;D:\external\gradle-8.11.1\bin;D:\external\plantuml.v1.2024.8;D:\external\wix-toolset-v5.0.2;C:\Program Files\WiX Toolset v5.0\bin;D:\external\etcd-v3.6.6-windows-amd64;C:\Users\gonetjd\AppData\Local\Microsoft\WindowsApps;C:\Program Files\JetBrains\IntelliJ IDEA 2024.2.4\bin;C:\Users\gonetjd\AppData\Local\Programs\MiKTeX\miktex\bin\x64;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="24.0.1+9-30"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="68.0"/>
+  </properties>
+  <testcase name="@TC_101 Upon first connection, a customer has his full token capacity available" classname="The bit bucket works" time="0.805">
+    <system-out><![CDATA[
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.0)
+
+2026-07-28T13:08:46.851Z  INFO 11424 --- [           main] c.r.s.cucumber.CucumberSpringContext     : Starting CucumberSpringContext using Java 24.0.1 with PID 11424 (started by GONETJD in D:\dev\java\reqlint\sandbox)
+2026-07-28T13:08:46.852Z  INFO 11424 --- [           main] c.r.s.cucumber.CucumberSpringContext     : No active profile set, falling back to 1 default profile: "default"
+2026-07-28T13:08:46.973Z  INFO 11424 --- [           main] c.r.s.cucumber.CucumberSpringContext     : Started CucumberSpringContext in 0.28 seconds (process running for 0.854)
+2026-07-28T13:08:47.351Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Prepare bitbucket.feature - @TC_101 Upon first connection, a customer has his full token capacity available
+2026-07-28T13:08:47.353Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 1 - Customer service has the following customers
+2026-07-28T13:08:47.356Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 2 - Now is 13:00
+2026-07-28T13:08:47.358Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Stage 1 - Check token availability of a customer
+2026-07-28T13:08:47.358Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 4 - Customer "CUST_A" has the following token availability
+2026-07-28T13:08:47.366Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 0              | 10               | ,000       | 13:00:00.000 |
+
+2026-07-28T13:08:47.366Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests its token availability
+2026-07-28T13:08:47.366Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=0, availableTokens=10, resetTime=0.000, timeStamp=2026-07-28T13:00]
+2026-07-28T13:08:47.388Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Availability is as expected
+]]></system-out>
+    <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\gonetjd\.m2\repository\net\bytebuddy\byte-buddy-agent\1.17.5\byte-buddy-agent-1.17.5.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+  </testcase>
+  <testcase name="@TC_102 Each customer has its own bucket" classname="The bit bucket works" time="0.014">
+    <failure message="&#10;expected: TokenBucketResponse[customerId=CUST_B, tokenCapacity=20, refillRate=10, grantedTokens=0, availableTokens=20, resetTime=0.000, timeStamp=2026-07-28T13:00]&#10; but was: TokenBucketResponse[customerId=CUST_B, tokenCapacity=20, refillRate=20, grantedTokens=0, availableTokens=20, resetTime=0.000, timeStamp=2026-07-28T13:00]" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
+
+expected: TokenBucketResponse[customerId=CUST_B, tokenCapacity=20, refillRate=10, grantedTokens=0, availableTokens=20, resetTime=0.000, timeStamp=2026-07-28T13:00]
+ but was: TokenBucketResponse[customerId=CUST_B, tokenCapacity=20, refillRate=20, grantedTokens=0, availableTokens=20, resetTime=0.000, timeStamp=2026-07-28T13:00]
+	at com.reqlint.sandbox.cucumber.steps.TokenBucketSteps.customer_has_the_following_availability(TokenBucketSteps.java:77)
+	at ✽.Customer "CUST_B" has the following token availability(classpath:features/bitbucket.feature:27)
+]]></failure>
+    <system-out><![CDATA[2026-07-28T13:08:47.400Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Prepare bitbucket.feature - @TC_102 Each customer has its own bucket
+2026-07-28T13:08:47.400Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 1 - Customer service has the following customers
+2026-07-28T13:08:47.400Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 2 - Now is 13:00
+2026-07-28T13:08:47.401Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Stage 1 - Obtain the bucket capacity of one customer
+2026-07-28T13:08:47.401Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 4 - Customer "CUST_A" has the following token availability
+2026-07-28T13:08:47.401Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 0              | 10               | ,000       | 13:00:00.000 |
+
+2026-07-28T13:08:47.401Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests its token availability
+2026-07-28T13:08:47.401Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=0, availableTokens=10, resetTime=0.000, timeStamp=2026-07-28T13:00]
+2026-07-28T13:08:47.401Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Availability is as expected
+2026-07-28T13:08:47.401Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Stage 2 - Compare the bucket capacity of a different customer
+2026-07-28T13:08:47.401Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 6 - Customer "CUST_B" has the following token availability
+2026-07-28T13:08:47.402Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_B      | 20             | 20          | 0              | 20               | ,000       | 13:00:00.000 |
+
+2026-07-28T13:08:47.402Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_B requests its token availability
+2026-07-28T13:08:47.402Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : TokenBucketResponse[customerId=CUST_B, tokenCapacity=20, refillRate=10, grantedTokens=0, availableTokens=20, resetTime=0.000, timeStamp=2026-07-28T13:00]
+2026-07-28T13:08:47.404Z ERROR 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Actual availability is: 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_B      | 20             | 10          | 0              | 20               | ,000       | 13:00:00.000 |
+
+]]></system-out>
+  </testcase>
+  <testcase name="@TC_201 Bucket gets replenished as time passes" classname="The bit bucket works" time="0.017">
+    <system-out><![CDATA[2026-07-28T13:08:47.421Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Prepare bitbucket.feature - @TC_201 Bucket gets replenished as time passes
+2026-07-28T13:08:47.421Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 1 - Customer service has the following customers
+2026-07-28T13:08:47.422Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 2 - Now is 13:00
+2026-07-28T13:08:47.422Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Stage 1 - Consume some tokens.
+2026-07-28T13:08:47.422Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 4 - Customer "CUST_A" succeeds in consuming 8 tokens with response
+2026-07-28T13:08:47.423Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Expect following response: 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 8              | 2                | ,400       | 13:00:00.000 |
+
+2026-07-28T13:08:47.423Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests to consume 8 tokens
+2026-07-28T13:08:47.424Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer receives requested tokens: TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=8, availableTokens=2, resetTime=0.400, timeStamp=2026-07-28T13:00]
+2026-07-28T13:08:47.424Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Response is as expected
+2026-07-28T13:08:47.424Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Stage 2 - Verify that token availability increased according to replenishment rate
+2026-07-28T13:08:47.424Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 6 - Now is 13:00:00.200
+2026-07-28T13:08:47.424Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 7 - Customer "CUST_A" has the following token availability
+2026-07-28T13:08:47.424Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 0              | 6                | ,200       | 13:00:00.200 |
+
+2026-07-28T13:08:47.424Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests its token availability
+2026-07-28T13:08:47.424Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=0, availableTokens=6, resetTime=0.200, timeStamp=2026-07-28T13:00:00.200]
+2026-07-28T13:08:47.424Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Availability is as expected
+2026-07-28T13:08:47.425Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 8 - Now is 13:00:00.300
+2026-07-28T13:08:47.425Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 9 - Customer "CUST_A" has the following token availability
+2026-07-28T13:08:47.425Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 0              | 8                | ,100       | 13:00:00.300 |
+
+2026-07-28T13:08:47.425Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests its token availability
+2026-07-28T13:08:47.425Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=0, availableTokens=8, resetTime=0.100, timeStamp=2026-07-28T13:00:00.300]
+2026-07-28T13:08:47.425Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Availability is as expected
+2026-07-28T13:08:47.425Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 10 - Now is 13:00:00.400
+2026-07-28T13:08:47.425Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 11 - Customer "CUST_A" has the following token availability
+2026-07-28T13:08:47.425Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 0              | 10               | ,000       | 13:00:00.400 |
+
+2026-07-28T13:08:47.426Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests its token availability
+2026-07-28T13:08:47.426Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=0, availableTokens=10, resetTime=0.000, timeStamp=2026-07-28T13:00:00.400]
+2026-07-28T13:08:47.426Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Availability is as expected
+]]></system-out>
+  </testcase>
+  <testcase name="@TC_202 Bucket does not get replenished beyond capacity" classname="The bit bucket works" time="0.005">
+    <system-out><![CDATA[2026-07-28T13:08:47.430Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Prepare bitbucket.feature - @TC_202 Bucket does not get replenished beyond capacity
+2026-07-28T13:08:47.430Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 1 - Customer service has the following customers
+2026-07-28T13:08:47.430Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 2 - Now is 13:00
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Stage 1 - Consume some tokens.
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 4 - Customer "CUST_A" succeeds in consuming 8 tokens with response
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Expect following response: 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 8              | 2                | ,400       | 13:00:00.000 |
+
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests to consume 8 tokens
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer receives requested tokens: TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=8, availableTokens=2, resetTime=0.400, timeStamp=2026-07-28T13:00]
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Response is as expected
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Stage 2 - Wait for a full minute before checking availability
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 6 - Now is 13:01
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 7 - Customer "CUST_A" has the following token availability
+2026-07-28T13:08:47.431Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 0              | 10               | ,000       | 13:01:00.000 |
+
+2026-07-28T13:08:47.432Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests its token availability
+2026-07-28T13:08:47.432Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=0, availableTokens=10, resetTime=0.000, timeStamp=2026-07-28T13:01]
+2026-07-28T13:08:47.432Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Availability is as expected
+]]></system-out>
+  </testcase>
+  <testcase name="@TC_301 Cannot consume from an empty bucket" classname="The bit bucket works" time="0.019">
+    <system-out><![CDATA[2026-07-28T13:08:47.435Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Prepare bitbucket.feature - @TC_301 Cannot consume from an empty bucket
+2026-07-28T13:08:47.435Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 1 - Customer service has the following customers
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 2 - Now is 13:00
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Stage 1 - Can consume some tokens.
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 4 - Customer "CUST_A" succeeds in consuming 8 tokens with response
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Expect following response: 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 8              | 2                | ,400       | 13:00:00.000 |
+
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests to consume 8 tokens
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer receives requested tokens: TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=8, availableTokens=2, resetTime=0.400, timeStamp=2026-07-28T13:00]
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Response is as expected
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 5 - Customer "CUST_A" succeeds in consuming 2 tokens with response
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Expect following response: 
+| CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| CUST_A      | 10             | 20          | 2              | 0                | ,500       | 13:00:00.000 |
+
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests to consume 2 tokens
+2026-07-28T13:08:47.436Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer receives requested tokens: TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=2, availableTokens=0, resetTime=0.500, timeStamp=2026-07-28T13:00]
+2026-07-28T13:08:47.437Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Response is as expected
+2026-07-28T13:08:47.437Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : # Stage 2 - Receives an error when consuming too many tokens
+2026-07-28T13:08:47.437Z  INFO 11424 --- [           main] c.r.sandbox.cucumber.steps.ReqlintSteps  : ## Step 7 - Customer "CUST_A" fails to consume 1 tokens with error
+2026-07-28T13:08:47.438Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : 
+| TOKENS_TO_CONSUME | CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------------|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| 1                 | CUST_A      | 10             | 20          | 0              | 0                | ,500       | 13:00:00.000 |
+
+2026-07-28T13:08:47.438Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer CUST_A requests to consume 1 tokens
+2026-07-28T13:08:47.438Z  INFO 11424 --- [           main] c.r.s.s.t.i.TokenBucketServiceImpl       : Customer has not enough available tokens: TokenBucketResponse[customerId=CUST_A, tokenCapacity=10, refillRate=20, grantedTokens=0, availableTokens=0, resetTime=0.500, timeStamp=2026-07-28T13:00]
+2026-07-28T13:08:47.438Z  INFO 11424 --- [           main] c.r.s.cucumber.steps.TokenBucketSteps    : Customer was prevented to consume tokens with the following exception:
+
+| TOKENS_TO_CONSUME | CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
+|-------------------|-------------|----------------|-------------|----------------|------------------|------------|--------------|
+| 1                 | CUST_A      | 10             | 20          | 0              | 0                | ,500       | 13:00:00.000 |
+
+]]></system-out>
+  </testcase>
+</testsuite>
