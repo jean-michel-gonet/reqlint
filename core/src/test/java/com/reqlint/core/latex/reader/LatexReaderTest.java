@@ -164,11 +164,14 @@ class LatexReaderTest {
                 "\\include{i-dont-exist}",
                 CONTENT_4));
 
-        Assertions.assertThatExceptionOfType(FileNotFoundException.class)
-                .isThrownBy(() -> readLinesFromFile(new LatexReader(rootFile)))
-                .withMessageContaining(rootFile.toString())
-                .withMessageContaining(temporaryFolder + "/i-dont-exist.tex")
-                .withMessageContaining("line 4");
+        try (LatexReader underTest = new LatexReader(rootFile)) {
+            Assertions.assertThatExceptionOfType(FileNotFoundException.class)
+                    .isThrownBy(() -> readLinesFromFile(underTest))
+                    .withMessageContaining(rootFile.toString())
+                    .withMessageContaining(temporaryFolder.getAbsolutePath())
+                    .withMessageContaining("i-dont-exist.tex")
+                    .withMessageContaining("line 4");
+        }
     }
 
     @Test
@@ -185,11 +188,15 @@ class LatexReaderTest {
                 CRLF,
                 CONTENT_4));
 
-        Assertions.assertThatExceptionOfType(FileNotFoundException.class)
-                .isThrownBy(() -> readLinesFromFile(new LatexReader(rootFile)))
-                .withMessageContaining(rootFile.toString())
-                .withMessageContaining(temporaryFolder + "/missing-folder/i-dont-exist.tex")
-                .withMessageContaining("line 4");
+        try (LatexReader underTest = new LatexReader(rootFile)) {
+            Assertions.assertThatExceptionOfType(FileNotFoundException.class)
+                    .isThrownBy(() -> readLinesFromFile(underTest))
+                    .withMessageContaining(rootFile.toString())
+                    .withMessageContaining(temporaryFolder.getAbsolutePath())
+                    .withMessageContaining("missing-folder")
+                    .withMessageContaining("i-dont-exist.tex")
+                    .withMessageContaining("line 4");
+        }
     }
 
     @Test
@@ -226,27 +233,28 @@ class LatexReaderTest {
                 CONTENT_3,
                 CRLF));
 
-        LatexReader underTest = new LatexReader(rootFile);
-        BufferedReader bufferedReader = new BufferedReader(underTest);
+        try (LatexReader underTest = new LatexReader(rootFile);
+             BufferedReader bufferedReader = new BufferedReader(underTest)) {
 
-        Assertions.assertThat(bufferedReader.readLine()).isEqualTo(CONTENT_1);
-        Assertions.assertThat(underTest.file()).isEqualTo(rootFile);
-        Assertions.assertThat(underTest.lineNumber()).isEqualTo(1);
+            Assertions.assertThat(bufferedReader.readLine()).isEqualTo(CONTENT_1);
+            Assertions.assertThat(underTest.file()).isEqualTo(rootFile);
+            Assertions.assertThat(underTest.lineNumber()).isEqualTo(1);
 
-        Assertions.assertThat(bufferedReader.readLine()).isEqualTo(CONTENT_2);
-        Assertions.assertThat(underTest.file()).isEqualTo(other);
-        Assertions.assertThat(underTest.lineNumber()).isEqualTo(1);
+            Assertions.assertThat(bufferedReader.readLine()).isEqualTo(CONTENT_2);
+            Assertions.assertThat(underTest.file()).isEqualTo(other);
+            Assertions.assertThat(underTest.lineNumber()).isEqualTo(1);
 
-        Assertions.assertThat(bufferedReader.readLine()).isEqualTo(CONTENT_3);
-        Assertions.assertThat(underTest.file()).isEqualTo(other);
-        Assertions.assertThat(underTest.lineNumber()).isEqualTo(2);
+            Assertions.assertThat(bufferedReader.readLine()).isEqualTo(CONTENT_3);
+            Assertions.assertThat(underTest.file()).isEqualTo(other);
+            Assertions.assertThat(underTest.lineNumber()).isEqualTo(2);
 
-        Assertions.assertThat(bufferedReader.readLine()).isEqualTo("");
-        Assertions.assertThat(underTest.file()).isEqualTo(rootFile);
-        Assertions.assertThat(underTest.lineNumber()).isEqualTo(2);
+            Assertions.assertThat(bufferedReader.readLine()).isEqualTo("");
+            Assertions.assertThat(underTest.file()).isEqualTo(rootFile);
+            Assertions.assertThat(underTest.lineNumber()).isEqualTo(2);
 
-        Assertions.assertThat(bufferedReader.readLine()).isEqualTo(CONTENT_4);
-        Assertions.assertThat(underTest.file()).isEqualTo(rootFile);
-        Assertions.assertThat(underTest.lineNumber()).isEqualTo(3);
+            Assertions.assertThat(bufferedReader.readLine()).isEqualTo(CONTENT_4);
+            Assertions.assertThat(underTest.file()).isEqualTo(rootFile);
+            Assertions.assertThat(underTest.lineNumber()).isEqualTo(3);
+        }
     }
 }
