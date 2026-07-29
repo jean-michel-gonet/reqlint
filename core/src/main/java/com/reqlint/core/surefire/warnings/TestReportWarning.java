@@ -1,13 +1,18 @@
 package com.reqlint.core.surefire.warnings;
 
 import com.reqlint.core.latex.loader.items.TestCase;
+import org.jspecify.annotations.NonNull;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
  * A warning found while rendering the test report.
  */
-public class TestReportWarning {
+public class TestReportWarning implements Comparable<TestReportWarning> {
+    private static final Comparator<TestReportWarning> COMPARATOR =
+            Comparator.comparing(TestReportWarning::testCase);
+
     private final TestCase testCase;
     private final String description;
 
@@ -52,5 +57,10 @@ public class TestReportWarning {
     @Override
     public String toString() {
         return testCase.identifier() + ": " + description;
+    }
+
+    @Override
+    public int compareTo(@NonNull TestReportWarning o) {
+        return COMPARATOR.compare(this, o);
     }
 }

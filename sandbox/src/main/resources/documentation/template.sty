@@ -12,6 +12,8 @@
 \RequirePackage{amsopn}
 \RequirePackage{enumitem}
 \RequirePackage{longtable}
+\RequirePackage{listings}
+\RequirePackage{amssymb}
 
 
 % --- Error Handling for Empty Fields ---
@@ -58,4 +60,26 @@
     ref=Stage \arabic*,            % How it looks if you \ref{} it
     leftmargin=*,                  % Clean indentation align
     before=\let\stage\item         % The magic: map \stage to \item locally
+}
+
+\lstdefinestyle{stageLog}{
+    basicstyle=\ttfamily\small\color{black!85},
+    backgroundcolor=\color{gray!6},
+    frame=leftline,            % Elegant vertical bar on the left instead of a full box
+    framerule=2pt,
+    rulecolor=\color{blue!60!black},
+    breaklines=true,
+    columns=fullflexible,
+    xleftmargin=1.2em,
+    aboveskip=0.4em,
+    belowskip=1em
+}
+
+% Command for stage header with itemize-like bullet symbol
+\newcommand{\stagetitle}[1]{%
+    \vspace{0.6em}\noindent\textcolor{blue!60!black}{$\blacksquare$}\;\textbf{#1}\par
+}
+% Command for stage header with itemize-like bullet symbol
+\newcommand{\testfailure}[1]{%
+    \vspace{0.6em}\noindent\textcolor{red!60!black}{$\blacksquare$}\;\textbf{#1}\par
 }

@@ -1,55 +1,66 @@
 package com.reqlint.core.surefire;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.time.LocalDateTime;
+import com.reqlint.core.surefire.warnings.TestReportWarning;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record SurefireTestReport(LocalDateTime timeStamp, String name, List<SurefireStageOutput> stageOutputs, String failure) {
-    private static final Pattern STAGE_PATTERN = Pattern.compile("#\\s*Stage\\s+([0-9]+)\\s?-\\s(.*)$");
+/**
+ * Contains the surefire test report, in a more accessible form.
+ * @see TestReportsLoader
+ */
+public class SurefireTestReport {
+    private final List<SurefireTestReportItem> reportItems = new ArrayList<>();
+    private final List<TestReportWarning> warnings = new ArrayList<>();
 
-    public SurefireTestReport(LocalDateTime timeStamp, String name, String output, String failure) {
-        this(timeStamp, name, stageOutputs(output), failure);
+    /**
+     * @param reportItem A new item to add to the report.
+     */
+    public void addReportItem(SurefireTestReportItem reportItem) {
+        reportItems.add(reportItem);
     }
 
-    private static List<SurefireStageOutput> stageOutputs(String output) {
-        List<SurefireStageOutput> stageOutputs = new ArrayList<>();
+    /**
+     * @param warning A warning found while processing the reprt.
+     */
+    public void addReportWarning(TestReportWarning warning) {
+        warnings.add(warning);
+    }
 
-        try (BufferedReader bufferedReader = new BufferedReader(new StringReader(output))) {
-            StringBuilder stageOutput = new StringBuilder();
-            String line;
-            int stageNumber = 0;
-            String stageTitle = "Preparation";
-            while ((line = bufferedReader.readLine()) != null) {
-                Matcher matcher = STAGE_PATTERN.matcher(line);
-                if (matcher.find()) {
-                    stageOutputs.add(new SurefireStageOutput(
-                            stageNumber,
-                            stageTitle,
-                            stageOutput.toString()));
-                    stageOutput = new StringBuilder();
-                    stageNumber = Integer.parseInt(matcher.group(1));
-                    stageTitle = matcher.group(2);
-                } else {
-                    stageOutput.append(line).append("\r\n");
-                }
+    /**
+     * Finds all reports related to the specified test case identifier.
+     * It should ideally answer with exactly one report, but:
+     * <ul>
+     *     <li>Zero results - A test case may not be automatized, so it has no corresponding test report.</li>
+     *     <li>More than one result - By accident, label from one test scenario is duplicated to another.
+     *     This should be treated as a problem.
+     *     </li>
+     * </ul>
+     * @param testCaseIdentifier The test case identifier.
+     * @return A collection of reports.
+     */
+    public List<SurefireTestReportItem> reportsOfTestCase(String testCaseIdentifier) {
+        String sPattern = String.format("(^|[@_\\s])(%s)($|[@_\\s])", testCaseIdentifier);
+        Pattern pattern = Pattern.compile(sPattern);
+
+        List<SurefireTestReportItem> matchingReports = new ArrayList<>();
+        for (SurefireTestReportItem reportItem : reportItems) {
+            String name = reportItem.name();
+            Matcher matcher = pattern.matcher(name);
+            if (matcher.find()) {
+                matchingReports.add(reportItem);
             }
-            stageOutputs.add(new SurefireStageOutput(
-                    stageNumber,
-                    stageTitle,
-                    stageOutput.toString()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-
-        return stageOutputs;
+        return matchingReports;
     }
 
-    public boolean isFailed() {
-        return failure != null && !failure.isEmpty();
+    public List<TestReportWarning> warnings() {
+        return warnings.stream().sorted().toList();
+    }
+
+    public List<SurefireTestReportItem> reports() {
+        return reportItems;
     }
 }

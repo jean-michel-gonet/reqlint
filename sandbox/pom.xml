@@ -81,13 +81,32 @@
                 <artifactId>reqlint-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
+                    <!-- The traceability matrix -->
                     <execution>
-                        <id>traceability-matrix-config</id> <!-- Give it a memorable ID -->
-                        <goals><goal>traceability-matrix</goal></goals>
+                        <id>traceability-matrix-config</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>traceability-matrix</goal>
+                        </goals>
                         <configuration>
                             <inputFilePath>classes/documentation/root.tex</inputFilePath>
                             <traceabilityMatrixFilePath>classes/documentation/traceability/traceability-matrix.tex</traceabilityMatrixFilePath>
                             <traceabilityWarningsFilePath>classes/documentation/traceability/traceability-warnings.tex</traceabilityWarningsFilePath>
+                        </configuration>
+                    </execution>
+
+                    <!-- The test results -->
+                    <execution>
+                        <id>test-results-config</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>test-results</goal>
+                        </goals>
+                        <configuration>
+                            <inputFilePath>classes/documentation/root.tex</inputFilePath>
+                            <surefireReportsFolderPath>surefire-reports</surefireReportsFolderPath>
+                            <testResultsFilePath>classes/documentation/testresults/testresults-report.tex</testResultsFilePath>
+                            <testWarningsFilePath>classes/documentation/testresults/testresults-warning.tex</testWarningsFilePath>
                         </configuration>
                     </execution>
                 </executions>

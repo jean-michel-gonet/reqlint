@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 public class TestReportsFinder {
     public static final String PREFIX = "TEST";
-    public static final String EXTENSION = ".XML";
+    public static final String EXTENSION = ".xml";
 
     private final File surefireFolder;
     private final String prefix;

@@ -1,6 +1,5 @@
 package com.reqlint.core.surefire;
 
-import com.reqlint.core.surefire.warnings.TestReportWarning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -17,43 +16,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class TestReportsLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestReportsLoader.class);
 
-    private final List<SurefireTestReport> reports = new ArrayList<>();
-    private final List<TestReportWarning> warnings = new ArrayList<>();
-
+    private final SurefireTestReport surefireTestReport;
     private final DocumentBuilder documentBuilder;
-
-    public List<SurefireTestReport> reports() {
-        return reports;
-    }
-
-    public List<SurefireTestReport> reportsOfTestCase(String testCaseIdentifier) {
-        String sPattern = String.format("(^|[@_\\s])(%s)($|[@_\\s])", testCaseIdentifier);
-        Pattern pattern = Pattern.compile(sPattern);
-
-        List<SurefireTestReport> matchingReports = new ArrayList<>();
-        for (SurefireTestReport report : reports) {
-            String name = report.name();
-            Matcher matcher = pattern.matcher(name);
-            if (matcher.find()) {
-                matchingReports.add(report);
-            }
-        }
-        return matchingReports;
-    }
 
     /**
      * Default class constructor.
      */
     public TestReportsLoader() {
+        this(new  SurefireTestReport());
+    }
+
+    /**
+     * Use this class constructor if you want to continue building up the test report.
+     * @param surefireTestReport The test report.
+     */
+    public TestReportsLoader(SurefireTestReport surefireTestReport) {
+        this.surefireTestReport = surefireTestReport;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         try {
@@ -118,11 +101,18 @@ public class TestReportsLoader {
             }
 
             LOGGER.info("Test report of: {}", testCaseName);
-            reports.add(new SurefireTestReport(
+            surefireTestReport.addReportItem(new SurefireTestReportItem(
                     timestamp,
                     testCaseName,
                     testOutput,
                     testFailure));
         }
+    }
+
+    /**
+     * @return The test report.
+     */
+    public SurefireTestReport getTestReport() {
+        return surefireTestReport;
     }
 }

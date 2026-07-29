@@ -110,7 +110,7 @@ public class TestCase extends SpecificationItem {
     /**
      * @return A list with all attached test cases.
      */
-    public TestProcedure testCaseProcedure() {
+    public TestProcedure testProcedure() {
         return testProcedure;
     }
 }

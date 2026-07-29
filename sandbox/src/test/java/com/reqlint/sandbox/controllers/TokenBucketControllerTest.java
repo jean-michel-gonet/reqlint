@@ -30,7 +30,7 @@ class TokenBucketControllerTest {
     private static final int AVAILABLE_TOKENS = TOKEN_CAPACITY - TOKENS_TO_CONSUME;
     private static final int REFILL_RATE = 20;
     private static final BigDecimal RESET_TIME = BigDecimal.ONE.setScale(1, RoundingMode.UP);
-    private static final LocalDateTime TIME_STAMP = LocalDateTime.now().withNano(0);
+    private static final LocalDateTime TIME_STAMP = LocalDateTime.of(2009, 10, 15, 14, 56, 56);
 
     private static final TokenBucketResponse RESPONSE =
             new TokenBucketResponse(
