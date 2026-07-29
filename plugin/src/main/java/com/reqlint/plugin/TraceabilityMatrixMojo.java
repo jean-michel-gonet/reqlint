@@ -6,26 +6,30 @@ import com.reqlint.core.latex.output.TraceabilityMatrixOutput;
 import com.reqlint.core.latex.reader.LatexReader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.project.MavenProject;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 @Mojo(name = "traceability-matrix", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresProject = true)
 public class TraceabilityMatrixMojo extends AbstractMojo {
 
-    @Parameter(name = "basePath", defaultValue = "${project.build.directory}")
-    private String basePath;
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private MavenProject project;
 
-    @Parameter(name = "inputFilePath")
-    private String inputFilePath;
+    @Parameter(name = "main")
+    private String main;
 
-    @Parameter(name = "traceabilityMatrixFilePath")
-    private String traceabilityMatrixFilePath;
+    @Parameter(name = "traceabilityMatrixOutput")
+    private String traceabilityMatrixOutput;
 
-    @Parameter(name = "traceabilityWarningsFilePath")
-    private String traceabilityWarningsFilePath;
+    @Parameter(name = "traceabilityWarningsOutput")
+    private String traceabilityWarningsOutput;
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -40,7 +44,7 @@ public class TraceabilityMatrixMojo extends AbstractMojo {
     }
 
     private SpecificationTree readSpecificationTree() throws IOException {
-        File inputFile = new File(new File(basePath), inputFilePath);
+        File inputFile = new File(project.getBuild().getOutputDirectory(), main);
         if (!inputFile.isFile()) {
             throw new IllegalArgumentException(inputFile.getAbsolutePath() + " does not exist or is not a file");
         }
@@ -51,7 +55,7 @@ public class TraceabilityMatrixMojo extends AbstractMojo {
     }
 
     private void writeTraceabilityMatrix(SpecificationTree specificationTree) throws IOException {
-        File traceabilityMatrixFile = new File(new File(basePath), traceabilityMatrixFilePath);
+        File traceabilityMatrixFile = new File(project.getBuild().getOutputDirectory(), traceabilityMatrixOutput);
         if (traceabilityMatrixFile.exists()) {
             if (!traceabilityMatrixFile.delete()) {
                 throw new IllegalArgumentException("Cannot overwrite " + traceabilityMatrixFile.getAbsolutePath());
@@ -64,7 +68,7 @@ public class TraceabilityMatrixMojo extends AbstractMojo {
     }
 
     private void writeTraceabilityWarnings(SpecificationTree specificationTree) throws  IOException {
-        File traceabilityMatrixFile = new File(new File(basePath), traceabilityWarningsFilePath);
+        File traceabilityMatrixFile = new File(project.getBuild().getOutputDirectory(), traceabilityWarningsOutput);
         if (traceabilityMatrixFile.exists()) {
             if (!traceabilityMatrixFile.delete()) {
                 throw new IllegalArgumentException("Cannot overwrite " + traceabilityMatrixFile.getAbsolutePath());

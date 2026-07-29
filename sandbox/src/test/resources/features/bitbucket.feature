@@ -9,14 +9,14 @@ Feature: The bit bucket works
 
     And Now is 13:00
 
-  Scenario: @TC_101 Upon first connection, a customer has his full token capacity available
+  Scenario: @TC-101 Upon first connection, a customer has his full token capacity available
     * Stage 1 - "Check token availability of a customer"
 
     Then Customer "CUST_A" has the following token availability
       | CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP |
       | CUST_A      | 10             | 20          | 0              | 10               | 0.000      | 13:00      |
 
-  Scenario: @TC_102 Each customer has its own bucket
+  Scenario: @TC-102 Each customer has its own bucket
     * Stage 1 - "Obtain the bucket capacity of one customer"
 
     Then Customer "CUST_A" has the following token availability
@@ -28,7 +28,7 @@ Feature: The bit bucket works
       | CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP |
       | CUST_B      | 20             | 10          | 0              | 20               | 0.000      | 13:00      |
 
-  Scenario:@TC_201 Bucket gets replenished as time passes
+  Scenario:@TC-201 Bucket gets replenished as time passes
     * Stage 1 - "Consume some tokens."
     Then Customer "CUST_A" succeeds in consuming 8 tokens with response
       | CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP |
@@ -53,7 +53,7 @@ Feature: The bit bucket works
       | CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP   |
       | CUST_A      | 10             | 20          | 0              | 10               | 0.000      | 13:00:00.400 |
 
-  Scenario:@TC_202 Bucket does not get replenished beyond capacity
+  Scenario:@TC-202 Bucket does not get replenished beyond capacity
 
     * Stage 1 - "Consume some tokens."
 
@@ -69,7 +69,7 @@ Feature: The bit bucket works
       | CUSTOMER_ID | TOKEN_CAPACITY | REFILL_RATE | GRANTED_TOKENS | AVAILABLE_TOKENS | RESET_TIME | TIME_STAMP |
       | CUST_A      | 10             | 20          | 0              | 10               | 0.000      | 13:01      |
 
-  Scenario:@TC_301 Cannot consume from an empty bucket
+  Scenario:@TC-301 Cannot consume from an empty bucket
 
     * Stage 1 - "Can consume some tokens."
 

@@ -18,11 +18,13 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven-plugin-tools.version>3.15.2</maven-plugin-tools.version>
+        <maven-plugin.version>3.15.2</maven-plugin.version>
+        <maven-api.version>3.9.16</maven-api.version>
         <spring-boot.version>3.5.0</spring-boot.version>
         <io-cucumber.version>7.23.0</io-cucumber.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <jspecify.version>1.0.0</jspecify.version>
+        <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
     <dependencyManagement>
@@ -38,19 +40,25 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
-                <version>3.9.16</version>
+                <version>${maven-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>${maven-api.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-report-plugin</artifactId>
-                <version>${maven-plugin-tools.version}</version>
+                <version>${maven-plugin.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugin-tools</groupId>
                 <artifactId>maven-plugin-annotations</artifactId>
-                <version>${maven-plugin-tools.version}</version>
+                <version>${maven-plugin.version}</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -60,6 +68,25 @@
                 <artifactId>jspecify</artifactId>
                 <version>${jspecify.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.22.0</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- Used by the sandbox -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -74,12 +101,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang3.version}</version>
-                <scope>compile</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
@@ -88,28 +109,14 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>${maven-plugin-tools.version}</version>
-                    <executions>
-                        <execution>
-                            <id>help-mojo</id>
-                            <goals>
-                                <!-- good practice is to generate help mojo for plugin -->
-                                <goal>helpmojo</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <version>${maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.6.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
-    <reporting>
-        <plugins>
-            <!-- automatically generate plugin documentation when running `mvn site` -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-plugin-report-plugin</artifactId>
-                <version>${maven-plugin-tools.version}</version>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>

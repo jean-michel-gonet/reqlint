@@ -113,7 +113,7 @@ class TestCaseTest {
 
         underTest.load(line, reader);
 
-        TestProcedure testProcedure = underTest.testCaseProcedure();
+        TestProcedure testProcedure = underTest.testProcedure();
         Assertions.assertThat(testProcedure).isNotNull();
         Assertions.assertThat(testProcedure.identifier()).isEqualTo(IDENTIFIER);
         Assertions.assertThat(testProcedure.title()).isEqualTo(TestProcedure.TITLE);
