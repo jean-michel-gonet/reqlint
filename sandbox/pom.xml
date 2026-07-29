@@ -83,8 +83,9 @@
                 <executions>
                     <!-- The traceability matrix -->
                     <execution>
-                        <id>traceability-matrix-config</id>
-                        <phase>none</phase>
+                        <id>traceability-matrix</id>
+                        <!-- To be executed when resources are present in the target folder -->
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>traceability-matrix</goal>
                         </goals>
@@ -97,14 +98,14 @@
 
                     <!-- The test results -->
                     <execution>
-                        <id>test-results-config</id>
-                        <phase>none</phase>
+                        <id>test-results</id>
+                        <!-- To be executed after all integration tests -->
+                        <phase>post-integration-test</phase>
                         <goals>
                             <goal>test-results</goal>
                         </goals>
                         <configuration>
                             <inputFilePath>classes/documentation/root.tex</inputFilePath>
-                            <surefireReportsFolderPath>surefire-reports</surefireReportsFolderPath>
                             <testResultsFilePath>classes/documentation/testresults/testresults-report.tex</testResultsFilePath>
                             <testWarningsFilePath>classes/documentation/testresults/testresults-warning.tex</testWarningsFilePath>
                         </configuration>

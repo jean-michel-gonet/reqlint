@@ -12,21 +12,23 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Mojo(name = "test-results", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresProject = true)
 public class TestResultsMojo extends AbstractMojo {
+
+    @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
+    private List<MavenProject> reactorProjects;
 
     @Parameter(name = "basePath", defaultValue = "${project.build.directory}")
     private String basePath;
 
     @Parameter(name = "inputFilePath")
     private String inputFilePath;
-
-    @Parameter(name = "surefireReportsFolderPath")
-    private String surefireReportsFolderPath;
 
     @Parameter(name = "testResultsFilePath")
     private String testResultsFilePath;
@@ -68,12 +70,24 @@ public class TestResultsMojo extends AbstractMojo {
     }
 
     private SurefireTestReport readSurefireTestReport() throws IOException {
-        File surefireReportsFolder = new File(new File(basePath), surefireReportsFolderPath);
-        TestReportsFinder testReportsFinder = new TestReportsFinder(surefireReportsFolder);
+
+        List<File> surefireReportsFolders = reactorProjects.stream()
+                .map(project -> new File(project.getBuild().getDirectory(), "surefire-reports"))
+                .filter(File::exists)
+                .filter(File::isDirectory)
+                .toList();
+
         TestReportsLoader testReportsLoader = new TestReportsLoader();
-        for (File surefireTestReport : testReportsFinder.search()) {
-            testReportsLoader.loadReport(surefireTestReport);
+        for (File surefireReportsFolder : surefireReportsFolders) {
+            getLog().info("Loading Surefire reports from " + surefireReportsFolder.getAbsolutePath());
+            TestReportsFinder testReportsFinder = new TestReportsFinder(surefireReportsFolder);
+            for (File surefireTestReport : testReportsFinder.search()) {
+                testReportsLoader.loadReport(surefireTestReport);
+            }
         }
+
+        SurefireTestReport testReport = testReportsLoader.getTestReport();
+        getLog().info("Loaded " + testReport.numberOfReports() + " reports");
         return testReportsLoader.getTestReport();
     }
 

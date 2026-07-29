@@ -63,4 +63,8 @@ public class SurefireTestReport {
     public List<SurefireTestReportItem> reports() {
         return reportItems;
     }
+
+    public int numberOfReports() {
+        return reportItems.size();
+    }
 }
