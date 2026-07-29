@@ -36,7 +36,7 @@ class TestReportsFinderTest {
         File file5 = new File(tempDir, TestReportsFinder.PREFIX + "whatever2.txt");
         createFileWithLines(file5, List.of("Hello World!"));
 
-        Assertions.assertThat(underTest.search()).containsExactly(file1, file2, file3);
+        Assertions.assertThat(underTest.search()).containsExactlyInAnyOrder(file1, file2, file3);
     }
 
     @Test

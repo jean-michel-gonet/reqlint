@@ -34,6 +34,7 @@ public class TestResultsMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
+        this.getLog();
         try {
             SpecificationTree specificationTree = readSpecificationTree();
 

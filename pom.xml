@@ -23,6 +23,7 @@
         <io-cucumber.version>7.23.0</io-cucumber.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <jspecify.version>1.0.0</jspecify.version>
+        <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
     <dependencyManagement>
@@ -61,6 +62,19 @@
                 <version>${jspecify.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- Used by the sandbox -->
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
@@ -73,12 +87,6 @@
                 <version>${io-cucumber.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang3.version}</version>
-                <scope>compile</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
