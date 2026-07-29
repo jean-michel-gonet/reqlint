@@ -22,19 +22,28 @@ import java.util.List;
 public class TestResultsMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
-    private List<MavenProject> reactorProjects;
+    private List<MavenProject> allProjects;
 
-    @Parameter(name = "basePath", defaultValue = "${project.build.directory}")
-    private String basePath;
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private MavenProject project;
 
-    @Parameter(name = "inputFilePath")
-    private String inputFilePath;
+    /**
+     * The main latex file, that contains links to all other files.
+     */
+    @Parameter(name = "main")
+    private String main;
 
-    @Parameter(name = "testResultsFilePath")
-    private String testResultsFilePath;
+    /**
+     * The file where to output the tests results.
+     */
+    @Parameter(name = "testResultsOutput")
+    private String testResultsOutput;
 
-    @Parameter(name = "testWarningsFilePath")
-    private String testWarningsFilePath;
+    /**
+     * The file where to output the warnings collected while composing the test results output.
+     */
+    @Parameter(name = "testWarningsOutput")
+    private String testWarningsOutput;
 
 
     @Override
@@ -51,19 +60,19 @@ public class TestResultsMojo extends AbstractMojo {
             getLog().info("Writing test warnings output");
             writeTestWarnings(testResultsOutput);
         } catch (Exception e) {
-            throw new MojoExecutionException("Failed to run traceability-matrix goal", e);
+            throw new MojoExecutionException("Failed to run test-result goal", e);
         }
     }
 
     private void writeTestResults(TestResultsOutput testResultsOutput) throws IOException {
-        File testsResultsFile = new File(new File(basePath), testResultsFilePath);
+        File testsResultsFile = new File(project.getBuild().getOutputDirectory(), this.testResultsOutput);
         try(Writer writer = new OutputStreamWriter(new FileOutputStream(testsResultsFile), StandardCharsets.UTF_8)) {
             testResultsOutput.writeTestResults(writer);
         }
     }
 
     private void writeTestWarnings(TestResultsOutput testResultsOutput) throws IOException {
-        File testsResultsFile = new File(new File(basePath), testWarningsFilePath);
+        File testsResultsFile = new File(project.getBuild().getOutputDirectory(), testWarningsOutput);
         try(Writer writer = new OutputStreamWriter(new FileOutputStream(testsResultsFile), StandardCharsets.UTF_8)) {
             testResultsOutput.writeTestWarnings(writer);
         }
@@ -71,7 +80,7 @@ public class TestResultsMojo extends AbstractMojo {
 
     private SurefireTestReport readSurefireTestReport() throws IOException {
 
-        List<File> surefireReportsFolders = reactorProjects.stream()
+        List<File> surefireReportsFolders = allProjects.stream()
                 .map(project -> new File(project.getBuild().getDirectory(), "surefire-reports"))
                 .filter(File::exists)
                 .filter(File::isDirectory)
@@ -92,12 +101,12 @@ public class TestResultsMojo extends AbstractMojo {
     }
 
     private SpecificationTree readSpecificationTree() throws IOException {
-        File inputFile = new File(new File(basePath), inputFilePath);
-        if (!inputFile.isFile()) {
-            throw new IllegalArgumentException(inputFile.getAbsolutePath() + " does not exist or is not a file");
+        File mainFile = new File(project.getBuild().getOutputDirectory(), main);
+        if (!mainFile.isFile()) {
+            throw new IllegalArgumentException(mainFile.getAbsolutePath() + " does not exist or is not a file");
         }
 
-        LatexReader latexReader = new LatexReader(inputFile);
+        LatexReader latexReader = new LatexReader(mainFile);
         SpecificationTreeLoader specificationTreeLoader = new SpecificationTreeLoader(latexReader);
         return specificationTreeLoader.load();
     }
