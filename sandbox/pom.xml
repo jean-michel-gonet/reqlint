@@ -121,8 +121,10 @@
                             <goal>compile-pdf</goal>
                         </goals>
                         <configuration>
-                            <latexTool>lualatex</latexTool>
-                            <bibTool>NONE</bibTool>
+                            <!--latexTool>lualatex</latexTool--> <!-- Depends on your latex distribution -->
+                            <latexTool>pdflatex</latexTool>
+                            <!--bibTool>NONE</bibTool-->
+                            <bibTool>BIBTEX</bibTool>
                             <plantUmlTool>NONE</plantUmlTool>
                             <pdfOutput>specification.pdf</pdfOutput>
                         </configuration>

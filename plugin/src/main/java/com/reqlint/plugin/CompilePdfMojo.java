@@ -113,9 +113,10 @@ public class CompilePdfMojo extends AbstractMojo {
 
         // Copy the file to its final destination:
         if (pdfOutput != null && !pdfOutput.isEmpty()) {
+            File pdfProducedFile = new File(workingDirectory, mainFileNameWithoutExtension + ".pdf");
             File pdfOutputFile = new File(project.getBuild().getDirectory(), pdfOutput);
             try {
-                Files.move(mainFile.toPath(), pdfOutputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.move(pdfProducedFile.toPath(), pdfOutputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 throw new MojoExecutionException("Error moving PDF file: " + pdfOutputFile.getAbsolutePath(), e);
             }
