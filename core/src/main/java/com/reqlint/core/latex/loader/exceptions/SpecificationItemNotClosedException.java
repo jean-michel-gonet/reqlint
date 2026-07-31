@@ -1,6 +1,6 @@
 package com.reqlint.core.latex.loader.exceptions;
 
-import com.reqlint.core.latex.loader.SpecificationItem;
+import com.reqlint.core.specification.SpecificationItem;
 
 /**
  * Exception raised when the {@code equipmentrequirement} has invalid arguments.

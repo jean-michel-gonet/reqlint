@@ -1,9 +1,9 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.latex.loader.SpecificationTree;
+import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.latex.loader.SpecificationTreeLoader;
 import com.reqlint.core.latex.output.TestResultsOutput;
-import com.reqlint.core.latex.reader.LatexReader;
+import com.reqlint.core.latex.parser.LatexReader;
 import com.reqlint.core.surefire.SurefireTestReport;
 import com.reqlint.core.surefire.TestReportsFinder;
 import com.reqlint.core.surefire.TestReportsLoader;

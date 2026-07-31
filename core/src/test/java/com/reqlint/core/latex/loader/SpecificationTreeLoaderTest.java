@@ -1,9 +1,11 @@
 package com.reqlint.core.latex.loader;
 
-import com.reqlint.core.latex.loader.items.EquipmentRequirement;
-import com.reqlint.core.latex.loader.items.SoftwareRequirement;
-import com.reqlint.core.latex.loader.items.TestCase;
-import com.reqlint.core.latex.reader.LatexReader;
+import com.reqlint.core.specification.TraceabilityMatrixItem;
+import com.reqlint.core.specification.items.EquipmentRequirement;
+import com.reqlint.core.specification.items.SoftwareRequirement;
+import com.reqlint.core.specification.items.TestCase;
+import com.reqlint.core.latex.parser.LatexReader;
+import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.testutils.TextFileContent;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

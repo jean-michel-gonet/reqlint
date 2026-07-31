@@ -1,10 +1,9 @@
 package com.reqlint.core.latex.output;
 
-import com.reqlint.core.latex.loader.SpecificationTree;
-import com.reqlint.core.latex.loader.items.TestCase;
-import com.reqlint.core.latex.loader.items.TestProcedure;
-import com.reqlint.core.latex.loader.items.TestStage;
-import com.reqlint.core.latex.loader.warnings.SpecificationTreeWarning;
+import com.reqlint.core.specification.SpecificationTree;
+import com.reqlint.core.specification.items.TestCase;
+import com.reqlint.core.specification.items.TestProcedure;
+import com.reqlint.core.specification.items.TestStage;
 import com.reqlint.core.surefire.SurefireStageOutputItem;
 import com.reqlint.core.surefire.SurefireTestReport;
 import com.reqlint.core.surefire.SurefireTestReportItem;

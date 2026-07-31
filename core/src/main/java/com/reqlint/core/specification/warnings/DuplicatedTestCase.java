@@ -1,0 +1,11 @@
+package com.reqlint.core.specification.warnings;
+
+import com.reqlint.core.specification.items.TestCase;
+
+public class DuplicatedTestCase extends SpecificationTreeWarning {
+    public DuplicatedTestCase(TestCase specificationItem) {
+        super(specificationItem, "There are several test cases with the same identifier: "
+                + specificationItem.identifier());
+    }
+
+}

@@ -1,6 +1,6 @@
 package com.reqlint.core.surefire.warnings;
 
-import com.reqlint.core.latex.loader.items.TestCase;
+import com.reqlint.core.specification.items.TestCase;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Comparator;

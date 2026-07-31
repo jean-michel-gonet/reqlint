@@ -1,9 +1,10 @@
 package com.reqlint.core.latex.loader;
 
-import com.reqlint.core.latex.loader.items.EquipmentRequirement;
-import com.reqlint.core.latex.loader.items.SoftwareRequirement;
-import com.reqlint.core.latex.loader.items.TestCase;
-import com.reqlint.core.latex.reader.LatexReader;
+import com.reqlint.core.latex.loader.itemloaders.EquipmentRequirementLatexLoader;
+import com.reqlint.core.latex.loader.itemloaders.SoftwareRequirementLatexLoader;
+import com.reqlint.core.latex.loader.itemloaders.TestCaseLatexLoader;
+import com.reqlint.core.latex.parser.LatexReader;
+import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.utils.AssociatedPattern;
 import com.reqlint.core.utils.FindMatchingLiteral;
 import com.reqlint.core.utils.MatchingLiteral;
@@ -53,20 +54,20 @@ public class SpecificationTreeLoader {
                 }
 
                 // Create the appropriate specification item:
-                SpecificationItem specificationItem = switch (closestMatch.literal()) {
-                    case EQUIPMENT_REQUIREMENT -> new EquipmentRequirement();
-                    case SOFTWARE_REQUIREMENT -> new SoftwareRequirement();
-                    case TEST_CASE -> new TestCase();
+                SpecificationItemLatexLoader<?> specificationItemLatexLoader = switch (closestMatch.literal()) {
+                    case EQUIPMENT_REQUIREMENT -> new EquipmentRequirementLatexLoader();
+                    case SOFTWARE_REQUIREMENT -> new SoftwareRequirementLatexLoader();
+                    case TEST_CASE -> new TestCaseLatexLoader();
                 };
 
                 // Attach the specification item to the tree:
-                specificationTree.attach(specificationItem);
+                specificationTree.attach(specificationItemLatexLoader.specificationItem());
 
                 // Remove from the line what we've already consumed:
                 line = line.substring(closestMatch.end());
 
                 // Let the specification item the remainder of the line, and more if needed.
-                line = specificationItem.load(line, bufferedReader);
+                line = specificationItemLatexLoader.load(line, bufferedReader);
             } while (!line.isEmpty());
         }
         return specificationTree;

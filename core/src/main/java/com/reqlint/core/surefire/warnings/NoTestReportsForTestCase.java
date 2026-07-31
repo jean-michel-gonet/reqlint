@@ -1,6 +1,6 @@
 package com.reqlint.core.surefire.warnings;
 
-import com.reqlint.core.latex.loader.items.TestCase;
+import com.reqlint.core.specification.items.TestCase;
 
 /**
  * Found a test case without corresponding test report.

@@ -1,9 +1,9 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.latex.loader.SpecificationTree;
+import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.latex.loader.SpecificationTreeLoader;
 import com.reqlint.core.latex.output.TraceabilityMatrixOutput;
-import com.reqlint.core.latex.reader.LatexReader;
+import com.reqlint.core.latex.parser.LatexReader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;

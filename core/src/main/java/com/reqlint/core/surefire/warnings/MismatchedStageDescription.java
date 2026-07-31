@@ -1,6 +1,6 @@
 package com.reqlint.core.surefire.warnings;
 
-import com.reqlint.core.latex.loader.items.TestCase;
+import com.reqlint.core.specification.items.TestCase;
 
 /**
  * A stage in the test procedure has a different description than its corresponding stage in the test report.

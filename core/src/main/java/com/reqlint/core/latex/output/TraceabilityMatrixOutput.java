@@ -1,8 +1,8 @@
 package com.reqlint.core.latex.output;
 
-import com.reqlint.core.latex.loader.SpecificationTree;
-import com.reqlint.core.latex.loader.TraceabilityMatrixItem;
-import com.reqlint.core.latex.loader.warnings.SpecificationTreeWarning;
+import com.reqlint.core.specification.SpecificationTree;
+import com.reqlint.core.specification.TraceabilityMatrixItem;
+import com.reqlint.core.specification.warnings.SpecificationTreeWarning;
 
 import java.io.IOException;
 import java.io.Writer;
