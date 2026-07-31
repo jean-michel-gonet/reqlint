@@ -91,7 +91,7 @@ public class TestResultsOutput {
             return;
         }
 
-        if (testProcedure.stages().size() != testReportItem.stageOutputs().size()) {
+        if (testProcedure.stages().size() + 1 != testReportItem.stageOutputs().size()) {
             testReport.addReportWarning(new MismatchedNumberOfStages(testCase, testReportItem.stageOutputs().size()));
             return;
         }

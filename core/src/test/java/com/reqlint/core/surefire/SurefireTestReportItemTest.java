@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-class SurefireTestReportTestItem {
+class SurefireTestReportItemTest {
     private static final LocalDateTime NOW = LocalDateTime.now();
     private static final String NAME = "NAME";
 

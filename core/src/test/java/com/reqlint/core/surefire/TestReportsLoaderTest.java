@@ -29,7 +29,7 @@ class TestReportsLoaderTest {
     public void can_look_for_one_report_by_its_identifier() {
         List<SurefireTestReportItem> reports = testReport.reportsOfTestCase("TC_101");
         Assertions.assertThat(reports).hasSize(1);
-        Assertions.assertThat(reports.getFirst().name()).startsWith("@TC_101 Upon first connection");
+        Assertions.assertThat(reports.getFirst().name()).startsWith("The bit bucket works @TC_101 Upon first connection");
         Assertions.assertThat(reports.getFirst().isFailed()).isFalse();
     }
 

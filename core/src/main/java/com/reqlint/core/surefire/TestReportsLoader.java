@@ -88,7 +88,8 @@ public class TestReportsLoader {
         NodeList testCaseNodes = doc.getElementsByTagName("testcase");
         for (int i = 0; i < testCaseNodes.getLength(); i++) {
             Element testCaseElement = (Element) testCaseNodes.item(i);
-            String testCaseName = testCaseElement.getAttribute("name");
+            String name = testCaseElement.getAttribute("name");
+            String className = testCaseElement.getAttribute("classname");
             String testOutput = "";
             NodeList systemOutNodes = testCaseElement.getElementsByTagName("system-out");
             if (systemOutNodes.getLength() > 0) {
@@ -100,10 +101,10 @@ public class TestReportsLoader {
                 testFailure = systemOutNodes.item(0).getTextContent().trim();
             }
 
-            LOGGER.info("Test report of: {}", testCaseName);
+            LOGGER.info("Test report of: {} {}", className, name);
             surefireTestReport.addReportItem(new SurefireTestReportItem(
                     timestamp,
-                    testCaseName,
+                    className + " " + name,
                     testOutput,
                     testFailure));
         }
