@@ -1,52 +1,42 @@
 package com.reqlint.plugin;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
 @Mojo(name = "compile-pdf")
-public class CompilePdfMojo extends AbstractMojo {
+public class CompilePdfMojo extends ReqlintMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CompilePdfMojo.class);
 
     public enum BibTool {
-        BIBER,
-        BIBTEX,
-        NONE
+        biber("biber"),
+        bibtex("bibtex"),
+        none("none");
+
+        private final String executable;
+
+        BibTool(String executable) {
+            this.executable = executable;
+        }
+
+        public String executable() {
+            return this.executable;
+        }
     }
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
 
     /**
-     * The main latex file, that contains links to all other files.
-     */
-    @Parameter(property = "main", defaultValue = "root.tex", required = true)
-    private String main;
-
-    /**
-     * The issued PDF file.
-     */
-    @Parameter(property = "pdfOutput", required = false)
-    private String pdfOutput;
-
-    /**
-     * Bibliography tool to use: "NONE", "BIBTEX", or "BIBER".
+     * Bibliography tool to use: "none", "bibtex", or "biber".
      * Default value is {@code biber}.
      */
     @Parameter(property = "bibTool", defaultValue = "NONE")
@@ -75,7 +65,7 @@ public class CompilePdfMojo extends AbstractMojo {
         LOGGER.info("Build PDF");
 
         // Establish the main file and the working directory
-        File mainFile = new File(project.getBuild().getOutputDirectory(), main);
+        File mainFile = new File(project.getBuild().getOutputDirectory(), specificationLatexDocument);
         workingDirectory = mainFile.getParentFile();
         LOGGER.info("Compiling latex file: {}", mainFile);
         LOGGER.info("Working folder: {}", workingDirectory);
@@ -86,39 +76,21 @@ public class CompilePdfMojo extends AbstractMojo {
 
         // Biber and bibtex behave differently when given the extension,
         // so it is best to remove it.
-        String mainFileName = mainFile.getName();
+        String mainFileNameWithExtension = mainFile.getName();
         String mainFileNameWithoutExtension = FilenameUtils.removeExtension(mainFile.getName());
 
         // Step 1: Initial Pass
-        runProcess("Pass 1/3 (LaTeX Initial)", latexTool, "-interaction=nonstopmode", "-halt-on-error", mainFileName);
+        runProcess("Pass 1 (LaTeX Initial)", latexTool, "-interaction=nonstopmode", "-halt-on-error", mainFileNameWithExtension);
 
         // Step 2: Bibliography Tool Execution (if enabled)
         switch (bibTool) {
-            // BibTeX takes the base file name without extension (e.g., 'root')
-            case BIBTEX -> {
-                runProcess("Pass 2/4 (BibTeX)", "bibtex", mainFileNameWithoutExtension);
-                runProcess("Pass 3/4 (LaTeX Post-Bib)", latexTool, "-interaction=nonstopmode",mainFileName);
-                runProcess("Pass 4/4 (LaTeX Final)", latexTool, "-interaction=nonstopmode", mainFileName);
+            case bibtex, biber -> {
+                runProcess("Pass 2 (" + bibTool.name() + ")", bibTool.executable(), mainFileNameWithoutExtension);
+                runProcess("Pass 3 (LaTeX Post-Bib)", latexTool, "-interaction=nonstopmode",mainFileNameWithExtension);
+                runProcess("Pass 4 (LaTeX Final)", latexTool, "-interaction=nonstopmode", mainFileNameWithExtension);
             }
-            case BIBER -> {
-                // Biber accepts either the base name or full root file
-                runProcess("Pass 2/4 (Biber)", "biber", mainFileNameWithoutExtension);
-                runProcess("Pass 3/4 (LaTeX Post-Biber)", latexTool, "-interaction=nonstopmode", mainFileName);
-                runProcess("Pass 4/4 (LaTeX Final)", latexTool, "-interaction=nonstopmode", mainFileName);
-            }
-            case NONE -> {
-                runProcess("Pass 2/2 (LaTeX Final)", latexTool, "-interaction=nonstopmode", mainFileName);
-            }
-        }
-
-        // Copy the file to its final destination:
-        if (pdfOutput != null && !pdfOutput.isEmpty()) {
-            File pdfProducedFile = new File(workingDirectory, mainFileNameWithoutExtension + ".pdf");
-            File pdfOutputFile = new File(project.getBuild().getDirectory(), pdfOutput);
-            try {
-                Files.move(pdfProducedFile.toPath(), pdfOutputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                throw new MojoExecutionException("Error moving PDF file: " + pdfOutputFile.getAbsolutePath(), e);
+            case none -> {
+                runProcess("Pass 2 (LaTeX Final)", latexTool, "-interaction=nonstopmode", mainFileNameWithExtension);
             }
         }
     }

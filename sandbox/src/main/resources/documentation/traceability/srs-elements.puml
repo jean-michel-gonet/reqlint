@@ -1,0 +1,8 @@
+@startuml
+class EquipmentRequirement
+class SoftwareRequirement
+class TestCase
+
+EquipmentRequirement "1" o-- "n" SoftwareRequirement
+SoftwareRequirement "1" o-- "n" TestCase
+@enduml
