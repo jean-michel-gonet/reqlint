@@ -101,7 +101,7 @@ public class TestReportsLoader {
                 testFailure = systemOutNodes.item(0).getTextContent().trim();
             }
 
-            LOGGER.info("Test report of: {} {}", className, name);
+            LOGGER.debug("Loaded test report of: {} - {}", className, name);
             surefireTestReport.addReportItem(new SurefireTestReportItem(
                     timestamp,
                     className + " " + name,

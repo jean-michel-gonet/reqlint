@@ -1,15 +1,13 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.latex.loader.SpecificationTreeLoader;
 import com.reqlint.core.latex.output.TraceabilityMatrixOutput;
 import com.reqlint.core.latex.parser.LatexReader;
-import org.apache.maven.plugin.AbstractMojo;
+import com.reqlint.core.specification.SpecificationTree;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,19 +15,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 @Mojo(name = "traceability-matrix", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresProject = true)
-public class TraceabilityMatrixMojo extends AbstractMojo {
-
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
-
-    @Parameter(name = "main")
-    private String main;
-
-    @Parameter(name = "traceabilityMatrixOutput")
-    private String traceabilityMatrixOutput;
-
-    @Parameter(name = "traceabilityWarningsOutput")
-    private String traceabilityWarningsOutput;
+public class TraceabilityMatrixMojo extends ReqlintMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -44,7 +30,7 @@ public class TraceabilityMatrixMojo extends AbstractMojo {
     }
 
     private SpecificationTree readSpecificationTree() throws IOException {
-        File inputFile = new File(project.getBuild().getOutputDirectory(), main);
+        File inputFile = new File(project.getBuild().getOutputDirectory(), specificationLatexDocument);
         if (!inputFile.isFile()) {
             throw new IllegalArgumentException(inputFile.getAbsolutePath() + " does not exist or is not a file");
         }

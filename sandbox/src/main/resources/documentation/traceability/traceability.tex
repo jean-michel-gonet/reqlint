@@ -1,8 +1,21 @@
 \section{Traceability}
 \label{sec:traceability}
 
-The traceability matrix summarizes all relationships between Equipment requirements, Software requirements and
-test cases:
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+      scale=0.5,
+      max width=0.8\textwidth,        % Never exceeds 80% of text area width
+      max height=0.8\textheight,      % Never exceeds 80% of text area height
+      keepaspectratio             % Preserves aspect ratio without distortion
+    ]{srs-elements}%
+    \caption{Software requirement specification relationship}%          % Custom short title for \listoffigures
+    \label{fig:traceability}%
+\end{figure}%
+
+
+The traceability matrix summarizes all relationships between Equipment requirements, software requirements and
+test cases (see figure~\ref{fig:traceability}):
 \input{traceability-matrix}
 
 While parsing the specification we found the following consistency issues:
