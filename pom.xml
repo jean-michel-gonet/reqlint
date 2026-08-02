@@ -123,6 +123,11 @@
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>${maven-antrun.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>com.reqlint</groupId>
+                    <artifactId>reqlint-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

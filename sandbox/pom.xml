@@ -101,7 +101,6 @@
             <plugin>
                 <groupId>com.reqlint</groupId>
                 <artifactId>reqlint-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <configuration>
                     <specificationLatexDocument>documentation/root.tex</specificationLatexDocument>
                     <traceabilityMatrixOutput>documentation/traceability/traceability-matrix.tex</traceabilityMatrixOutput>
