@@ -58,25 +58,46 @@ public class CompilePdfMojo extends ReqlintMojo {
     @Parameter(property = "latexTool", defaultValue = "lualatex")
     private String latexTool;
 
+
+    /**
+     * A list of additional LaTeX documents to compile into PDF.
+     * Optional parameter.
+     */
+    @Parameter(property = "additionalRootDocuments")
+    private List<File> additionalRootDocuments;
+
+
     private File workingDirectory;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        LOGGER.info("Build PDF");
+        LOGGER.info("Compile LaTeX files");
+
+        List<File> latexMainDocuments = new ArrayList<>();
+        latexMainDocuments.add(specificationLatexDocument);
+        latexMainDocuments.addAll(additionalRootDocuments);
+
+        for (File latexMainDocument : latexMainDocuments) {
+            LOGGER.info("Compile LaTeX file {}", latexMainDocument.getAbsolutePath());
+            compileLatexFile(latexMainDocument);
+        }
+    }
+
+    private void compileLatexFile(File latexMainDocument) throws MojoFailureException, MojoExecutionException {
 
         // Establish the main file and the working directory
-        workingDirectory = specificationLatexDocument.getParentFile();
-        LOGGER.info("Compiling latex file: {}", specificationLatexDocument);
+        workingDirectory = latexMainDocument.getParentFile();
+        LOGGER.info("Compiling latex file: {}", latexMainDocument);
         LOGGER.info("Working folder: {}", workingDirectory);
 
-        if (!specificationLatexDocument.isFile()) {
+        if (!latexMainDocument.isFile()) {
             throw new MojoExecutionException("Latex file is not a file, or does not exist");
         }
 
         // Biber and bibtex behave differently when given the extension,
         // so it is best to remove it.
-        String mainFileNameWithExtension = specificationLatexDocument.getName();
-        String mainFileNameWithoutExtension = FilenameUtils.removeExtension(specificationLatexDocument.getName());
+        String mainFileNameWithExtension = latexMainDocument.getName();
+        String mainFileNameWithoutExtension = FilenameUtils.removeExtension(latexMainDocument.getName());
 
         // Step 1: Initial Pass
         runProcess("Pass 1 (LaTeX Initial)", latexTool, "-interaction=nonstopmode", "-halt-on-error", mainFileNameWithExtension);
