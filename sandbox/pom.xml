@@ -129,21 +129,21 @@
                         </goals>
                     </execution>
 
-                    <!-- Compile the PDF -->
+                    <!-- Compile LaTeX files -->
                     <execution>
-                        <id>compile-pdf</id>
+                        <id>compile-latex</id>
                         <!-- To be executed after all integration tests, and after test-results -->
                         <phase>post-integration-test</phase>
                         <goals>
-                            <goal>compile-pdf</goal>
+                            <goal>compile-latex</goal>
                         </goals>
                         <configuration>
                             <latexTool>lualatex</latexTool> <!-- Depends on your latex distribution -->
                             <bibTool>bibtex</bibTool>
-                            <additionalRootDocuments>
-                                <additionalRootDocument>${project.build.outputDirectory}/documentation/root-testresults.tex</additionalRootDocument>
-                                <additionalRootDocument>${project.build.outputDirectory}/documentation/root-traceability.tex</additionalRootDocument>
-                            </additionalRootDocuments>
+                            <additionalLatexDocuments>
+                                <additionalLatexDocument>${project.build.outputDirectory}/documentation/root-testresults.tex</additionalLatexDocument>
+                                <additionalLatexDocument>${project.build.outputDirectory}/documentation/root-traceability.tex</additionalLatexDocument>
+                            </additionalLatexDocuments>
                         </configuration>
                     </execution>
                 </executions>

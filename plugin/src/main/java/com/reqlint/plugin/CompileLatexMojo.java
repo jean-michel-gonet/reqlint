@@ -14,10 +14,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mojo(name = "compile-pdf")
-public class CompilePdfMojo extends ReqlintMojo {
+@Mojo(name = "compile-latex")
+public class CompileLatexMojo extends ReqlintMojo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CompilePdfMojo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompileLatexMojo.class);
 
     public enum BibTool {
         biber("biber"),
@@ -63,8 +63,8 @@ public class CompilePdfMojo extends ReqlintMojo {
      * A list of additional LaTeX documents to compile into PDF.
      * Optional parameter.
      */
-    @Parameter(property = "additionalRootDocuments")
-    private List<File> additionalRootDocuments;
+    @Parameter(property = "additionalLatexDocuments")
+    private List<File> additionalLatexDocuments;
 
 
     private File workingDirectory;
@@ -73,31 +73,31 @@ public class CompilePdfMojo extends ReqlintMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         LOGGER.info("Compile LaTeX files");
 
-        List<File> latexMainDocuments = new ArrayList<>();
-        latexMainDocuments.add(specificationLatexDocument);
-        latexMainDocuments.addAll(additionalRootDocuments);
+        List<File> allLatexDocuments = new ArrayList<>();
+        allLatexDocuments.add(specificationLatexDocument);
+        allLatexDocuments.addAll(additionalLatexDocuments);
 
-        for (File latexMainDocument : latexMainDocuments) {
-            LOGGER.info("Compile LaTeX file {}", latexMainDocument.getAbsolutePath());
-            compileLatexFile(latexMainDocument);
+        for (File latexDocument : allLatexDocuments) {
+            LOGGER.info("Compile LaTeX file {}", latexDocument.getAbsolutePath());
+            compileLatexFile(latexDocument);
         }
     }
 
-    private void compileLatexFile(File latexMainDocument) throws MojoFailureException, MojoExecutionException {
+    private void compileLatexFile(File latexDocument) throws MojoFailureException, MojoExecutionException {
 
         // Establish the main file and the working directory
-        workingDirectory = latexMainDocument.getParentFile();
-        LOGGER.info("Compiling latex file: {}", latexMainDocument);
+        workingDirectory = latexDocument.getParentFile();
+        LOGGER.info("Compiling latex document: {}", latexDocument);
         LOGGER.info("Working folder: {}", workingDirectory);
 
-        if (!latexMainDocument.isFile()) {
+        if (!latexDocument.isFile()) {
             throw new MojoExecutionException("Latex file is not a file, or does not exist");
         }
 
         // Biber and bibtex behave differently when given the extension,
         // so it is best to remove it.
-        String mainFileNameWithExtension = latexMainDocument.getName();
-        String mainFileNameWithoutExtension = FilenameUtils.removeExtension(latexMainDocument.getName());
+        String mainFileNameWithExtension = latexDocument.getName();
+        String mainFileNameWithoutExtension = FilenameUtils.removeExtension(latexDocument.getName());
 
         // Step 1: Initial Pass
         runProcess("Pass 1 (LaTeX Initial)", latexTool, "-interaction=nonstopmode", "-halt-on-error", mainFileNameWithExtension);
