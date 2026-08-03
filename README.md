@@ -5,6 +5,15 @@ ReqLint parses LaTeX specs and automated test outputs to perform graph static an
 ensuring zero orphan requirements or unverified test cases. 
 Keep your regulatory traceability matrices structurally sound and directly tied to your Java build pipeline.
 
+## Table of contents
+- [Why LaTeX?](#why-latex)
+- [What does Reqlint do](#what-does-Reqlint-do)
+- [Prerequisites](#prerequisites)
+- [Writing the Specification](#writing-the-specification)
+- [Automating Test Scenarios](#automatizing-the-test-scenarios)
+- [Plugin Configuration](#configuring-the-plugin)
+- [Debugging](#debugging)
+
 # Why LaTeX?
 Because it is a text based language, reasonably easy to learn,
 that compiles beautiful PDF files.
@@ -20,8 +29,8 @@ Also, LaTeX has never stopped being used to produce documents since 1985.
 By now it has hundreds or thousands of different solutions to produce any kind of printable artifact.
 This includes tables, diagrams, equations, tables of content, bibliography...
 
-# What does _Reqlint_ ?
-_Reqlint_ reads two different sources:
+# What does Reqlint do?
+Reqlint reads two different sources:
 - Your software requirement specification, provided it is written in LaTeX and you use the 
   expected vocabulary to surround your specification items.
 - The surefire test reports.
@@ -41,14 +50,22 @@ From these two sources, it produces two different types of documents, and two su
 
 Additionally, it has a convenient tool to compile LaTeX documents into PDF documents. 
 
+This is the list of goals implemented in Reqlint:
+
+| Goal                | Default Lifecycle Phase | Inputs                             | Outputs                           |
+|---------------------|-------------------------|------------------------------------|-----------------------------------|
+| traceability-matrix | process-resources       | LaTeX Specification                | Matrix & Warning LaTeX fragments  |
+| test-results        | post-integration-test   | LaTeX Specification + Surefire XML | Results & Warning LaTeX fragments |
+| compile-latex       | post-integration-test   | Consolidated LaTeX files           | Target .pdf artifacts             |
+
 # Prerequisites
-_Reqlint_ expects LaTeX to be installed in the host system, and present in the path.
+Reqlint expects LaTeX to be installed in the host system, and present in the path.
 
 When using Windows, you can choose from different distributions.
 We've tested MikTex with success, so we recommend it.
 When using macOS, you can install _texlive_ using _Homebrew_.
 
-The expectation of _Reqlint_ is that you can open a command prompt, type the following commands,
+The expectation of Reqlint is that you can open a command prompt, type the following commands,
 and at least one of them should return no error:
 
 ```bash
@@ -73,7 +90,7 @@ Start by having a Software Requirement Specification document written in LaTeX.
 Then you write automated tests for your application that match the test cases defined in your specification.
 Finally, you configure the plugin in your `pom.xml` file.
 
-As _Reqlint_ is a _Maven_ plugin, it has the usual expectations on what folders you should use.
+As Reqlint is a _Maven_ plugin, it has the usual expectations on what folders you should use.
 A software requirement specification is a documentation made of text files.
 You must save them in a `/src/main/resources` folder or subfolder, within either a project or module.
 
@@ -95,14 +112,14 @@ This environment takes two arguments:
 - The identifier, that can be any string - but keep in mind is an identifier.
 - The title, that can be any text - but don't make it too long.
 
-There are no limits to what you can include inside the environment, except other _Reqlint_ environments.
+There are no limits to what you can include inside the environment, except other Reqlint environments.
 
 For example:
 ```latex
-\begin{equipentrequirement}{identifier}{Title}
+\begin{equipmentrequirement}{identifier}{Title}
     You can write here freely.
     You must not nest any of the other reqlint environments or commands.
-\end{equipentrequirement}
+\end{equipmentrequirement}
 ```
 
 ### The `softwarerequirement` environment.
@@ -111,7 +128,7 @@ This environment takes two arguments:
 - The identifier, that can be any string - but keep in mind is an identifier.
 - The title, that can be any text - but don't make it too long.
 
-There are no limits to what you can include inside the environment, except other _Reqlint_ environments.
+There are no limits to what you can include inside the environment, except other Reqlint environments.
 You should add a `\childof` element, to identify the parent equipment requirement.  
 
 For example:
@@ -130,7 +147,7 @@ This environment takes two arguments:
 - The identifier, that can be any string - but keep in mind is an identifier.
 - The title, that can be any text - but don't make it too long.
 
-There are no limits to what you can include inside the environment, except other _Reqlint_ environments.
+There are no limits to what you can include inside the environment, except other Reqlint environments.
 You should add a `\childof` element, to identify the parent software requirement.
 Optionally, you can nest a special `\testprocedure` environment,
 where you can list a number of intermediary `\stage` to split long test procedures.
@@ -139,7 +156,7 @@ For example:
 
 ```latex
 \begin{testcase}{identifier}{Title}
-    \childof{ER-100} % The parent software requirement.
+    \childof{SR-100} % The parent software requirement.
     
     You can write here freely.
     You must not nest any of the other reqlint environments or commands, except:
@@ -178,7 +195,7 @@ that the plugin can produce:
 
 To prepare a placeholder, decide where you want the fragment in the document, and then use `\input` to include it.
 To avoid error messages while you type, create a dummy content for the fragment.
-_Reqlint_ will replace it during the build.
+Reqlint will replace it during the build.
 
 For example, if you want a section of the document containing the test report
 and the test warnings, you can create a folder called `testresults`. 
@@ -213,12 +230,12 @@ over the files with dummy content.
 ### Produce multiple PDF files
 Depending on your quality system, you may be required to split the different parts into separated documents.
 When this is the case, create one main LaTeX file per final document.
-_Reqlint_ only requires that one main LaTeX document includes all equipment requirements, software requirements and test cases.
+Reqlint only requires that one main LaTeX document includes all equipment requirements, software requirements and test cases.
 You are free to have as many additional root documents as you need.
 
 ## Automatizing the test scenarios
 You can automatize your test scenarios as you would do with any Java project.
-You only need to tag them appropriately so _Reqlint_ can recognize which test belongs to which test case.
+You only need to tag them appropriately so Reqlint can recognize which test belongs to which test case.
 
 ### Tagging _Cucumber_ tests
 To tag a _Cucumber_ test, use `@TC_IDENTIFIER` in the `Scenario` line.
@@ -241,10 +258,10 @@ For that you must create a _Cucumber_ command that logs using the following patt
 Where `[n]` is an integer (without brackets), and the stage description is any string,
 without new line, also without brackets.
 
-When reading the surefire test reports, _Reqlint_ recognizes the pattern, and intersects
-a space between logs in that exact place.
-
-Additionally, if the corresponding `testcase` has a `testprocedure`, _Reqlint_ tries to match
+When reading the Surefire test reports, Reqlint recognizes the pattern and inserts  
+a line break between logs at that exact boundary.
+ 
+Additionally, if the corresponding `testcase` has a `testprocedure`, Reqlint tries to match
 the `\stages` in the test procedure with the stages in the test report.
 If it can't match the stages, it outputs a test case warning. 
 
@@ -268,11 +285,12 @@ public void TC_101_can_do_something_nice() {
 
 ## Configuring the plugin
 
-_Reqlint_ is designed to integrate itself with the rest of the usual _Maven_ plugins.
+Reqlint is designed to integrate itself with the rest of the usual _Maven_ plugins.
 There are several steps you want to consider, some of them using other plugins.
 The elements below are just an example of how you can set up the production of documentation.
 
 You can see in action all examples below in the `sandbox` module.
+In particular, have a look at the complete pom file [pom.xml](sandbox/pom.xml).
 
 ### Preprocessing the LaTeX files
 At the very beginning of the `mvn` compilation, _Maven_ copies all resource files into 
@@ -405,7 +423,7 @@ all documentation is in the `resources/documentation` folder:
 
 ### Producing the test report
 
-The goal name to produce the test report is `test-report`.
+The goal name to produce the test report is `test-results`.
 The most appropriate _Maven_ phase to produce the test report is `post-integration-test`,
 because you need the _Surefire_ test reports to be present.
 
@@ -442,12 +460,12 @@ all documentation is in the `resources/documentation` folder:
 </plugin>
 ```
 
-### Compiling the LaTeZ files
+### Compiling the LaTeX files
 
 You may have already set up a LaTeX compilation process, in which case you don't need to use
 this plugin. 
 
-The _Reqlint_ goal to compile the LaTeX files into PDF is `compile-latex`.
+The Reqlint goal to compile the LaTeX files into PDF is `compile-latex`.
 The most appropriate _Maven_ phase to run it is `post-integration-test`,
 just after the `test-result` execution.
 
