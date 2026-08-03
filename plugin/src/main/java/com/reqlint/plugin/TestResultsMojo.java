@@ -15,7 +15,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@Mojo(name = "test-results", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresProject = true)
+@Mojo(name = "test-results", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
 public class TestResultsMojo extends ReqlintMojo {
 
     @Override

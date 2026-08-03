@@ -3,6 +3,7 @@ package com.reqlint.plugin;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mojo(name = "compile-latex")
+@Mojo(name = "compile-latex", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
 public class CompileLatexMojo extends ReqlintMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CompileLatexMojo.class);
