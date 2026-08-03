@@ -65,19 +65,18 @@ public class CompilePdfMojo extends ReqlintMojo {
         LOGGER.info("Build PDF");
 
         // Establish the main file and the working directory
-        File mainFile = new File(project.getBuild().getOutputDirectory(), specificationLatexDocument);
-        workingDirectory = mainFile.getParentFile();
-        LOGGER.info("Compiling latex file: {}", mainFile);
+        workingDirectory = specificationLatexDocument.getParentFile();
+        LOGGER.info("Compiling latex file: {}", specificationLatexDocument);
         LOGGER.info("Working folder: {}", workingDirectory);
 
-        if (!mainFile.isFile()) {
+        if (!specificationLatexDocument.isFile()) {
             throw new MojoExecutionException("Latex file is not a file, or does not exist");
         }
 
         // Biber and bibtex behave differently when given the extension,
         // so it is best to remove it.
-        String mainFileNameWithExtension = mainFile.getName();
-        String mainFileNameWithoutExtension = FilenameUtils.removeExtension(mainFile.getName());
+        String mainFileNameWithExtension = specificationLatexDocument.getName();
+        String mainFileNameWithoutExtension = FilenameUtils.removeExtension(specificationLatexDocument.getName());
 
         // Step 1: Initial Pass
         runProcess("Pass 1 (LaTeX Initial)", latexTool, "-interaction=nonstopmode", "-halt-on-error", mainFileNameWithExtension);

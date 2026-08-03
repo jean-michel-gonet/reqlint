@@ -4,6 +4,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -24,29 +25,29 @@ public abstract class ReqlintMojo extends AbstractMojo {
      * commands.
      */
     @Parameter(name = "specificationLatexDocument")
-    protected String specificationLatexDocument;
+    protected File specificationLatexDocument;
 
     /**
      * Name of the latex file where to output the traceability matrix.
      */
     @Parameter(name = "traceabilityMatrixOutput")
-    protected String traceabilityMatrixOutput;
+    protected File traceabilityMatrixOutput;
 
     /**
      * Name of the latex file where to output the warnings detected while building the traceability matrix.
      */
     @Parameter(name = "traceabilityWarningsOutput")
-    protected String traceabilityWarningsOutput;
+    protected File traceabilityWarningsOutput;
 
     /**
      * Name of the latex file where to output the tests results.
      */
     @Parameter(name = "testResultsOutput")
-    protected String testResultsOutput;
+    protected File testResultsOutput;
 
     /**
      * Name of the latex file where to output the warnings collected while composing the test results output.
      */
     @Parameter(name = "testWarningsOutput")
-    protected String testWarningsOutput;
+    protected File testWarningsOutput;
 }
