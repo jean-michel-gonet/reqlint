@@ -42,7 +42,8 @@ public class SurefireTestReport {
      * @return A collection of reports.
      */
     public List<SurefireTestReportItem> reportsOfTestCase(String testCaseIdentifier) {
-        String sPattern = String.format("(^|[@_\\s])(%s)($|[@_\\s])", testCaseIdentifier);
+        String testCaseIdentifierWithSafeChars = testCaseIdentifier.replace("-", "[-_]");
+        String sPattern = String.format("(^|[@_\\s])(%s)($|[@_\\s])", testCaseIdentifierWithSafeChars);
         Pattern pattern = Pattern.compile(sPattern);
 
         List<SurefireTestReportItem> matchingReports = new ArrayList<>();
