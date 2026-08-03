@@ -165,7 +165,7 @@ It identifies the parent specification item.
 The parent of a `softwarerequirement` is an `equipmentrequirement`, 
 and the parent of a `testcase` is a `softwarerequirement`.
 
-## Add placeholders to your documentation
+### Add placeholders to your documentation
 
 Because the plugin follows the inclusion commands (`\import`, `\input`, etc.)
 you can subdivide your document in as many files as you want.
@@ -209,6 +209,12 @@ THIS SECTION IS GENERATED AT BUILD TIME
 
 Later on, you can configure the plugin to write the fragments
 over the files with dummy content.
+
+### Produce multiple PDF files
+Depending on your quality system, you may be required to split the different parts into separated documents.
+When this is the case, create one main LaTeX file per final document.
+_Reqlint_ only requires that one main LaTeX document includes all equipment requirements, software requirements and test cases.
+You are free to have as many additional root documents as you need.
 
 ## Automatizing the test scenarios
 You can automatize your test scenarios as you would do with any Java project.
@@ -370,7 +376,6 @@ The `traceability-matrix` goal takes the following parameters:
 - `traceabilityMatrixOutput`: The name of the LaTeX fragment where to output the traceability matrix. 
 - `traceabilityWarningsOutput`: The name of the LaTeX fragment where to output the traceability warnings.
 
-All three files have paths relative to the project `resources` folder.
 The two output files should point to the placeholders you've prepared in advance (see above).
 This is an example illustrating how to configure this goal when
 all documentation is in the `resources/documentation` folder:
@@ -380,9 +385,9 @@ all documentation is in the `resources/documentation` folder:
     <groupId>com.reqlint</groupId>
     <artifactId>reqlint-maven-plugin</artifactId>
     <configuration>
-        <specificationLatexDocument>documentation/root.tex</specificationLatexDocument>
-        <traceabilityMatrixOutput>documentation/traceability/traceability-matrix.tex</traceabilityMatrixOutput>
-        <traceabilityWarningsOutput>documentation/traceability/traceability-warnings.tex</traceabilityWarningsOutput>
+      <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
+      <traceabilityMatrixOutput>${project.build.outputDirectory}/documentation/traceability/traceability-matrix.tex</traceabilityMatrixOutput>
+      <traceabilityWarningsOutput>${project.build.outputDirectory}/documentation/traceability/traceability-warnings.tex</traceabilityWarningsOutput>
     </configuration>
     <executions>
         <!-- The traceability matrix -->
@@ -419,9 +424,9 @@ all documentation is in the `resources/documentation` folder:
     <groupId>com.reqlint</groupId>
     <artifactId>reqlint-maven-plugin</artifactId>
     <configuration>
-        <specificationLatexDocument>documentation/root.tex</specificationLatexDocument>
-        <testResultsOutput>documentation/testresults/testresults-report.tex</testResultsOutput>
-        <testWarningsOutput>documentation/testresults/testresults-warning.tex</testWarningsOutput>
+      <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
+      <testResultsOutput>${project.build.outputDirectory}/documentation/testresults/testresults-report.tex</testResultsOutput>
+      <testWarningsOutput>${project.build.outputDirectory}/documentation/testresults/testresults-warning.tex</testWarningsOutput>
     </configuration>
     <executions>
         <!-- The test results -->
@@ -437,44 +442,52 @@ all documentation is in the `resources/documentation` folder:
 </plugin>
 ```
 
-### Compiling the PDF files
+### Compiling the LaTeZ files
 
-You may have already set up a PDF compilation process, in which case you don't need to use
+You may have already set up a LaTeX compilation process, in which case you don't need to use
 this plugin. 
 
-The _Reqlint_ goal to compile the LaTeX files into PDF is `compile-pdf`.
+The _Reqlint_ goal to compile the LaTeX files into PDF is `compile-latex`.
 The most appropriate _Maven_ phase to run it is `post-integration-test`,
 just after the `test-result` execution.
 
-The `compile-pdf` plugin takes the following parameters:
+The `compile-latex` plugin takes the following parameters:
 - `specificationLatexDocument`: The main LaTeX file that contains the software requirements specification.
 - `latexTool`: The command to execute LaTeX. This is going to be either `lualatex` or `pdflatex`. 
    Most of the distributions offer both, so probably both are working. 
 - `bibTool`: The command to execute the bibliography tool in LaTeX.
   It depends on your distribution, it can be `biber` or `bibtex`.
   If you don't use bibliography, then you can specify `none`.
+- `additionalLatexDocuments`: An optional list of additional latex documents to compile into PDF files.
 
-The PDF compilation produces a `*.pdf` file with the same name and path as `specificationLatexDocument`.
+The LaTeX compilation produces a `*.pdf` file with the same name and path as `specificationLatexDocument`
+and, if you specified additional files,
+one `*.pdf` per each.
 
 This is an example:
 ```xml
+
 <plugin>
     <groupId>com.reqlint</groupId>
     <artifactId>reqlint-maven-plugin</artifactId>
     <configuration>
-        <specificationLatexDocument>documentation/root.tex</specificationLatexDocument>
+        <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
     </configuration>
     <executions>
         <execution>
-            <id>compile-pdf</id>
+            <id>compile-latex</id>
             <!-- To be executed after all integration tests, and after test-results -->
             <phase>post-integration-test</phase>
             <goals>
-                <goal>compile-pdf</goal>
+                <goal>compile-latex</goal>
             </goals>
             <configuration>
                 <latexTool>lualatex</latexTool> <!-- Depends on your latex distribution -->
                 <bibTool>bibtex</bibTool>
+                <additionalLatexDocuments>
+                    <additionalLatexDocument>${project.build.outputDirectory}/documentation/root-testresults.tex</additionalLatexDocument>
+                    <additionalLatexDocument>${project.build.outputDirectory}/documentation/root-traceability.tex</additionalLatexDocument>
+                </additionalLatexDocuments>
             </configuration>
         </execution>
     </executions>
@@ -512,7 +525,7 @@ This is an example:
             <configuration>
                 <artifacts>
                     <artifact>
-                        <!-- Path to the PDF generated by the compile-pdf Mojo -->
+                        <!-- Path to the PDF generated by the compile-latex Mojo -->
                         <file>${project.build.directory}/classes/documentation/root.pdf</file>
                         <!-- Type/Extension -->
                         <type>pdf</type>

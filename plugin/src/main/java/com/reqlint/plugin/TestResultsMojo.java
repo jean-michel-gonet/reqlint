@@ -1,17 +1,15 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.latex.loader.SpecificationTreeLoader;
 import com.reqlint.core.latex.output.TestResultsOutput;
 import com.reqlint.core.latex.parser.LatexReader;
+import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.surefire.SurefireTestReport;
 import com.reqlint.core.surefire.TestReportsFinder;
 import com.reqlint.core.surefire.TestReportsLoader;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -39,15 +37,13 @@ public class TestResultsMojo extends ReqlintMojo {
     }
 
     private void writeTestResults(TestResultsOutput testResultsOutput) throws IOException {
-        File testsResultsFile = new File(project.getBuild().getOutputDirectory(), this.testResultsOutput);
-        try(Writer writer = new OutputStreamWriter(new FileOutputStream(testsResultsFile), StandardCharsets.UTF_8)) {
+        try(Writer writer = new OutputStreamWriter(new FileOutputStream(this.testResultsOutput), StandardCharsets.UTF_8)) {
             testResultsOutput.writeTestResults(writer);
         }
     }
 
     private void writeTestWarnings(TestResultsOutput testResultsOutput) throws IOException {
-        File testsResultsFile = new File(project.getBuild().getOutputDirectory(), testWarningsOutput);
-        try(Writer writer = new OutputStreamWriter(new FileOutputStream(testsResultsFile), StandardCharsets.UTF_8)) {
+        try(Writer writer = new OutputStreamWriter(new FileOutputStream(testWarningsOutput), StandardCharsets.UTF_8)) {
             testResultsOutput.writeTestWarnings(writer);
         }
     }
@@ -75,12 +71,11 @@ public class TestResultsMojo extends ReqlintMojo {
     }
 
     private SpecificationTree readSpecificationTree() throws IOException {
-        File mainFile = new File(project.getBuild().getOutputDirectory(), specificationLatexDocument);
-        if (!mainFile.isFile()) {
-            throw new IllegalArgumentException(mainFile.getAbsolutePath() + " does not exist or is not a file");
+        if (!specificationLatexDocument.isFile()) {
+            throw new IllegalArgumentException(specificationLatexDocument.getAbsolutePath() + " does not exist or is not a file");
         }
 
-        LatexReader latexReader = new LatexReader(mainFile);
+        LatexReader latexReader = new LatexReader(specificationLatexDocument);
         SpecificationTreeLoader specificationTreeLoader = new SpecificationTreeLoader(latexReader);
         return specificationTreeLoader.load();
     }

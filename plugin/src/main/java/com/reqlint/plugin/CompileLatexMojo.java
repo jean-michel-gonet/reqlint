@@ -14,10 +14,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mojo(name = "compile-pdf")
-public class CompilePdfMojo extends ReqlintMojo {
+@Mojo(name = "compile-latex")
+public class CompileLatexMojo extends ReqlintMojo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CompilePdfMojo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompileLatexMojo.class);
 
     public enum BibTool {
         biber("biber"),
@@ -58,26 +58,46 @@ public class CompilePdfMojo extends ReqlintMojo {
     @Parameter(property = "latexTool", defaultValue = "lualatex")
     private String latexTool;
 
+
+    /**
+     * A list of additional LaTeX documents to compile into PDF.
+     * Optional parameter.
+     */
+    @Parameter(property = "additionalLatexDocuments")
+    private List<File> additionalLatexDocuments;
+
+
     private File workingDirectory;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        LOGGER.info("Build PDF");
+        LOGGER.info("Compile LaTeX files");
+
+        List<File> allLatexDocuments = new ArrayList<>();
+        allLatexDocuments.add(specificationLatexDocument);
+        allLatexDocuments.addAll(additionalLatexDocuments);
+
+        for (File latexDocument : allLatexDocuments) {
+            LOGGER.info("Compile LaTeX file {}", latexDocument.getAbsolutePath());
+            compileLatexFile(latexDocument);
+        }
+    }
+
+    private void compileLatexFile(File latexDocument) throws MojoFailureException, MojoExecutionException {
 
         // Establish the main file and the working directory
-        File mainFile = new File(project.getBuild().getOutputDirectory(), specificationLatexDocument);
-        workingDirectory = mainFile.getParentFile();
-        LOGGER.info("Compiling latex file: {}", mainFile);
+        workingDirectory = latexDocument.getParentFile();
+        LOGGER.info("Compiling latex document: {}", latexDocument);
         LOGGER.info("Working folder: {}", workingDirectory);
 
-        if (!mainFile.isFile()) {
+        if (!latexDocument.isFile()) {
             throw new MojoExecutionException("Latex file is not a file, or does not exist");
         }
 
         // Biber and bibtex behave differently when given the extension,
         // so it is best to remove it.
-        String mainFileNameWithExtension = mainFile.getName();
-        String mainFileNameWithoutExtension = FilenameUtils.removeExtension(mainFile.getName());
+        String mainFileNameWithExtension = latexDocument.getName();
+        String mainFileNameWithoutExtension = FilenameUtils.removeExtension(latexDocument.getName());
 
         // Step 1: Initial Pass
         runProcess("Pass 1 (LaTeX Initial)", latexTool, "-interaction=nonstopmode", "-halt-on-error", mainFileNameWithExtension);
