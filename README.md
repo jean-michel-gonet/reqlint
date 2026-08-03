@@ -224,8 +224,7 @@ both empty or with some dummy content like:
 THIS SECTION IS GENERATED AT BUILD TIME
 ```
 
-Later on, you can configure the plugin to write the fragments
-over the files with dummy content.
+Later on, you configure the plugin to overwrite the dummy content.
 
 ### Produce multiple PDF files
 Depending on your quality system, you may be required to split the different parts into separated documents.
