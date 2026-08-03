@@ -50,7 +50,7 @@ class TokenBucketControllerTest {
 
 
     @Test
-    public void TC_101_can_consume_tokens() throws Exception {
+    public void TC_402_can_consume_tokens() throws Exception {
         Mockito.when(tokenBucketService.consumeTokens(CUSTOMER_ID, TOKENS_TO_CONSUME))
                 .thenReturn(RESPONSE);
 
@@ -69,7 +69,7 @@ class TokenBucketControllerTest {
     }
 
     @Test
-    public void can_handle_not_enough_tokens_error() throws Exception {
+    public void TC_401_can_handle_not_enough_tokens_error() throws Exception {
         Mockito.when(tokenBucketService.consumeTokens(CUSTOMER_ID, TOKENS_TO_CONSUME))
                 .thenThrow(new NotEnoughTokensAvailableException(TOKENS_TO_CONSUME, RESPONSE));
 

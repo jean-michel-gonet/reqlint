@@ -44,19 +44,20 @@ Additionally, it has a convenient tool to compile LaTeX documents into PDF docum
 # Prerequisites
 _Reqlint_ expects LaTeX to be installed in the host system, and present in the path.
 
-When using windows, you can choose from different distributions.
+When using Windows, you can choose from different distributions.
 We've tested MikTex with success, so we recommend it.
 When using macOS, you can install _texlive_ using _Homebrew_.
 
-The expectation of _Reqlint_ is that you can open a command prompt, type the following command,
-and receive no error:
+The expectation of _Reqlint_ is that you can open a command prompt, type the following commands,
+and at least one of them should return no error:
 
 ```bash
 lualatex -version
+pdflatex -version
 ```
 
 Additionally, you may want to install _PlantUML_, because it is the most common tool to write diagrams.
-When using windows, download the native *.zip from the official website,
+When using Windows, download the native *.zip from the official website,
 unpack it,
 and add it to the path.
 When using macOS, install it using _Homebrew_.
@@ -94,8 +95,7 @@ This environment takes two arguments:
 - The identifier, that can be any string - but keep in mind is an identifier.
 - The title, that can be any text - but don't make it too long.
 
-There are no limits to what you can include inside the environment, except
-other _Reqlint_ environments.
+There are no limits to what you can include inside the environment, except other _Reqlint_ environments.
 
 For example:
 ```latex
@@ -111,9 +111,8 @@ This environment takes two arguments:
 - The identifier, that can be any string - but keep in mind is an identifier.
 - The title, that can be any text - but don't make it too long.
 
-There are no limits to what you can include inside the environment, 
-but you should add one or more `\childof` element, to identify the 
-parent equipment requirement.  
+There are no limits to what you can include inside the environment, except other _Reqlint_ environments.
+You should add a `\childof` element, to identify the parent equipment requirement.  
 
 For example:
 ```latex
@@ -131,9 +130,9 @@ This environment takes two arguments:
 - The identifier, that can be any string - but keep in mind is an identifier.
 - The title, that can be any text - but don't make it too long.
 
-There are no limits to what you can include inside the environment,
-but you should add one or more `\childof` element, to identify the
-parent equipment requirement, and you can nest a special `\testprocedure` environment
+There are no limits to what you can include inside the environment, except other _Reqlint_ environments.
+You should add a `\childof` element, to identify the parent software requirement.
+Optionally, you can nest a special `\testprocedure` environment,
 where you can list a number of intermediary `\stage` to split long test procedures.
 
 For example:
@@ -177,8 +176,9 @@ that the plugin can produce:
 3. The test report.
 4. The test warnings.
 
-To prepare a placeholder, decide where you want the fragment in the document, and then
-use 
+To prepare a placeholder, decide where you want the fragment in the document, and then use `\input` to include it.
+To avoid error messages while you type, create a dummy content for the fragment.
+_Reqlint_ will replace it during the build.
 
 For example, if you want a section of the document containing the test report
 and the test warnings, you can create a folder called `testresults`. 
