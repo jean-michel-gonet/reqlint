@@ -61,12 +61,11 @@ public class CompileLatexMojo extends ReqlintMojo {
 
 
     /**
-     * A list of additional LaTeX documents to compile into PDF.
-     * Optional parameter.
+     * A list of LaTeX documents to compile into PDF.
+     * Specify at least one, or don't use this mojo.
      */
-    @Parameter(property = "additionalLatexDocuments")
-    private List<File> additionalLatexDocuments;
-
+    @Parameter(property = "latexDocuments", required = true)
+    private List<File> latexDocuments;
 
     private File workingDirectory;
 
@@ -74,11 +73,7 @@ public class CompileLatexMojo extends ReqlintMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         LOGGER.info("Compile LaTeX files");
 
-        List<File> allLatexDocuments = new ArrayList<>();
-        allLatexDocuments.add(specificationLatexDocument);
-        allLatexDocuments.addAll(additionalLatexDocuments);
-
-        for (File latexDocument : allLatexDocuments) {
+        for (File latexDocument : latexDocuments) {
             LOGGER.info("Compile LaTeX file {}", latexDocument.getAbsolutePath());
             compileLatexFile(latexDocument);
         }

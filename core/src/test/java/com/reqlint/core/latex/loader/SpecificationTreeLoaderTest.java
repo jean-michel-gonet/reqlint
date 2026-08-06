@@ -1,17 +1,20 @@
 package com.reqlint.core.latex.loader;
 
+import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.specification.TraceabilityMatrixItem;
 import com.reqlint.core.specification.items.EquipmentRequirement;
 import com.reqlint.core.specification.items.SoftwareRequirement;
 import com.reqlint.core.specification.items.TestCase;
-import com.reqlint.core.latex.parser.LatexReader;
-import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.testutils.TextFileContent;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.List;
 
 class SpecificationTreeLoaderTest {
@@ -28,12 +31,21 @@ class SpecificationTreeLoaderTest {
     private static final String STAGE_2 = "Stage 2";
 
     @TempDir
-    public File temporaryFolder;
+    private File temporaryFolder;
 
+    private SpecificationTreeLoader underTest;
+    private File root;
+    private SpecificationTree specificationTree;
+
+    @BeforeEach
+    void setUp() {
+        root = new File(temporaryFolder, "root.tex");
+        underTest = new SpecificationTreeLoader();
+        specificationTree = underTest.specificationTree();
+    }
 
     @Test
     public void can_load_a_tree() throws Exception {
-        File root = new File(temporaryFolder, "root.tex");
 
         TextFileContent.createFileWithLines(root, List.of(
                 String.format("\\begin{equipmentrequirement}{%s}{%s}", ER_ID, ER_TITLE),
@@ -65,13 +77,11 @@ class SpecificationTreeLoaderTest {
                 "\\end{testcase}"
         ));
 
-        LatexReader latexReader = new LatexReader(root);
-
-        SpecificationTreeLoader underTest = new SpecificationTreeLoader(latexReader);
-        SpecificationTree specificationTree = underTest.load();
+        try (Reader reader = new InputStreamReader(new FileInputStream(root))) {
+            underTest.load(reader);
+        }
 
         specificationTree.verify();
-
         List<TraceabilityMatrixItem> traceabilityMatrix = specificationTree.buildTraceabilityMatrix();
 
         Assertions.assertThat(traceabilityMatrix).containsExactly(
@@ -83,8 +93,6 @@ class SpecificationTreeLoaderTest {
 
     @Test
     public void can_load_a_tree_from_file_without_breaks() throws Exception {
-        File root = new File(temporaryFolder, "root.tex");
-
         TextFileContent.createFileWithLines(root, List.of(
                 String.format("\\begin{equipmentrequirement}{%s}{%s}", ER_ID, ER_TITLE),
                 "\\end{equipmentrequirement}",
@@ -100,13 +108,11 @@ class SpecificationTreeLoaderTest {
                 "\\end{testcase}"
         ));
 
-        LatexReader latexReader = new LatexReader(root);
-
-        SpecificationTreeLoader underTest = new SpecificationTreeLoader(latexReader);
-        SpecificationTree specificationTree = underTest.load();
+        try (Reader reader = new InputStreamReader(new FileInputStream(root))) {
+            underTest.load(reader);
+        }
 
         specificationTree.verify();
-
         List<TraceabilityMatrixItem> traceabilityMatrix = specificationTree.buildTraceabilityMatrix();
 
         Assertions.assertThat(traceabilityMatrix).containsExactly(

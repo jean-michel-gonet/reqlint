@@ -102,7 +102,9 @@
                 <groupId>com.reqlint</groupId>
                 <artifactId>reqlint-maven-plugin</artifactId>
                 <configuration>
-                    <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
+                    <specificationLatexDocuments>
+                        <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
+                    </specificationLatexDocuments>
                     <traceabilityMatrixOutput>${project.build.outputDirectory}/documentation/traceability/traceability-matrix.tex</traceabilityMatrixOutput>
                     <traceabilityWarningsOutput>${project.build.outputDirectory}/documentation/traceability/traceability-warnings.tex</traceabilityWarningsOutput>
                     <testResultsOutput>${project.build.outputDirectory}/documentation/testresults/testresults-report.tex</testResultsOutput>
@@ -140,10 +142,11 @@
                         <configuration>
                             <latexTool>lualatex</latexTool> <!-- Depends on your latex distribution -->
                             <bibTool>bibtex</bibTool>
-                            <additionalLatexDocuments>
-                                <additionalLatexDocument>${project.build.outputDirectory}/documentation/root-testresults.tex</additionalLatexDocument>
-                                <additionalLatexDocument>${project.build.outputDirectory}/documentation/root-traceability.tex</additionalLatexDocument>
-                            </additionalLatexDocuments>
+                            <latexDocuments>
+                                <latexDocument>${project.build.outputDirectory}/documentation/root.tex</latexDocument>
+                                <latexDocument>${project.build.outputDirectory}/documentation/root-testresults.tex</latexDocument>
+                                <latexDocument>${project.build.outputDirectory}/documentation/root-traceability.tex</latexDocument>
+                            </latexDocuments>
                         </configuration>
                     </execution>
                 </executions>
