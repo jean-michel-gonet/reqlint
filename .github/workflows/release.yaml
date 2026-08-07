@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - 'release-*'
+    tags:
+      - 'v*' # e.g., v1.2.0
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Extract '1.2.0' from 'v1.2.0'
+      - name: Extract Version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install LaTeX and Biber
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-bibtex-extra \
+            texlive-fonts-recommended \
+            biber
+
+      # Update parent and child POMs in-memory for this run
+      - name: Set Project Version
+        run: |
+          mvn versions:set \
+            -DnewVersion=${{ env.VERSION }} \
+            -DgenerateBackupPoms=false
+
+      - name: Build Core & Plugin
+        run: mvn clean install -pl core,plugin -am -DskipTests=false
+
+      - name: Build Sandbox Document
+        run: mvn clean package -pl sandbox
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            sandbox/target/*.pdf
+            plugin/target/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
