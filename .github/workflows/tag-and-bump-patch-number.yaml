@@ -1,0 +1,74 @@
+name: tag & bump patch number
+
+on:
+  workflow_dispatch: # Run manually from any release-x.y branch
+
+permissions:
+  contents: write
+
+jobs:
+  tag-and-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Branch Name
+        run: |
+          if [[ ! "${{ github.ref_name }}" =~ ^release- ]]; then
+            echo "::error::This workflow can only be run on release-* branches! Current branch: ${{ github.ref_name }}"
+            exit 1
+          fi
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Calculate Release Version and Tag
+        id: vars
+        run: |
+          # 1. Read current version (e.g., 1.0.0-SNAPSHOT or 1.0.1-SNAPSHOT)
+          CURRENT_VER=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Current version on branch: $CURRENT_VER"
+
+          # 2. Strip -SNAPSHOT -> 1.0.0
+          RELEASE_VER="${CURRENT_VER%-SNAPSHOT}"
+          TAG_NAME="v${RELEASE_VER}"
+
+          echo "RELEASE_VER=$RELEASE_VER" >> $GITHUB_ENV
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+      - name: Strip -SNAPSHOT & Commit Tag
+        run: |
+          # Set exact release version in POMs
+          mvn versions:set -DnewVersion=${{ env.RELEASE_VER }} -DgenerateBackupPoms=false
+
+          # Commit clean version and create tag
+          git add "**/pom.xml" pom.xml
+          git commit -m "chore: prepare release ${{ env.TAG_NAME }} [skip ci]"
+          git tag -a ${{ env.TAG_NAME }} -m "Release ${{ env.TAG_NAME }}"
+
+          # Push tag to trigger artifact workflow
+          git push origin ${{ env.TAG_NAME }}
+
+      - name: Bump to Next Patch SNAPSHOT
+        run: |
+          # Calculate & set next patch SNAPSHOT (e.g., 1.0.0 -> 1.0.1-SNAPSHOT)
+          mvn versions:set -DnextSnapshot=true -DgenerateBackupPoms=false
+
+          # Extract new snapshot version for commit message
+          NEXT_SNAPSHOT=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+
+          # Commit and push back to the active release branch
+          git add "**/pom.xml" pom.xml
+          git commit -m "chore: bump release branch to ${NEXT_SNAPSHOT} [skip ci]"
+          git push origin ${{ github.ref_name }}
