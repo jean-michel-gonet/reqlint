@@ -3,6 +3,9 @@ name: Release
 on:
   workflow_dispatch: # Allows manual trigger from GitHub UI / CLI
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
