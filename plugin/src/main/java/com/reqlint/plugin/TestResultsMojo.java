@@ -1,8 +1,6 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.latex.loader.SpecificationTreeLoader;
 import com.reqlint.core.latex.output.TestResultsOutput;
-import com.reqlint.core.latex.parser.LatexReader;
 import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.surefire.SurefireTestReport;
 import com.reqlint.core.surefire.TestReportsFinder;
@@ -68,15 +66,5 @@ public class TestResultsMojo extends ReqlintMojo {
         SurefireTestReport testReport = testReportsLoader.getTestReport();
         getLog().info("Loaded " + testReport.numberOfReports() + " surefire test reports");
         return testReportsLoader.getTestReport();
-    }
-
-    private SpecificationTree readSpecificationTree() throws IOException {
-        if (!specificationLatexDocument.isFile()) {
-            throw new IllegalArgumentException(specificationLatexDocument.getAbsolutePath() + " does not exist or is not a file");
-        }
-
-        LatexReader latexReader = new LatexReader(specificationLatexDocument);
-        SpecificationTreeLoader specificationTreeLoader = new SpecificationTreeLoader(latexReader);
-        return specificationTreeLoader.load();
     }
 }

@@ -389,7 +389,7 @@ The most appropriate _Maven_ phase to produce the traceability matrix is `proces
 because you only need the project resources, and no compilation is required.
 
 The `traceability-matrix` goal takes the following parameters:
-- `specificationLatexDocument`: The main LaTeX file that contains the software requirements specification.
+- `specificationLatexDocuments`: The main(s) LaTeX file(s) that contains the software requirements specification.
 - `traceabilityMatrixOutput`: The name of the LaTeX fragment where to output the traceability matrix. 
 - `traceabilityWarningsOutput`: The name of the LaTeX fragment where to output the traceability warnings.
 
@@ -402,7 +402,9 @@ all documentation is in the `resources/documentation` folder:
     <groupId>com.reqlint</groupId>
     <artifactId>reqlint-maven-plugin</artifactId>
     <configuration>
-      <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
+      <specificationLatexDocuments>
+        <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
+      </specificationLatexDocuments>
       <traceabilityMatrixOutput>${project.build.outputDirectory}/documentation/traceability/traceability-matrix.tex</traceabilityMatrixOutput>
       <traceabilityWarningsOutput>${project.build.outputDirectory}/documentation/traceability/traceability-warnings.tex</traceabilityWarningsOutput>
     </configuration>
@@ -427,11 +429,10 @@ The most appropriate _Maven_ phase to produce the test report is `post-integrati
 because you need the _Surefire_ test reports to be present.
 
 The `test-report` goal takes the following parameters:
-- `specificationLatexDocument`: The main LaTeX file that contains the software requirements specification.
+- `specificationLatexDocuments`: The main(s) LaTeX file(s) that contains the software requirements specification.
 - `testResultsOutput`: The name of the LaTeX fragment where to output the test report.
 - `testWarningsOutput`: The name of the LaTeX fragment where to output the test warnings.
 
-All three files have paths relative to the project `resources` folder.
 The two output files should point to the placeholders you've prepared in advance (see above).
 This is an example illustrating how to configure this goal when
 all documentation is in the `resources/documentation` folder:
@@ -441,7 +442,9 @@ all documentation is in the `resources/documentation` folder:
     <groupId>com.reqlint</groupId>
     <artifactId>reqlint-maven-plugin</artifactId>
     <configuration>
-      <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
+      <specificationLatexDocuments>
+        <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
+      </specificationLatexDocuments>
       <testResultsOutput>${project.build.outputDirectory}/documentation/testresults/testresults-report.tex</testResultsOutput>
       <testWarningsOutput>${project.build.outputDirectory}/documentation/testresults/testresults-warning.tex</testWarningsOutput>
     </configuration>
@@ -469,17 +472,14 @@ The most appropriate _Maven_ phase to run it is `post-integration-test`,
 just after the `test-result` execution.
 
 The `compile-latex` plugin takes the following parameters:
-- `specificationLatexDocument`: The main LaTeX file that contains the software requirements specification.
+- `latexDocuments`: The list with all latex documents to compile into PDF files.
 - `latexTool`: The command to execute LaTeX. This is going to be either `lualatex` or `pdflatex`. 
    Most of the distributions offer both, so probably both are working. 
 - `bibTool`: The command to execute the bibliography tool in LaTeX.
   It depends on your distribution, it can be `biber` or `bibtex`.
   If you don't use bibliography, then you can specify `none`.
-- `additionalLatexDocuments`: An optional list of additional latex documents to compile into PDF files.
 
-The LaTeX compilation produces a `*.pdf` file with the same name and path as `specificationLatexDocument`
-and, if you specified additional files,
-one `*.pdf` per each.
+The LaTeX compilation produces one `*.pdf` file per specified `latexDocument`.
 
 This is an example:
 ```xml
@@ -487,9 +487,6 @@ This is an example:
 <plugin>
     <groupId>com.reqlint</groupId>
     <artifactId>reqlint-maven-plugin</artifactId>
-    <configuration>
-        <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
-    </configuration>
     <executions>
         <execution>
             <id>compile-latex</id>
@@ -501,10 +498,11 @@ This is an example:
             <configuration>
                 <latexTool>lualatex</latexTool> <!-- Depends on your latex distribution -->
                 <bibTool>bibtex</bibTool>
-                <additionalLatexDocuments>
-                    <additionalLatexDocument>${project.build.outputDirectory}/documentation/root-testresults.tex</additionalLatexDocument>
-                    <additionalLatexDocument>${project.build.outputDirectory}/documentation/root-traceability.tex</additionalLatexDocument>
-                </additionalLatexDocuments>
+              <latexDocuments>
+                <latexDocument>${project.build.outputDirectory}/documentation/root.tex</latexDocument>
+                <latexDocument>${project.build.outputDirectory}/documentation/root-testresults.tex</latexDocument>
+                <latexDocument>${project.build.outputDirectory}/documentation/root-traceability.tex</latexDocument>
+              </latexDocuments>
             </configuration>
         </execution>
     </executions>
@@ -522,9 +520,6 @@ which attaches additional artifacts to be installed and deployed.
 Configure `attach-artifact` goal during the `package` phase by specifying
 the PDF file in the artifacts.
 This is an example:
-
-The artifacts `file` are relative to project build directory, so
-you need to keep it in mind when configuring it.
 
 This is an example:
 

@@ -27,15 +27,6 @@ public class TraceabilityMatrixMojo extends ReqlintMojo {
         }
     }
 
-    private SpecificationTree readSpecificationTree() throws IOException {
-        if (!specificationLatexDocument.isFile()) {
-            throw new IllegalArgumentException(specificationLatexDocument.getAbsolutePath() + " does not exist or is not a file");
-        }
-
-        LatexReader latexReader = new LatexReader(specificationLatexDocument);
-        SpecificationTreeLoader specificationTreeLoader = new SpecificationTreeLoader(latexReader);
-        return specificationTreeLoader.load();
-    }
 
     private void writeTraceabilityMatrix(SpecificationTree specificationTree) throws IOException {
         if (traceabilityMatrixOutput.exists()) {

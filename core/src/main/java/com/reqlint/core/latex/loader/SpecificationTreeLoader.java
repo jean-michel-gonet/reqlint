@@ -11,6 +11,7 @@ import com.reqlint.core.utils.MatchingLiteral;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.regex.Matcher;
 
 public class SpecificationTreeLoader {
@@ -31,15 +32,25 @@ public class SpecificationTreeLoader {
         }
     }
 
-    private final LatexReader latexReader;
+    private final SpecificationTree specificationTree;
 
-    public SpecificationTreeLoader(LatexReader latexReader) {
-        this.latexReader = latexReader;
+    /**
+     * Default class constructor.
+     */
+    public SpecificationTreeLoader() {
+        this(new SpecificationTree());
     }
 
-    public SpecificationTree load() throws IOException {
+    /**
+     * Use this constructor if you want to complete an existing {@link SpecificationTree}.
+     * @param specificationTree The specification tree to complete.
+     */
+    public SpecificationTreeLoader(SpecificationTree specificationTree) {
+        this.specificationTree = specificationTree;
+    }
+
+    public void load(Reader latexReader) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(latexReader);
-        SpecificationTree specificationTree = new SpecificationTree();
         String line;
         while( (line = bufferedReader.readLine()) != null) {
             do {
@@ -70,6 +81,12 @@ public class SpecificationTreeLoader {
                 line = specificationItemLatexLoader.load(line, bufferedReader);
             } while (!line.isEmpty());
         }
+    }
+
+    /**
+     * @return The loaded specification tree.
+     */
+    public SpecificationTree specificationTree() {
         return specificationTree;
     }
 }

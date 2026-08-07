@@ -1,10 +1,14 @@
 package com.reqlint.plugin;
 
+import com.reqlint.core.latex.loader.SpecificationTreeLoader;
+import com.reqlint.core.latex.parser.LatexReader;
+import com.reqlint.core.specification.SpecificationTree;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -20,12 +24,12 @@ public abstract class ReqlintMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
-     * The latex file where the software requirements specification is documented.
-     * Reqlint can follow through {@code \input}, {@code \include}, {@code \import} and {@code \subimport}
-     * commands.
+     * The latex main files where the software requirements specification is documented.
+     * Reqlint follows through {@code \input}, {@code \include}, {@code \import} and {@code \subimport}
+     * commands, so you only need to specify the main files.
      */
-    @Parameter(name = "specificationLatexDocument")
-    protected File specificationLatexDocument;
+    @Parameter(name = "specificationLatexDocuments")
+    protected List<File> specificationLatexDocuments;
 
     /**
      * Name of the latex file where to output the traceability matrix.
@@ -50,4 +54,20 @@ public abstract class ReqlintMojo extends AbstractMojo {
      */
     @Parameter(name = "testWarningsOutput")
     protected File testWarningsOutput;
+
+    /**
+     * Loads the specification from files specified in {@link #specificationLatexDocuments}.
+     * @return The specification tree.
+     * @throws IOException If one or more files are unreadable.
+     */
+    protected SpecificationTree readSpecificationTree() throws IOException {
+        SpecificationTreeLoader specificationTreeLoader = new SpecificationTreeLoader();
+        for (File specificationLatexDocument : specificationLatexDocuments) {
+            try (LatexReader reader = new LatexReader(specificationLatexDocument)) {
+                specificationTreeLoader.load(reader);
+            }
+        }
+        return specificationTreeLoader.specificationTree();
+    }
+
 }
