@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.reqlint</groupId>
         <artifactId>reqlint</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>reqlint-maven-plugin</artifactId>
