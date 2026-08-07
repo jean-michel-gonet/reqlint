@@ -32,10 +32,16 @@ public abstract class ReqlintMojo extends AbstractMojo {
     protected List<File> specificationLatexDocuments;
 
     /**
-     * Name of the latex file where to output the traceability matrix.
+     * Name of the latex file where to output the upstream traceability matrix (SR to ER).
      */
-    @Parameter(name = "traceabilityMatrixOutput")
-    protected File traceabilityMatrixOutput;
+    @Parameter(name = "upstreamTraceabilityMatrixOutput")
+    protected File upstreamTraceabilityMatrixOutput;
+
+    /**
+     * Name of the latex file where to output the downstream traceability matrix (ER to SR).
+     */
+    @Parameter(name = "downstreamTraceabilityMatrixOutput")
+    protected File downstreamTraceabilityMatrixOutput;
 
     /**
      * Name of the latex file where to output the warnings detected while building the traceability matrix.

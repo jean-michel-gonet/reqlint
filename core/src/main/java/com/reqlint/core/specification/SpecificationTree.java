@@ -23,6 +23,12 @@ public class SpecificationTree {
         return equipmentRequirements.stream().sorted().toList();
     }
 
+    public List<EquipmentRequirement> equipmentRequirements(SoftwareRequirement softwareRequirement) {
+        return equipmentRequirements.stream()
+                .filter(er -> er.softwareRequirements().contains(softwareRequirement))
+                .toList();
+    }
+
     public List<SoftwareRequirement> softwareRequirements() {
         return softwareRequirements.stream().sorted().toList();
     }

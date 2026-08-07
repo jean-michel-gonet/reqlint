@@ -4,6 +4,9 @@ import com.reqlint.core.latex.loader.SpecificationItemLatexLoader;
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemMissingArgumentsException;
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemNotClosedException;
 import com.reqlint.core.specification.items.EquipmentRequirement;
+import com.reqlint.core.utils.AssociatedPattern;
+import com.reqlint.core.utils.FindMatchingLiteral;
+import com.reqlint.core.utils.MatchingLiteral;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,15 +17,32 @@ import java.util.regex.Pattern;
  * Populates the properties of the specification item with the data found in the latex source.
  */
 public class EquipmentRequirementLatexLoader implements SpecificationItemLatexLoader<EquipmentRequirement> {
-    private static final Pattern ARGUMENTS = Pattern.compile("\\{([^}]+)}\\{([^}]+)}");
-    private static final Pattern CLOSE_EQUIPMENT_REQUIREMENT = Pattern.compile("\\\\end\\{equipmentrequirement}");
+
+    private enum Patterns implements AssociatedPattern {
+        CLOSE(Pattern.compile("\\\\end\\{equipmentrequirement}")),
+        STATUS(LatexPatterns.STATUS),
+        DERIVED(LatexPatterns.DERIVED),
+        SECURITY(LatexPatterns.SECURITY),
+        SAFETY(LatexPatterns.SAFETY);
+
+        private final Pattern pattern;
+
+        Patterns(Pattern pattern) {
+            this.pattern = pattern;
+        }
+
+        @Override
+        public Matcher find(String line) {
+            return pattern.matcher(line);
+        }
+    }
 
     private final EquipmentRequirement equipmentRequirement = new  EquipmentRequirement();
 
     @Override
     public String load(String line, BufferedReader reader) throws IOException {
         // Obtain the arguments from the remainder:
-        Matcher matcher = ARGUMENTS.matcher(line);
+        Matcher matcher = LatexPatterns.TWO_ARGUMENTS.matcher(line);
         if (!matcher.find()) {
             throw new SpecificationItemMissingArgumentsException(line);
         }
@@ -32,18 +52,28 @@ public class EquipmentRequirementLatexLoader implements SpecificationItemLatexLo
         // The content of the requirement starts at the end of the arguments:
         line = line.substring(matcher.end());
 
-        // Consume the content until the close pattern:
-        while (!(matcher = CLOSE_EQUIPMENT_REQUIREMENT.matcher(line)).find()) {
-            line = reader.readLine();
-            // If we reach EOF before the close pattern, then raise an exception:
-            if (line == null) {
-                throw new SpecificationItemNotClosedException(equipmentRequirement);
+        // Consume the rest of the content:
+        do {
+            while (!line.isEmpty()) {
+                MatchingLiteral<Patterns> matchingLiteral =
+                        FindMatchingLiteral.findClosestMatch(Patterns.class, line);
+                if (matchingLiteral == null) {
+                    break;
+                }
+                line = line.substring(matchingLiteral.end());
+                switch (matchingLiteral.literal()) {
+                    case DERIVED -> equipmentRequirement.setDerived(true, matchingLiteral.group(1));
+                    case STATUS -> equipmentRequirement.setStatus(matchingLiteral.group(1));
+                    case SAFETY -> equipmentRequirement.setConcernsSafety(true);
+                    case SECURITY -> equipmentRequirement.setConcernsSecurity(true);
+                    case CLOSE -> {
+                        return line;
+                    }
+                }
             }
-        }
+        } while ( (line = reader.readLine()) != null);
 
-        // The rest of the content starts at the end of the close pattern:
-        line = line.substring(matcher.end());
-        return line;
+        throw new SpecificationItemNotClosedException(equipmentRequirement);
     }
 
     @Override
