@@ -1,11 +1,7 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - 'release-*'
-    tags:
-      - 'v*' # e.g., v1.2.0
+  workflow_dispatch: # Allows manual trigger from GitHub UI / CLI
 
 jobs:
   release:
