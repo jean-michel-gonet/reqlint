@@ -105,9 +105,6 @@
                     <specificationLatexDocuments>
                         <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
                     </specificationLatexDocuments>
-                    <upstreamTraceabilityMatrixOutput>${project.build.outputDirectory}/documentation/traceability/traceability-matrix-upstream.tex</upstreamTraceabilityMatrixOutput>
-                    <downstreamTraceabilityMatrixOutput>${project.build.outputDirectory}/documentation/traceability/traceability-matrix-downstream.tex</downstreamTraceabilityMatrixOutput>
-                    <traceabilityWarningsOutput>${project.build.outputDirectory}/documentation/traceability/traceability-warnings.tex</traceabilityWarningsOutput>
                     <testResultsOutput>${project.build.outputDirectory}/documentation/testresults/testresults-report.tex</testResultsOutput>
                     <testWarningsOutput>${project.build.outputDirectory}/documentation/testresults/testresults-warning.tex</testWarningsOutput>
                 </configuration>
@@ -120,6 +117,13 @@
                         <goals>
                             <goal>traceability-matrix</goal>
                         </goals>
+                        <configuration>
+                            <upstreamSssSrsTrxOutput>${project.build.outputDirectory}/documentation/traceability/traceability-sss-srs-upstream.tex</upstreamSssSrsTrxOutput>
+                            <downstreamSssSrsTrxOutput>${project.build.outputDirectory}/documentation/traceability/traceability-sss-srs-downstream.tex</downstreamSssSrsTrxOutput>
+                            <upstreamSrsTcTrxOutput>${project.build.outputDirectory}/documentation/traceability/traceability-srs-tc-upstream.tex</upstreamSrsTcTrxOutput>
+                            <downstreamSrsTcTrxOutput>${project.build.outputDirectory}/documentation/traceability/traceability-srs-tc-downstream.tex</downstreamSrsTcTrxOutput>
+                            <traceabilityWarningsOutput>${project.build.outputDirectory}/documentation/traceability/traceability-warnings.tex</traceabilityWarningsOutput>
+                        </configuration>
                     </execution>
 
                     <!-- Produce the test results -->

@@ -229,8 +229,8 @@ Later on, you configure the plugin to overwrite the dummy content.
 ### Produce multiple PDF files
 Depending on your quality system, you may be required to split the different parts into separated documents.
 When this is the case, create one main LaTeX file per final document.
-Reqlint only requires that one main LaTeX document includes all equipment requirements, software requirements and test cases.
-You are free to have as many additional root documents as you need.
+Reqlint accepts a list of files to extract equipment requirements, software requirements and test cases,
+so you are free to split it into as many root documents as you need.
 
 ## Automatizing the test scenarios
 You can automatize your test scenarios as you would do with any Java project.
@@ -384,32 +384,35 @@ not provided with an extension.
 
 ### Producing the traceability matrix
 
-The goal name to produce the traceability matrix is `traceability-matrix`.
+The goal name to produce the traceability matrices is `traceability-matrix`.
 The most appropriate _Maven_ phase to produce the traceability matrix is `process-resources`,
 because you only need the project resources, and no compilation is required.
 
 The `traceability-matrix` goal takes the following parameters:
 - `specificationLatexDocuments`: The main(s) LaTeX file(s) that contains the software requirements specification.
-- `traceabilityMatrixOutput`: The name of the LaTeX fragment where to output the traceability matrix. 
-- `traceabilityWarningsOutput`: The name of the LaTeX fragment where to output the traceability warnings.
+- `upstreamSssSrsTrxOutput`: Name of the latex file where to output the upstream traceability matrix - SSS to SR. 
+- `downstreamSssSrsTrxOutput`:  Name of the latex file where to output the downstream traceability matrix - SSS to SR.
+- `upstreamSrsTcTrxOutput`: Name of the latex file where to output the upstream traceability matrix - TC to SR.
+- `downstreamSrsTcTrxOutput`: Name of the latex file where to output the downstream traceability matrix - TC to SR.  
+- `traceabilityWarningsOutput`: Name of the latex file where to output the warnings detected while building the traceability matrix.  
 
-The two output files should point to the placeholders you've prepared in advance (see above).
+The five output files should point to the placeholders you've prepared in advance (see above).
+You can disable any or all outputs by not specifying the corresponding parameter.
 This is an example illustrating how to configure this goal when
 all documentation is in the `resources/documentation` folder:
 
 ```xml
+
 <plugin>
     <groupId>com.reqlint</groupId>
     <artifactId>reqlint-maven-plugin</artifactId>
     <configuration>
-      <specificationLatexDocuments>
-        <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
-      </specificationLatexDocuments>
-      <traceabilityMatrixOutput>${project.build.outputDirectory}/documentation/traceability/traceability-matrix.tex</traceabilityMatrixOutput>
-      <traceabilityWarningsOutput>${project.build.outputDirectory}/documentation/traceability/traceability-warnings.tex</traceabilityWarningsOutput>
+        <specificationLatexDocuments>
+            <specificationLatexDocument>${project.build.outputDirectory}/documentation/root.tex</specificationLatexDocument>
+        </specificationLatexDocuments>
     </configuration>
     <executions>
-        <!-- The traceability matrix -->
+        <!-- Produce the traceability matrix -->
         <execution>
             <id>traceability-matrix</id>
             <!-- To be executed when resources are present in the target folder -->
@@ -417,6 +420,23 @@ all documentation is in the `resources/documentation` folder:
             <goals>
                 <goal>traceability-matrix</goal>
             </goals>
+            <configuration>
+                <upstreamSssSrsTrxOutput>
+                    ${project.build.outputDirectory}/documentation/traceability/traceability-sss-srs-upstream.tex
+                </upstreamSssSrsTrxOutput>
+                <downstreamSssSrsTrxOutput>
+                    ${project.build.outputDirectory}/documentation/traceability/traceability-sss-srs-downstream.tex
+                </downstreamSssSrsTrxOutput>
+                <upstreamSrsTcTrxOutput>
+                    ${project.build.outputDirectory}/documentation/traceability/traceability-srs-tc-upstream.tex
+                </upstreamSrsTcTrxOutput>
+                <downstreamSrsTcTrxOutput>
+                    ${project.build.outputDirectory}/documentation/traceability/traceability-srs-tc-downstream.tex
+                </downstreamSrsTcTrxOutput>
+                <traceabilityWarningsOutput>
+                    ${project.build.outputDirectory}/documentation/traceability/traceability-warnings.tex
+                </traceabilityWarningsOutput>
+            </configuration>
         </execution>
     </executions>
 </plugin>

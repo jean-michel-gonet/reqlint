@@ -6,9 +6,10 @@ import com.reqlint.core.specification.SpecificationTree;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -16,12 +17,10 @@ import java.util.List;
  * Contains the common properties.
  */
 public abstract class ReqlintMojo extends AbstractMojo {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReqlintMojo.class);
 
     @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
     protected List<MavenProject> allProjects;
-
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    protected MavenProject project;
 
     /**
      * The latex main files where the software requirements specification is documented.
@@ -30,24 +29,6 @@ public abstract class ReqlintMojo extends AbstractMojo {
      */
     @Parameter(name = "specificationLatexDocuments")
     protected List<File> specificationLatexDocuments;
-
-    /**
-     * Name of the latex file where to output the upstream traceability matrix (SR to ER).
-     */
-    @Parameter(name = "upstreamTraceabilityMatrixOutput")
-    protected File upstreamTraceabilityMatrixOutput;
-
-    /**
-     * Name of the latex file where to output the downstream traceability matrix (ER to SR).
-     */
-    @Parameter(name = "downstreamTraceabilityMatrixOutput")
-    protected File downstreamTraceabilityMatrixOutput;
-
-    /**
-     * Name of the latex file where to output the warnings detected while building the traceability matrix.
-     */
-    @Parameter(name = "traceabilityWarningsOutput")
-    protected File traceabilityWarningsOutput;
 
     /**
      * Name of the latex file where to output the tests results.
@@ -69,6 +50,7 @@ public abstract class ReqlintMojo extends AbstractMojo {
     protected SpecificationTree readSpecificationTree() throws IOException {
         SpecificationTreeLoader specificationTreeLoader = new SpecificationTreeLoader();
         for (File specificationLatexDocument : specificationLatexDocuments) {
+            LOGGER.info("Reading specification Latex Document {}", specificationLatexDocument);
             try (LatexReader reader = new LatexReader(specificationLatexDocument)) {
                 specificationTreeLoader.load(reader);
             }
@@ -76,4 +58,14 @@ public abstract class ReqlintMojo extends AbstractMojo {
         return specificationTreeLoader.specificationTree();
     }
 
+    protected Writer open(String info, File file) throws IOException {
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new IllegalArgumentException("Cannot overwrite " + file.getAbsolutePath());
+            }
+        }
+        LOGGER.info("Writing {} to {}", info, file.getAbsolutePath());
+
+        return new OutputStreamWriter(new FileOutputStream(file));
+    }
 }
