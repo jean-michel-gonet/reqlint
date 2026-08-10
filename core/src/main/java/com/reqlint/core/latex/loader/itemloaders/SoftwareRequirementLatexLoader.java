@@ -17,11 +17,14 @@ import java.util.regex.Pattern;
  * Populates the properties of the specification item with the data found in the latex source.
  */
 public class SoftwareRequirementLatexLoader implements SpecificationItemLatexLoader<SoftwareRequirement> {
-    private static final Pattern ARGUMENTS = Pattern.compile("\\{([^}]+)}\\{([^}]+)}");
 
     private enum Patterns implements AssociatedPattern {
         CLOSE(Pattern.compile("\\\\end\\{softwarerequirement}")),
-        CHILD_OF(Pattern.compile("\\\\childof\\{([^}]+)}"));
+        STATUS(LatexPatterns.STATUS),
+        DERIVED(LatexPatterns.DERIVED),
+        SECURITY(LatexPatterns.SECURITY),
+        SAFETY(LatexPatterns.SAFETY),
+        CHILD_OF(LatexPatterns.CHILD_OF);
 
         private final Pattern pattern;
 
@@ -40,7 +43,7 @@ public class SoftwareRequirementLatexLoader implements SpecificationItemLatexLoa
     @Override
     public String load(String line, BufferedReader reader) throws IOException {
         // Obtain the arguments from the remainder:
-        Matcher matcher = ARGUMENTS.matcher(line);
+        Matcher matcher = LatexPatterns.TWO_ARGUMENTS.matcher(line);
         if (!matcher.find()) {
             throw new SpecificationItemMissingArgumentsException(line);
         }
@@ -61,6 +64,10 @@ public class SoftwareRequirementLatexLoader implements SpecificationItemLatexLoa
                 line = line.substring(matchingLiteral.end());
                 switch (matchingLiteral.literal()) {
                     case CHILD_OF -> softwareRequirement.childOf(matchingLiteral.group(1));
+                    case DERIVED -> softwareRequirement.setDerived(true, matchingLiteral.group(1));
+                    case STATUS -> softwareRequirement.setStatus(matchingLiteral.group(1));
+                    case SAFETY -> softwareRequirement.setConcernsSafety(true);
+                    case SECURITY -> softwareRequirement.setConcernsSecurity(true);
                     case CLOSE -> {
                         return line;
                     }

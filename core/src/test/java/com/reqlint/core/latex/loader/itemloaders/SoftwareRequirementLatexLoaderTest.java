@@ -2,6 +2,7 @@ package com.reqlint.core.latex.loader.itemloaders;
 
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemMissingArgumentsException;
 import com.reqlint.core.latex.loader.exceptions.SpecificationItemNotClosedException;
+import com.reqlint.core.specification.items.EquipmentRequirement;
 import com.reqlint.core.specification.items.SoftwareRequirement;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,9 @@ class SoftwareRequirementLatexLoaderTest {
     private static final String IDENTIFIER = "IDENTIFIER";
     private static final String TITLE = "TITLE";
     private static final String EXPECTED_REMAINDER = "Expected remainder";
+    private static final String DERIVED_RATIONALE = "Because of something rational";
+    private static final String STATUS = "Flabbergasted";
+
 
     private SoftwareRequirementLatexLoader underTest;
 
@@ -88,5 +92,60 @@ class SoftwareRequirementLatexLoaderTest {
 
         Assertions.assertThatExceptionOfType(SpecificationItemNotClosedException.class)
                 .isThrownBy(() -> underTest.load(line, reader));
+    }
+
+    @Test
+    public void can_be_derived() throws Exception {
+        String line = String.format("{%s}{%s}", IDENTIFIER, TITLE);
+        BufferedReader reader = new BufferedReader(stringReaderOf(
+                String.format("\\derived{%s}\r\n", DERIVED_RATIONALE),
+                "\\end{softwarerequirement}"));
+
+        underTest.load(line, reader);
+
+        SoftwareRequirement softwareRequirement = underTest.specificationItem();
+        Assertions.assertThat(softwareRequirement.derived()).isTrue();
+        Assertions.assertThat(softwareRequirement.derivedRationale()).isEqualTo(DERIVED_RATIONALE);
+    }
+
+    @Test
+    public void can_have_a_status() throws Exception{
+        String line = String.format("{%s}{%s}", IDENTIFIER, TITLE);
+        BufferedReader reader = new BufferedReader(stringReaderOf(
+                String.format("\\status{%s}\r\n", STATUS),
+                "\\end{softwarerequirement}"));
+
+        underTest.load(line, reader);
+
+        SoftwareRequirement softwareRequirement = underTest.specificationItem();
+        Assertions.assertThat(softwareRequirement.status()).isEqualTo(STATUS);
+    }
+
+    @Test
+    public void can_concern_security() throws Exception {
+        String line = String.format("{%s}{%s}", IDENTIFIER, TITLE);
+        BufferedReader reader = new BufferedReader(stringReaderOf(
+                "\\security\r\n",
+                "\\end{softwarerequirement}"));
+
+        underTest.load(line, reader);
+
+        SoftwareRequirement softwareRequirement = underTest.specificationItem();
+        Assertions.assertThat(softwareRequirement.concernsSecurity()).isTrue();
+        Assertions.assertThat(softwareRequirement.concernsSafety()).isFalse();
+    }
+
+    @Test
+    public void can_concern_safety() throws Exception {
+        String line = String.format("{%s}{%s}", IDENTIFIER, TITLE);
+        BufferedReader reader = new BufferedReader(stringReaderOf(
+                "\\safety\r\n",
+                "\\end{softwarerequirement}"));
+
+        underTest.load(line, reader);
+
+        SoftwareRequirement softwareRequirement = underTest.specificationItem();
+        Assertions.assertThat(softwareRequirement.concernsSecurity()).isFalse();
+        Assertions.assertThat(softwareRequirement.concernsSafety()).isTrue();
     }
 }

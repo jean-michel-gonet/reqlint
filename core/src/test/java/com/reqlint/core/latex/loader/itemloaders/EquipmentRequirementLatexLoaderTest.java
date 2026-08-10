@@ -17,6 +17,8 @@ class EquipmentRequirementLatexLoaderTest {
     private static final String IDENTIFIER = "IDENTIFIER";
     private static final String TITLE = "TITLE";
     private static final String EXPECTED_REMAINDER = "Expected remainder";
+    private static final String DERIVED_RATIONALE = "Because of something rational";
+    private static final String STATUS = "Flabbergasted";
 
     private EquipmentRequirementLatexLoader underTest;
 
@@ -74,6 +76,61 @@ class EquipmentRequirementLatexLoaderTest {
 
         Assertions.assertThatExceptionOfType(SpecificationItemNotClosedException.class)
                 .isThrownBy(() -> underTest.load(line, reader));
+    }
+
+    @Test
+    public void can_be_derived() throws Exception {
+        String line = String.format("{%s}{%s}", IDENTIFIER, TITLE);
+        BufferedReader reader = new BufferedReader(stringReaderOf(
+                String.format("\\derived{%s}\r\n", DERIVED_RATIONALE),
+                "\\end{equipmentrequirement}"));
+
+        underTest.load(line, reader);
+
+        EquipmentRequirement equipmentRequirement = underTest.specificationItem();
+        Assertions.assertThat(equipmentRequirement.derived()).isTrue();
+        Assertions.assertThat(equipmentRequirement.derivedRationale()).isEqualTo(DERIVED_RATIONALE);
+    }
+
+    @Test
+    public void can_have_a_status() throws Exception{
+        String line = String.format("{%s}{%s}", IDENTIFIER, TITLE);
+        BufferedReader reader = new BufferedReader(stringReaderOf(
+                String.format("\\status{%s}\r\n", STATUS),
+                "\\end{equipmentrequirement}"));
+
+        underTest.load(line, reader);
+
+        EquipmentRequirement equipmentRequirement = underTest.specificationItem();
+        Assertions.assertThat(equipmentRequirement.status()).isEqualTo(STATUS);
+    }
+
+    @Test
+    public void can_concern_security() throws Exception {
+        String line = String.format("{%s}{%s}", IDENTIFIER, TITLE);
+        BufferedReader reader = new BufferedReader(stringReaderOf(
+                "\\security\r\n",
+                "\\end{equipmentrequirement}"));
+
+        underTest.load(line, reader);
+
+        EquipmentRequirement equipmentRequirement = underTest.specificationItem();
+        Assertions.assertThat(equipmentRequirement.concernsSecurity()).isTrue();
+        Assertions.assertThat(equipmentRequirement.concernsSafety()).isFalse();
+    }
+
+    @Test
+    public void can_concern_safety() throws Exception {
+        String line = String.format("{%s}{%s}", IDENTIFIER, TITLE);
+        BufferedReader reader = new BufferedReader(stringReaderOf(
+                "\\safety\r\n",
+                "\\end{equipmentrequirement}"));
+
+        underTest.load(line, reader);
+
+        EquipmentRequirement equipmentRequirement = underTest.specificationItem();
+        Assertions.assertThat(equipmentRequirement.concernsSecurity()).isFalse();
+        Assertions.assertThat(equipmentRequirement.concernsSafety()).isTrue();
     }
 
 }
