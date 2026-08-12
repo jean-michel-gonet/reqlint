@@ -104,11 +104,24 @@ class SpecificationTreeTest {
     }
 
     @Test
+    public void can_list_equipment_requirements_by_software_requirement() throws Exception {
+        underTest.verify();
+        Assertions.assertThat(underTest.equipmentRequirements(sr1))
+                .containsExactly(er1);
+    }
+
+    @Test
     public void can_sort_software_requirements_by_identifier() throws Exception {
         Assertions.assertThat(underTest.softwareRequirements())
                 .containsExactly(sr1, sr2, sr3);
     }
 
+    @Test
+    public void can_list_software_requirements_by_test_case() throws Exception {
+        underTest.verify();
+        Assertions.assertThat(underTest.softwareRequirements(tc1))
+                .containsExactly(sr1);
+    }
 
     @Test
     public void can_sort_test_cases_by_identifier() throws Exception {

@@ -19,24 +19,52 @@ public class SpecificationTree {
     private final List<TestCase> testCases = new ArrayList<>();
     private final List<SpecificationTreeWarning> warnings = new ArrayList<>();
 
+    /**
+     * @return All equipment requirements.
+     */
     public List<EquipmentRequirement> equipmentRequirements() {
         return equipmentRequirements.stream().sorted().toList();
     }
 
+    /**
+     * The list of equipment requirements linked to the specified software requirement.
+     * @param softwareRequirement The software requirement.
+     * @return The related equipment requirements.
+     */
     public List<EquipmentRequirement> equipmentRequirements(SoftwareRequirement softwareRequirement) {
         return equipmentRequirements.stream()
                 .filter(er -> er.softwareRequirements().contains(softwareRequirement))
                 .toList();
     }
 
+    /**
+     * @return All software requirements.
+     */
     public List<SoftwareRequirement> softwareRequirements() {
         return softwareRequirements.stream().sorted().toList();
     }
 
+    /**
+     * The list of software requirements linked to the specified test case.
+     * @param testCase The test case.
+     * @return The related software requirements.
+     */
+    public List<SoftwareRequirement> softwareRequirements(TestCase testCase) {
+        return softwareRequirements.stream()
+                .filter(sr -> sr.testCases().contains(testCase))
+                .toList();
+    }
+
+    /**
+     * @return All test cases.
+     */
     public List<TestCase> testCases() {
         return testCases.stream().sorted().toList();
     }
 
+    /**
+     * @return All warnings.
+     */
     public List<SpecificationTreeWarning> warnings() {
         return warnings.stream().toList();
     }

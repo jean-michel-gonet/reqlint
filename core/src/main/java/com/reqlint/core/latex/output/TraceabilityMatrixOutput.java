@@ -4,6 +4,7 @@ import com.reqlint.core.specification.SpecificationItem;
 import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.specification.items.EquipmentRequirement;
 import com.reqlint.core.specification.items.SoftwareRequirement;
+import com.reqlint.core.specification.items.TestCase;
 import com.reqlint.core.specification.warnings.SpecificationTreeWarning;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class TraceabilityMatrixOutput {
      * @param writer To write the matrix.
      * @throws IOException Hopefully not.
      */
-    public void writeDownstreamTraceabilityMatrix(Writer writer) throws IOException {
+    public void writeDownstreamSssSrsTrx(Writer writer) throws IOException {
         writeTableHeader(writer, "Upstream", "Downstream");
         for (EquipmentRequirement equipmentRequirement : specificationTree.equipmentRequirements()) {
             if (equipmentRequirement.softwareRequirements().isEmpty()) {
@@ -43,7 +44,7 @@ public class TraceabilityMatrixOutput {
      * @param writer To write the matrix.
      * @throws IOException Hopefully not.
      */
-    public void writeUpstreamTraceabilityMatrix(Writer writer) throws IOException {
+    public void writeUpstreamSssSrsTrx(Writer writer) throws IOException {
         writeTableHeader(writer, "Downstream", "Upstream");
         for (SoftwareRequirement softwareRequirement : specificationTree.softwareRequirements()) {
             List<EquipmentRequirement> equipmentRequirements = specificationTree.equipmentRequirements(softwareRequirement);
@@ -58,6 +59,47 @@ public class TraceabilityMatrixOutput {
         writeTableFooter(writer);
     }
 
+    /**
+     * Writes a traceability matrix with all software requirements and the linked test cases.
+     * Test cases not linked to a software requirement will not appear.
+     * @param writer To write the matrix.
+     * @throws IOException Hopefully not.
+     */
+    public void writeDownstreamSrsTcTrx(Writer writer) throws IOException {
+        writeTableHeader(writer, "Upstream", "Downstream");
+        for (SoftwareRequirement softwareRequirement : specificationTree.softwareRequirements()) {
+            if (softwareRequirement.testCases().isEmpty()) {
+                writeTableRow(writer, softwareRequirement, null);
+            } else {
+                for (TestCase testCase : softwareRequirement.testCases()) {
+                    writeTableRow(writer, softwareRequirement, testCase);
+                }
+            }
+
+        }
+        writeTableFooter(writer);
+    }
+
+    /**
+     * Writes a traceability matrix with all test cases and the linked software.
+     * Software requirements not linked to a test case will not appear.
+     * @param writer To write the matrix.
+     * @throws IOException Hopefully not.
+     */
+    public void writeUpstreamSrsTcTrx(Writer writer) throws IOException {
+        writeTableHeader(writer, "Downstream", "Upstream");
+        for (TestCase testCase : specificationTree.testCases()) {
+            List<SoftwareRequirement> softwareRequirements = specificationTree.softwareRequirements(testCase);
+            if (softwareRequirements.isEmpty()) {
+                writeTableRow(writer, testCase, null);
+            } else {
+                for (SoftwareRequirement softwareRequirement : softwareRequirements) {
+                    writeTableRow(writer, testCase, softwareRequirement);
+                }
+            }
+        }
+        writeTableFooter(writer);
+    }
     private void writeTableHeader(Writer writer, String leftTitle, String rightTitle) throws IOException {
         writer.write("\\begin{xltabular}{\\linewidth}{@{} L c c c c @{\\hspace{15pt}} L c c c c @{}}\r\n");
         writer.write("\\toprule\r\n");

@@ -5,48 +5,80 @@ import com.reqlint.core.specification.SpecificationTree;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
 @Mojo(name = "traceability-matrix", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class TraceabilityMatrixMojo extends ReqlintMojo {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraceabilityMatrixMojo.class);
+
+    /**
+     * Name of the latex file where to output the upstream traceability matrix - SSS to SR.
+     */
+    @Parameter(name = "upstreamSssSrsTrxOutput")
+    protected File upstreamSssSrsTrxOutput;
+
+    /**
+     * Name of the latex file where to output the downstream traceability matrix - SSS to SR.
+     */
+    @Parameter(name = "downstreamSssSrsTrxOutput")
+    protected File downstreamSssSrsTrxOutput;
+
+    /**
+     * Name of the latex file where to output the upstream traceability matrix - TC to SR.
+     */
+    @Parameter(name = "upstreamSrsTcTrxOutput")
+    protected File upstreamSrsTcTrxOutput;
+
+    /**
+     * Name of the latex file where to output the upstream traceability matrix - SR to TC.
+     */
+    @Parameter(name = "downstreamSrsTcTrxOutput")
+    protected File downstreamSrsTcTrxOutput;
+
+    /**
+     * Name of the latex file where to output the warnings detected while building the traceability matrix.
+     */
+    @Parameter(name = "traceabilityWarningsOutput")
+    protected File traceabilityWarningsOutput;
 
     @Override
     public void execute() throws MojoExecutionException {
         try {
             SpecificationTree specificationTree = readSpecificationTree();
             specificationTree.verify();
-            writeTraceabilityMatrix(specificationTree);
+            writeSssSrsTrx(specificationTree);
             writeTraceabilityWarnings(specificationTree);
         } catch (Exception e) {
             throw new MojoExecutionException("Failed to run traceability-matrix goal", e);
         }
     }
 
-    private void writeTraceabilityMatrix(SpecificationTree specificationTree) throws IOException {
+    private void writeSssSrsTrx(SpecificationTree specificationTree) throws IOException {
         TraceabilityMatrixOutput traceabilityMatrixOutput = new TraceabilityMatrixOutput(specificationTree);
-
-        if (upstreamTraceabilityMatrixOutput != null) {
-            if (upstreamTraceabilityMatrixOutput.exists()) {
-                if (!upstreamTraceabilityMatrixOutput.delete()) {
-                    throw new IllegalArgumentException("Cannot overwrite " + upstreamTraceabilityMatrixOutput.getAbsolutePath());
-                }
+        if (upstreamSssSrsTrxOutput != null) {
+            try (Writer writer = this.open("SSS / SRS upstream traceability matrix", upstreamSssSrsTrxOutput)) {
+                traceabilityMatrixOutput.writeUpstreamSssSrsTrx(writer);
             }
-            try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(upstreamTraceabilityMatrixOutput))) {
-                traceabilityMatrixOutput.writeUpstreamTraceabilityMatrix(writer);
+        }
+        if (downstreamSssSrsTrxOutput != null) {
+            try (Writer writer = open("SSS / SRS downstream traceability matrix", downstreamSssSrsTrxOutput)) {
+                traceabilityMatrixOutput.writeDownstreamSssSrsTrx(writer);
             }
         }
 
-        if (downstreamTraceabilityMatrixOutput != null) {
-            if (downstreamTraceabilityMatrixOutput.exists()) {
-                if (!downstreamTraceabilityMatrixOutput.delete()) {
-                    throw new IllegalArgumentException("Cannot overwrite " + downstreamTraceabilityMatrixOutput.getAbsolutePath());
-                }
+        if (upstreamSrsTcTrxOutput != null) {
+            try (Writer writer = this.open("SRS / TC upstream traceability matrix", upstreamSrsTcTrxOutput)) {
+                traceabilityMatrixOutput.writeUpstreamSrsTcTrx(writer);
             }
-            try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(downstreamTraceabilityMatrixOutput))) {
-                traceabilityMatrixOutput.writeDownstreamTraceabilityMatrix(writer);
+        }
+        if (downstreamSrsTcTrxOutput != null) {
+            try (Writer writer = open("SRS / TC downstream traceability matrix", downstreamSrsTcTrxOutput)) {
+                traceabilityMatrixOutput.writeDownstreamSrsTcTrx(writer);
             }
         }
     }
