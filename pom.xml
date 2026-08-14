@@ -12,6 +12,7 @@
         <module>core</module>
         <module>plugin</module>
         <module>sandbox</module>
+        <module>cucumber</module>
     </modules>
 
     <properties>

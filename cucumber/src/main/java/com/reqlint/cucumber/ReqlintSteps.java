@@ -1,6 +1,6 @@
-package com.reqlint.sandbox.cucumber.steps;
+package com.reqlint.cucumber;
 
-import com.reqlint.sandbox.services.ResetEvent;
+import com.reqlint.core.surefire.report.LogPatternsAndFormats;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.java.AfterStep;
 import io.cucumber.java.Before;
@@ -12,27 +12,25 @@ import io.cucumber.plugin.event.Step;
 import io.cucumber.plugin.event.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * Adds specific logs before starting the scenario, and before each cucumber step.
+ * This class is compatible with the
+ */
 public class ReqlintSteps {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReqlintSteps.class);
-
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
 
     private int cucumberStepNumber = 0;
 
     @Before
-    public void log_scenario_name(Scenario scenario) {
-        applicationEventPublisher.publishEvent(new ResetEvent());
+    public void before(Scenario scenario) {
         cucumberStepNumber = 0;
         String testIdentifier = extractTestIdentifier(scenario.getUri());
-        LOGGER.info("# Prepare {} - {}", testIdentifier, scenario.getName());
+        LOGGER.info(LogPatternsAndFormats.preparationOf(testIdentifier, scenario.getName()));
     }
 
     private String extractTestIdentifier(URI uri) {
@@ -41,21 +39,29 @@ public class ReqlintSteps {
     }
 
     @BeforeStep
-    public void log_step_name(Scenario scenario) throws Exception {
+    public void logStepName(Scenario scenario) throws Exception {
         StepDescription stepDescription = extractStepDescription(scenario);
-        if (stepDescription.text().startsWith("Stage")) {
-            return;
-        }
-        LOGGER.info("# Step {} - {}", stepDescription.number(), stepDescription.text());
+        LOGGER.info(LogPatternsAndFormats.stepOf(stepDescription.number(), stepDescription.keyword(), stepDescription.text()));
+    }
+
+    @Given("Stage {int}")
+    public void start_stage(int stepNumber) {
+        // Nothing to do.
+    }
+
+    @Given("Stage {int} - {string}")
+    public void start_stage(int stepNumber, String stepName) {
+        // Nothing to do.
     }
 
     @AfterStep
-    public void increment_step_number(Scenario scenario) {
+    public void nextStep(Scenario scenario) {
         cucumberStepNumber++;
     }
 
     private record StepDescription(
             int number,
+            String keyword,
             String text
     ) {}
 
@@ -78,21 +84,6 @@ public class ReqlintSteps {
 
         PickleStepTestStep pickle = testStepTitles.get(cucumberStepNumber);
         Step step = pickle.getStep();
-        return new StepDescription(cucumberStepNumber + 1, step.getKeyword() + " " + step.getText());
-    }
-
-    @Given("Stage {int}")
-    public void start_phase(int stepNumber) {
-        // Nothing to do: the line is already logged by log_step_name
-    }
-
-    @Given("Stage {int} - {string}")
-    public void start_phase(int stepNumber, String stepName) {
-        // Nothing to do: the line is already logged by log_step_name
-    }
-
-    @Given("Application restarts")
-    public void application_restarts() {
-        applicationEventPublisher.publishEvent(new ResetEvent());
+        return new StepDescription(cucumberStepNumber + 1, step.getKeyword().trim(), step.getText().trim());
     }
 }

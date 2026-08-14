@@ -48,6 +48,7 @@ public class TraceabilityMatrixMojo extends ReqlintMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
+        LOGGER.info("traceability-matrix goal started");
         try {
             SpecificationTree specificationTree = readSpecificationTree();
             specificationTree.verify();

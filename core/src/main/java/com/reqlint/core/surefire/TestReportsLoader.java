@@ -1,5 +1,6 @@
 package com.reqlint.core.surefire;
 
+import com.reqlint.core.surefire.report.TestRun;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -102,11 +103,12 @@ public class TestReportsLoader {
             }
 
             LOGGER.debug("Loaded test report of: {} - {}", className, name);
-            surefireTestReport.addReportItem(new SurefireTestReportItem(
-                    timestamp,
-                    className + " " + name,
-                    testOutput,
-                    testFailure));
+            surefireTestReport.addReportItem(TestRun.builder()
+                    .timeStamp(timestamp)
+                    .name(className + name)
+                    .output(testOutput)
+                    .failure(testFailure)
+                    .build());
         }
     }
 

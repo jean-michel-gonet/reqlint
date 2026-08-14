@@ -2,13 +2,13 @@ package com.reqlint.core.latex.output;
 
 import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.specification.items.TestCase;
-import com.reqlint.core.surefire.SurefireStageOutputItem;
+import com.reqlint.core.surefire.report.TestRunStage;
 import com.reqlint.core.surefire.SurefireTestReport;
-import com.reqlint.core.surefire.SurefireTestReportItem;
+import com.reqlint.core.surefire.report.TestRun;
+import com.reqlint.core.surefire.report.TestRunStageStep;
 import com.reqlint.core.testutils.TextFileContent;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
@@ -51,16 +51,24 @@ class TestResultsOutputTest {
         testWarningsFile = new File(temporaryFolder, TEST_WARNINGS_FILENAME);
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void can_output_the_test_result() throws Exception {
         TestCase testCase = new TestCase(IDENTIFIER, TITLE);
         specificationTree.attach(testCase);
 
-        surefireTestReport.addReportItem(new SurefireTestReportItem(
+        surefireTestReport.addReportItem(new TestRun(
                 TIMESTAMP,
                 IDENTIFIER,
-                List.of(new SurefireStageOutputItem(STAGE_1_NUMBER, STAGE_1_TITLE, STAGE_1_OUTPUT)),
-                NO_FAILURE));
+                null,
+                List.of(TestRunStage.builder()
+                                .ordinal(STAGE_1_NUMBER)
+                                .title(STAGE_1_TITLE)
+                                .addOperation(TestRunStageStep.builder()
+                                        .ordinal(0)
+                                        .title("XX")
+                                        .appendToOutput(STAGE_1_OUTPUT)
+                                        .build())
+                                .build())));
 
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(testResultsFile));
         underTest.writeTestResults(writer);
@@ -77,7 +85,7 @@ class TestResultsOutputTest {
                 "\\begin{lstlisting}[style=stageLog]",
                 "The output of the first stage\\end{lstlisting}");
     }
-    @Test
+    @org.junit.jupiter.api.Test
     public void can_output_the_test_result_when_there_is_none() throws Exception {
         TestCase testCase = new TestCase(IDENTIFIER, TITLE);
         specificationTree.attach(testCase);

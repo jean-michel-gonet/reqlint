@@ -18,7 +18,7 @@ public class FindMatchingLiteral {
         int closestStart = line.length();
         MatchingLiteral<T> matchingLiteral = null;
         for (T enumConstant : clazz.getEnumConstants()) {
-            Matcher matcher = enumConstant.find(line);
+            Matcher matcher = enumConstant.match(line);
             if (matcher.find() && matcher.start() < closestStart) {
                 closestStart = matcher.start();
                 matchingLiteral = new MatchingLiteral<>(enumConstant, matcher);

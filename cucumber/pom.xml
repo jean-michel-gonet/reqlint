@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.reqlint</groupId>
+        <artifactId>reqlint</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>reqlint-cucumber</artifactId>
+    <packaging>jar</packaging>
+    <description>Contains helpers for using REQLINT with cucumber.</description>
+
+    <dependencies>
+        <!-- Local dependencies -->
+        <dependency>
+            <groupId>com.reqlint</groupId>
+            <artifactId>reqlint-core</artifactId>
+        </dependency>
+
+        <!-- Third party dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+        </dependency>
+    </dependencies>
+</project>

@@ -4,9 +4,9 @@ import com.reqlint.core.specification.SpecificationTree;
 import com.reqlint.core.specification.items.TestCase;
 import com.reqlint.core.specification.items.TestProcedure;
 import com.reqlint.core.specification.items.TestStage;
-import com.reqlint.core.surefire.SurefireStageOutputItem;
+import com.reqlint.core.surefire.report.TestRunStage;
 import com.reqlint.core.surefire.SurefireTestReport;
-import com.reqlint.core.surefire.SurefireTestReportItem;
+import com.reqlint.core.surefire.report.TestRun;
 import com.reqlint.core.surefire.warnings.*;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class TestResultsOutput {
 
             // Look for the corresponding test report:
             String identifier = testCase.identifier();
-            List<SurefireTestReportItem> matchingTestReports = testReport.reportsOfTestCase(identifier);
+            List<TestRun> matchingTestReports = testReport.reportsOfTestCase(identifier);
 
             // Add the description if there is no test report:
             if (matchingTestReports.isEmpty()) {
@@ -70,17 +70,17 @@ public class TestResultsOutput {
         testReport.addReportWarning(new NoTestReportsForTestCase(testCase));
     }
 
-    private void writeTestResultForATestedTestCase(Writer writer, TestCase testCase, List<SurefireTestReportItem> matchingTestReports) throws IOException {
+    private void writeTestResultForATestedTestCase(Writer writer, TestCase testCase, List<TestRun> matchingTestReports) throws IOException {
         if (matchingTestReports.size() > 1) {
             testReport.addReportWarning(new MultipleTestReportsForTestCase(testCase, matchingTestReports.size()));
         }
-        SurefireTestReportItem testReportItem = matchingTestReports.getFirst();
+        TestRun testReportItem = matchingTestReports.getFirst();
 
         writeTestResult(writer, testReportItem);
         checkConsistency(testCase, testReportItem);
     }
 
-    private void checkConsistency(TestCase testCase, SurefireTestReportItem testReportItem) {
+    private void checkConsistency(TestCase testCase, TestRun testReportItem) {
         if (testReportItem.isFailed()) {
             testReport.addReportWarning(new TestFailed(testCase));
             return;
@@ -90,32 +90,30 @@ public class TestResultsOutput {
             return;
         }
 
-        if (testProcedure.stages().size() + 1 != testReportItem.stageOutputs().size()) {
-            testReport.addReportWarning(new MismatchedNumberOfStages(testCase, testReportItem.stageOutputs().size()));
+        if (testProcedure.stages().size() + 1 != testReportItem.stages().size()) {
+            testReport.addReportWarning(new MismatchedNumberOfStages(testCase, testReportItem.stages().size()));
             return;
         }
 
-        for(int n = 1; n < testReportItem.stageOutputs().size(); n++) {
+        for(int n = 1; n < testReportItem.stages().size(); n++) {
             TestStage testStage = testProcedure.stages().get(n - 1);
-            SurefireStageOutputItem stageOutputItem = testReportItem.stageOutputs().get(n);
-            if (!Objects.equals(testStage.description(), stageOutputItem.stageTitle())) {
+            TestRunStage stageOutputItem = testReportItem.stages().get(n);
+            if (!Objects.equals(testStage.description(), stageOutputItem.title())) {
                 testReport.addReportWarning(new MismatchedStageDescription(testCase, n));
                 return;
             }
         }
     }
 
-    private void writeTestResult(Writer writer, SurefireTestReportItem testReportItem) throws IOException {
-        for (SurefireStageOutputItem stageOutput : testReportItem.stageOutputs()) {
-            writer.write(String.format("\\stagetitle{Stage %d: %s}\r\n", stageOutput.stageNumber(), stageOutput.stageTitle()));
+    private void writeTestResult(Writer writer, TestRun test) throws IOException {
+        for (TestRunStage stageOutput : test.stages()) {
+            writer.write(String.format("\\stagetitle{Stage %d: %s}\r\n", stageOutput.ordinal(), stageOutput.title()));
             writer.write("\\begin{lstlisting}[style=stageLog]\r\n");
-            writer.write(stageOutput.stageOutput());
             writer.write("\\end{lstlisting}\r\n");
         }
-        if (testReportItem.isFailed()) {
+        if (test.isFailed()) {
             writer.write("\\testfailure{Test failed}\r\n");
             writer.write("\\begin{lstlisting}[style=stageLog]\r\n");
-            writer.write(testReportItem.failure());
             writer.write("\\end{lstlisting}\r\n");
         }
     }

@@ -26,7 +26,7 @@ public class TestProcedureLatexLoader implements SpecificationItemLatexLoader<Te
         }
 
         @Override
-        public Matcher find(String line) {
+        public Matcher match(String line) {
             return pattern.matcher(line);
         }
     }

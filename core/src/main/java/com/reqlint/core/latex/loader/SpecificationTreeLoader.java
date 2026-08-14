@@ -27,7 +27,7 @@ public class SpecificationTreeLoader {
         }
 
         @Override
-        public Matcher find(String line) {
+        public Matcher match(String line) {
             return pattern.matcher(line);
         }
     }

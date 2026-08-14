@@ -1,5 +1,6 @@
 package com.reqlint.core.surefire;
 
+import com.reqlint.core.surefire.report.TestRun;
 import com.reqlint.core.surefire.warnings.TestReportWarning;
 
 import java.util.ArrayList;
@@ -12,13 +13,13 @@ import java.util.regex.Pattern;
  * @see TestReportsLoader
  */
 public class SurefireTestReport {
-    private final List<SurefireTestReportItem> reportItems = new ArrayList<>();
+    private final List<TestRun> reportItems = new ArrayList<>();
     private final List<TestReportWarning> warnings = new ArrayList<>();
 
     /**
      * @param reportItem A new item to add to the report.
      */
-    public void addReportItem(SurefireTestReportItem reportItem) {
+    public void addReportItem(TestRun reportItem) {
         reportItems.add(reportItem);
     }
 
@@ -41,14 +42,14 @@ public class SurefireTestReport {
      * @param testCaseIdentifier The test case identifier.
      * @return A collection of reports.
      */
-    public List<SurefireTestReportItem> reportsOfTestCase(String testCaseIdentifier) {
+    public List<TestRun> reportsOfTestCase(String testCaseIdentifier) {
         String testCaseIdentifierWithSafeChars = testCaseIdentifier.replace("-", "[-_]");
         String sPattern = String.format("(^|[@_\\s])(%s)($|[@_\\s])", testCaseIdentifierWithSafeChars);
         Pattern pattern = Pattern.compile(sPattern);
 
-        List<SurefireTestReportItem> matchingReports = new ArrayList<>();
-        for (SurefireTestReportItem reportItem : reportItems) {
-            String name = reportItem.name();
+        List<TestRun> matchingReports = new ArrayList<>();
+        for (TestRun reportItem : reportItems) {
+            String name = reportItem.title();
             Matcher matcher = pattern.matcher(name);
             if (matcher.find()) {
                 matchingReports.add(reportItem);
@@ -61,7 +62,7 @@ public class SurefireTestReport {
         return warnings.stream().sorted().toList();
     }
 
-    public List<SurefireTestReportItem> reports() {
+    public List<TestRun> reports() {
         return reportItems;
     }
 

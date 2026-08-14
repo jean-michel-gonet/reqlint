@@ -3,6 +3,7 @@ package com.reqlint.plugin;
 import com.reqlint.core.latex.loader.SpecificationTreeLoader;
 import com.reqlint.core.latex.parser.LatexReader;
 import com.reqlint.core.specification.SpecificationTree;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -19,8 +20,8 @@ import java.util.List;
 public abstract class ReqlintMojo extends AbstractMojo {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReqlintMojo.class);
 
-    @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
-    protected List<MavenProject> allProjects;
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
 
     /**
      * The latex main files where the software requirements specification is documented.

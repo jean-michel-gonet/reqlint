@@ -32,7 +32,7 @@ public class EquipmentRequirementLatexLoader implements SpecificationItemLatexLo
         }
 
         @Override
-        public Matcher find(String line) {
+        public Matcher match(String line) {
             return pattern.matcher(line);
         }
     }
