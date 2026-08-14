@@ -107,7 +107,6 @@ public class TestReportsLoader {
                     .timeStamp(timestamp)
                     .name(className + name)
                     .output(testOutput)
-                    .failure(testFailure)
                     .build());
         }
     }

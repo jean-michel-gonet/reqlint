@@ -87,15 +87,12 @@ public record TestRun(LocalDateTime timeStamp, String title, TestRunStage prepar
             Status status = Status.CONTEXT_BUILD;
 
             for(String line: outputs) {
-                // Ignore trailing and ignoring sequences:
-                line = trim(line);
-
                 // Check for delimiting patterns in the line:
                 MatchingLiteral<LogPatternsAndFormats> matchingLiteral = FindMatchingLiteral.findClosestMatch(LogPatternsAndFormats.class, line);
 
                 // If none:
                 if (matchingLiteral == null) {
-                    // Add the line to the current step:
+                    // Add the line as output to the current step:
                     if (stepBuilder!=null) {
                         stepBuilder.appendToOutput(line);
                     }
@@ -107,82 +104,94 @@ public record TestRun(LocalDateTime timeStamp, String title, TestRunStage prepar
                 // Depending on the delimiting pattern found:
                 switch (matchingLiteral.literal()) {
                     case PREPARE -> {
+                        // Open next stage:
                         stageBuilder = TestRunStage.builder();
                         stageBuilder.ordinal(0);
                         stageBuilder.title("Preparation");
 
+                        // Open next step:
                         stepBuilder = null;
 
+                        // Sets the section:
                         status = Status.PREPARATION;
                     }
 
                     case STAGE -> {
-                        stageBuilder.addOperation(stepBuilder);
-                        if (status == Status.PREPARATION || status == Status.CONTEXT_BUILD) {
-                            this.preparation = stageBuilder.build();
-                        } else {
-                            if (status == Status.OPERATION) {
+                        // Close current step and stage:
+                        switch (status) {
+                            case PREPARATION -> {
                                 stageBuilder.addOperation(stepBuilder);
-                            } else {
-                                stageBuilder.addExpectation(stepBuilder);
+                                this.preparation = stageBuilder.build();
                             }
-                            this.stages.add(stageBuilder.build());
+                            case OPERATION -> {
+                                stageBuilder.addOperation(stepBuilder);
+                                this.stages.add(stageBuilder.build());
+                            }
+                            case EXPECTATION -> {
+                                stageBuilder.addExpectation(stepBuilder);
+                                this.stages.add(stageBuilder.build());
+                            }
                         }
-                        stageBuilder = TestRunStage.builder();
-                        stageBuilder.ordinal(Integer.parseInt(matchingLiteral.group(3)));
-                        stageBuilder.title(matchingLiteral.group(4));
 
+                        // Open next step
                         stepBuilder = null;
 
+                        // Open next stage:
+                        stageBuilder = TestRunStage.builder();
+                        stageBuilder.ordinal(Integer.parseInt(matchingLiteral.group(3)));
+                        stageBuilder.title(trim(matchingLiteral.group(4)));
+
+                        // Sets the section:
                         status = Status.OPERATION;
                     }
 
                     case GIVEN, WHEN, AND, STAR -> {
-                        if (status == Status.EXPECTATION) {
-                            stageBuilder.addExpectation(stepBuilder);
-                        } else {
-                            stageBuilder.addOperation(stepBuilder);
+                        switch (status) {
+                            case PREPARATION, OPERATION -> stageBuilder.addOperation(stepBuilder);
+                            case EXPECTATION -> stageBuilder.addExpectation(stepBuilder);
                         }
 
+                        // Open next step:
                         stepBuilder = TestRunStageStep.builder();
                         stepBuilder.ordinal(Integer.parseInt(matchingLiteral.group(1)));
-                        stepBuilder.title(matchingLiteral.group(3));
+                        stepBuilder.title(trim(matchingLiteral.group(3)));
                     }
 
                     case THEN -> {
-                        if (status == Status.EXPECTATION) {
-                            stageBuilder.addExpectation(stepBuilder);
-                        } else {
-                            stageBuilder.addOperation(stepBuilder);
+                        switch (status) {
+                            case PREPARATION -> {
+                                stageBuilder.addOperation(stepBuilder);
+                            }
+                            case OPERATION -> {
+                                stageBuilder.addOperation(stepBuilder);
+                                status = Status.EXPECTATION;
+                            }
+                            case EXPECTATION -> {
+                                stageBuilder.addExpectation(stepBuilder);
+                            }
                         }
-
-                        status = Status.EXPECTATION;
 
                         stepBuilder = TestRunStageStep.builder();
                         stepBuilder.ordinal(Integer.parseInt(matchingLiteral.group(1)));
-                        stepBuilder.title(matchingLiteral.group(3));
+                        stepBuilder.title(trim(matchingLiteral.group(3)));
                     }
                 }
             }
-            if (status == Status.EXPECTATION) {
-                stageBuilder.addExpectation(stepBuilder);
-            } else {
-                stageBuilder.addOperation(stepBuilder);
-            }
-            if (status == Status.PREPARATION) {
-                this.preparation = stageBuilder.build();
-            } else {
-                this.stages.add(stageBuilder.build());
+            switch (status) {
+                case PREPARATION -> {
+                    stageBuilder.addOperation(stepBuilder);
+                    this.preparation = stageBuilder.build();
+                }
+                case OPERATION -> {
+                    stageBuilder.addOperation(stepBuilder);
+                    this.stages.add(stageBuilder.build());
+                }
+                case EXPECTATION -> {
+                    stageBuilder.addExpectation(stepBuilder);
+                    this.stages.add(stageBuilder.build());
+                }
             }
 
-            return this;
-        }
-
-        /**
-         * @param failure The raw error logs captured during the test.
-         * @return This builder.
-         */
-        public Builder failure(String failure) {
             return this;
         }
 
@@ -201,20 +210,5 @@ public record TestRun(LocalDateTime timeStamp, String title, TestRunStage prepar
      */
     private TestRun(Builder builder) {
         this(builder.timeStamp, builder.name, builder.preparation, builder.stages);
-    }
-
-    /**
-     * @return {@code true} if either the preparation or any stage is failed.
-     */
-    public boolean isFailed() {
-        if (preparation().isFailed()) {
-            return true;
-        }
-        for (TestRunStage stage : stages) {
-            if (stage.isFailed()) {
-                return true;
-            }
-        }
-        return false;
     }
 }

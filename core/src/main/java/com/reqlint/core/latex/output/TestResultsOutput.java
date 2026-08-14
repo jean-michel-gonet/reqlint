@@ -81,10 +81,6 @@ public class TestResultsOutput {
     }
 
     private void checkConsistency(TestCase testCase, TestRun testReportItem) {
-        if (testReportItem.isFailed()) {
-            testReport.addReportWarning(new TestFailed(testCase));
-            return;
-        }
         TestProcedure testProcedure = testCase.testProcedure();
         if (testProcedure == null) {
             return;
@@ -108,11 +104,6 @@ public class TestResultsOutput {
     private void writeTestResult(Writer writer, TestRun test) throws IOException {
         for (TestRunStage stageOutput : test.stages()) {
             writer.write(String.format("\\stagetitle{Stage %d: %s}\r\n", stageOutput.ordinal(), stageOutput.title()));
-            writer.write("\\begin{lstlisting}[style=stageLog]\r\n");
-            writer.write("\\end{lstlisting}\r\n");
-        }
-        if (test.isFailed()) {
-            writer.write("\\testfailure{Test failed}\r\n");
             writer.write("\\begin{lstlisting}[style=stageLog]\r\n");
             writer.write("\\end{lstlisting}\r\n");
         }

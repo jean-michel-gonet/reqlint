@@ -8,9 +8,8 @@ import java.util.List;
  * @param ordinal The step number.
  * @param title Textual description.
  * @param output The logs entries associated to this step.
- * @param failure The step failure. Leave it {@code null} if no failure.
  */
-public record TestRunStageStep(int ordinal, String title, List<String> output, TestRunStageStepFailure failure) {
+public record TestRunStageStep(int ordinal, String title, List<String> output) {
 
     /**
      * @return A builder, to create new instances.
@@ -26,7 +25,6 @@ public record TestRunStageStep(int ordinal, String title, List<String> output, T
         private int ordinal;
         private String title;
         private final List<String> output = new ArrayList<>();
-        private TestRunStageStepFailure failure;
 
         /**
          * @return A new instance.
@@ -62,15 +60,6 @@ public record TestRunStageStep(int ordinal, String title, List<String> output, T
             this.output.add(output);
             return this;
         }
-
-        /**
-         * @param failure The step failure.
-         * @return This builder.
-         */
-        public Builder failure(TestRunStageStepFailure failure) {
-            this.failure = failure;
-            return this;
-        }
     }
 
     /**
@@ -79,14 +68,7 @@ public record TestRunStageStep(int ordinal, String title, List<String> output, T
      * @param builder A builder.
      */
     private TestRunStageStep(Builder builder) {
-        this(builder.ordinal, builder.title, builder.output,  builder.failure);
-    }
-
-    /**
-     * @return {@code true} If the step has a failure.
-     */
-    public boolean isFailed() {
-        return failure != null;
+        this(builder.ordinal, builder.title, builder.output);
     }
 
     @Override

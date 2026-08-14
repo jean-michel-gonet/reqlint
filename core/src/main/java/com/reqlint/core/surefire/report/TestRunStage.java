@@ -111,23 +111,6 @@ public record TestRunStage(int ordinal, String title, List<TestRunStageStep> ope
                 Collections.unmodifiableList(builder.expectations));
     }
 
-    /**
-     * @return {@code true} If any operation or expectation is failed.
-     */
-    public boolean isFailed() {
-        for (TestRunStageStep operation : operations) {
-            if (operation.isFailed()) {
-                return true;
-            }
-        }
-        for (TestRunStageStep expectation : expectations) {
-            if (expectation.isFailed()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public String toString() {
         return ordinal + " - " + title;
