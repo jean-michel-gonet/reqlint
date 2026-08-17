@@ -2,7 +2,10 @@ package com.reqlint.plugin;
 
 import com.reqlint.core.input.latex.loader.SpecificationTreeLoader;
 import com.reqlint.core.input.latex.parser.LatexReader;
+import com.reqlint.core.input.surefire.SurefireTestSuiteFinder;
+import com.reqlint.core.input.surefire.SurefireTestSuiteLoader;
 import com.reqlint.core.model.specification.SpecificationTree;
+import com.reqlint.core.model.testreport.TestReport;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -68,4 +71,27 @@ public abstract class ReqlintMojo extends AbstractMojo {
 
         return new OutputStreamWriter(new FileOutputStream(file));
     }
+
+    protected TestReport readSurefireTestReport() throws IOException {
+
+        List<File> surefireReportsFolders = session.getAllProjects().stream()
+                .map(project -> new File(project.getBuild().getDirectory(), "surefire-reports"))
+                .filter(File::exists)
+                .filter(File::isDirectory)
+                .toList();
+
+        SurefireTestSuiteLoader surefireTestSuiteLoader = new SurefireTestSuiteLoader();
+        for (File surefireReportsFolder : surefireReportsFolders) {
+            LOGGER.info("Loading surefire test reports from " + surefireReportsFolder.getAbsolutePath());
+            SurefireTestSuiteFinder surefireTestSuiteFinder = new SurefireTestSuiteFinder(surefireReportsFolder);
+            for (File surefireTestReport : surefireTestSuiteFinder.search()) {
+                surefireTestSuiteLoader.loadReport(surefireTestReport);
+            }
+        }
+
+        TestReport testReport = surefireTestSuiteLoader.getTestReport();
+        LOGGER.info("Loaded " + testReport.numberOfReports() + " surefire test reports");
+        return surefireTestSuiteLoader.getTestReport();
+    }
+
 }

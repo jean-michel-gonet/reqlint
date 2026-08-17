@@ -1,5 +1,6 @@
 package com.reqlint.core.input.latex.loader.itemloaders;
 
+import com.reqlint.core.input.latex.loader.LatexPatterns;
 import com.reqlint.core.input.latex.loader.SpecificationItemLatexLoader;
 import com.reqlint.core.input.latex.loader.exceptions.SpecificationItemMissingArgumentsException;
 import com.reqlint.core.input.latex.loader.exceptions.SpecificationItemNotClosedException;

@@ -130,6 +130,19 @@
                         </configuration>
                     </execution>
 
+                    <!-- Retrieve test case descriptions from test results -->
+                    <execution>
+                        <id>test-description</id>
+                        <!-- To be executed after all integration tests -->
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>test-description</goal>
+                        </goals>
+                        <configuration>
+                            <latexDocument>${project.build.outputDirectory}/documentation/root.tex</latexDocument>
+                        </configuration>
+                    </execution>
+
                     <!-- Produce the test results -->
                     <execution>
                         <id>test-results</id>

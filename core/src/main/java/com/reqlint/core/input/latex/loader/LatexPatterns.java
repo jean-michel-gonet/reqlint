@@ -1,11 +1,31 @@
-package com.reqlint.core.input.latex.loader.itemloaders;
+package com.reqlint.core.input.latex.loader;
 
 import java.util.regex.Pattern;
 
 /**
  * A collection of LaTeX patterns to use while loading the specification tree.
  */
-class LatexPatterns {
+public class LatexPatterns {
+    /**
+     * Pattern to match the equipment requirement open tag
+     */
+    public static final Pattern OPEN_EQUIPMENT_REQUIREMENT = Pattern.compile("\\\\begin\\{equipmentrequirement}");
+
+    /**
+     * Pattern to match the software requirement open tag
+     */
+    public static final Pattern OPEN_SOFTWARE_REQUIREMENT = Pattern.compile("\\\\begin\\{softwarerequirement}");
+
+    /**
+     * Pattern to match the test case open tag
+     */
+    public static final Pattern OPEN_TEST_CASE = Pattern.compile("\\\\begin\\{testcase}");
+
+    /**
+     * Pattern to match the test case close tag
+     */
+    public static final Pattern CLOSE_TEST_CASE = Pattern.compile("\\\\end\\{testcase}");
+
     /**
      * Pattern to match two arguments.
      * In the example below, it catches {@code arg1} in group 1 and {@code arg1} in group 2:

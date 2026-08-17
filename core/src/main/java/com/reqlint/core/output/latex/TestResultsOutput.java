@@ -102,9 +102,16 @@ public class TestResultsOutput {
         }
     }
 
-    private void writeTestResult(Writer writer, TestRun test) throws IOException {
+    /**
+     * Writes one test result to the specified writer.
+     * @param writer The writer.
+     * @param test The test result.
+     * @throws IOException Hopefully not
+     * TODO: Having this static method looks like a bad design...
+     */
+    public static void writeTestResult(Writer writer, TestRun test) throws IOException {
         if (test.preparation() == null && test.stages().isEmpty()) {
-            writer.write("No preparation for " + test.title() + CRLF);
+            writer.write("No description for " + test.title() + CRLF);
             return;
         }
 

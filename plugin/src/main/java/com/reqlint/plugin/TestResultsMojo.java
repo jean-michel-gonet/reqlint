@@ -1,19 +1,19 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.output.latex.TestResultsOutput;
 import com.reqlint.core.model.specification.SpecificationTree;
 import com.reqlint.core.model.testreport.TestReport;
-import com.reqlint.core.input.surefire.SurefireTestSuiteFinder;
-import com.reqlint.core.input.surefire.SurefireTestSuiteLoader;
+import com.reqlint.core.output.latex.TestResultsOutput;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 @Mojo(name = "test-results", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
 public class TestResultsMojo extends ReqlintMojo {
@@ -47,27 +47,5 @@ public class TestResultsMojo extends ReqlintMojo {
         try(Writer writer = new OutputStreamWriter(new FileOutputStream(testWarningsOutput), StandardCharsets.UTF_8)) {
             testResultsOutput.writeTestWarnings(writer);
         }
-    }
-
-    private TestReport readSurefireTestReport() throws IOException {
-
-        List<File> surefireReportsFolders = session.getAllProjects().stream()
-                .map(project -> new File(project.getBuild().getDirectory(), "surefire-reports"))
-                .filter(File::exists)
-                .filter(File::isDirectory)
-                .toList();
-
-        SurefireTestSuiteLoader surefireTestSuiteLoader = new SurefireTestSuiteLoader();
-        for (File surefireReportsFolder : surefireReportsFolders) {
-            LOGGER.info("Loading surefire test reports from " + surefireReportsFolder.getAbsolutePath());
-            SurefireTestSuiteFinder surefireTestSuiteFinder = new SurefireTestSuiteFinder(surefireReportsFolder);
-            for (File surefireTestReport : surefireTestSuiteFinder.search()) {
-                surefireTestSuiteLoader.loadReport(surefireTestReport);
-            }
-        }
-
-        TestReport testReport = surefireTestSuiteLoader.getTestReport();
-        LOGGER.info("Loaded " + testReport.numberOfReports() + " surefire test reports");
-        return surefireTestSuiteLoader.getTestReport();
     }
 }

@@ -15,9 +15,9 @@ import java.util.regex.Matcher;
 
 public class SpecificationTreeLoader {
     public enum Patterns implements AssociatedPattern {
-        EQUIPMENT_REQUIREMENT(java.util.regex.Pattern.compile("\\\\begin\\{equipmentrequirement}")),
-        SOFTWARE_REQUIREMENT(java.util.regex.Pattern.compile("\\\\begin\\{softwarerequirement}")),
-        TEST_CASE(java.util.regex.Pattern.compile("\\\\begin\\{testcase}"));
+        EQUIPMENT_REQUIREMENT(LatexPatterns.OPEN_EQUIPMENT_REQUIREMENT),
+        SOFTWARE_REQUIREMENT(LatexPatterns.OPEN_SOFTWARE_REQUIREMENT),
+        TEST_CASE(LatexPatterns.OPEN_TEST_CASE);
 
         private final java.util.regex.Pattern pattern;
 

@@ -1,5 +1,6 @@
 package com.reqlint.core.input.latex.loader.itemloaders;
 
+import com.reqlint.core.input.latex.loader.LatexPatterns;
 import com.reqlint.core.input.latex.loader.SpecificationItemLatexLoader;
 import com.reqlint.core.input.latex.loader.exceptions.SpecificationItemMissingArgumentsException;
 import com.reqlint.core.input.latex.loader.exceptions.SpecificationItemNotClosedException;
@@ -14,9 +15,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TestCaseLatexLoader implements SpecificationItemLatexLoader<TestCase> {
-    private static final Pattern ARGUMENTS = Pattern.compile("\\{([^}]+)}\\{([^}]+)}");
+
     private enum Patterns implements AssociatedPattern {
-        CLOSE(Pattern.compile("\\\\end\\{testcase}")),
+        CLOSE(LatexPatterns.CLOSE_TEST_CASE),
         TEST_PROCEDURE(Pattern.compile("\\\\begin\\{testprocedure}")),
         CHILD_OF(Pattern.compile("\\\\childof\\{([^}]+)}"));
 
@@ -37,7 +38,7 @@ public class TestCaseLatexLoader implements SpecificationItemLatexLoader<TestCas
     @Override
     public String load(String line, BufferedReader reader) throws IOException {
         // Obtain the arguments from the remainder:
-        Matcher matcher = ARGUMENTS.matcher(line);
+        Matcher matcher = LatexPatterns.TWO_ARGUMENTS.matcher(line);
         if (!matcher.find()) {
             throw new SpecificationItemMissingArgumentsException(line);
         }
