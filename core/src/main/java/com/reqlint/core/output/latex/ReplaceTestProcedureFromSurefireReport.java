@@ -20,11 +20,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ReplaceTestProcedureFromSurefireReport {
-    private static final String COMMAND = "\\\\testprocedurefromsurefirereport";
+    private static final String COMMAND = "\\testprocedurefromsurefirereport";
+
     public enum Patterns implements AssociatedPattern {
         OPEN_TEST_CASE(LatexPatterns.OPEN_TEST_CASE),
         CLOSE_TEST_CASE(LatexPatterns.CLOSE_TEST_CASE),
-        TEST_PROCEDURE_FROM_SUREFIRE_REPORT(Pattern.compile(COMMAND));
+        TEST_PROCEDURE_FROM_SUREFIRE_REPORT(Pattern.compile("\\" + COMMAND));
 
         private final java.util.regex.Pattern pattern;
 
@@ -55,7 +56,8 @@ public class ReplaceTestProcedureFromSurefireReport {
         }
     }
 
-    private record Replacement(File file, int line, String find, String replace) {}
+    private record Replacement(File file, int line, String find, String replace) {
+    }
 
     private void makeReplacements(List<Replacement> replacements) throws IOException {
         // Group replacements by target file to process each file exactly once
@@ -102,27 +104,23 @@ public class ReplaceTestProcedureFromSurefireReport {
                     }
                     line = line.substring(matchingLiteral.end());
                     switch (matchingLiteral.literal()) {
-                        case OPEN_TEST_CASE ->  {
+                        case OPEN_TEST_CASE -> {
                             Matcher matcher = LatexPatterns.TWO_ARGUMENTS.matcher(line);
                             if (matcher.find()) {
                                 currentTestCase = matcher.group(1);
                             }
                             line = line.substring(matcher.end());
                         }
-                        case TEST_PROCEDURE_FROM_SUREFIRE_REPORT -> {
-                            renderTestRun(currentTestCase).ifPresent(renderedTestRun -> {
-                                replacements.add(new Replacement(
-                                        latexReader.file(),
-                                        latexReader.lineNumber(),
-                                        COMMAND, renderedTestRun));
-                            });
-                        }
-                        case CLOSE_TEST_CASE -> {
-                            currentTestCase = "";
-                        }
+                        case TEST_PROCEDURE_FROM_SUREFIRE_REPORT ->
+                                renderTestRun(currentTestCase).ifPresent(renderedTestRun ->
+                                        replacements.add(new Replacement(
+                                                latexReader.file(),
+                                                latexReader.lineNumber(),
+                                                COMMAND, renderedTestRun)));
+                        case CLOSE_TEST_CASE -> currentTestCase = "";
                     }
                 }
-            } while ( (line = reader.readLine()) != null);
+            } while ((line = reader.readLine()) != null);
         }
         return replacements;
     }

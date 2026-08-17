@@ -35,6 +35,19 @@ public class TextFileContent {
     }
 
     /**
+     * Reads all the lines from the specified file.
+     *
+     * @param file An existing file, to read from.
+     * @return A list with all the lines of the content.
+     * @throws Exception Hopefully not.
+     */
+    public static List<String> readLinesFromFile(File file) throws Exception {
+        try (Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+            return readLinesFromFile(reader);
+        }
+    }
+
+    /**
      * Reads all the lines from the specified reader.
      *
      * @param reader A reader, to read from.

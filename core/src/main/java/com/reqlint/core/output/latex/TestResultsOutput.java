@@ -120,7 +120,7 @@ public class TestResultsOutput {
             writer.write("    \\item \\textbf{Preparation}\r\n");
             writer.write("    \\begin{enumerate}\r\n");
             for (TestRunStageStep operation : test.preparation().operations()) {
-                writer.write("        \\item  " + operation.title() + "\r\n");
+                writeStageStep(writer, operation);
             }
             writer.write("    \\end{enumerate}\r\n");
         }
@@ -131,7 +131,7 @@ public class TestResultsOutput {
                 writer.write("        \\item \\textbf{Operations}\r\n");
                 writer.write("        \\begin{enumerate}\r\n");
                 for (TestRunStageStep operation : stage.operations()) {
-                    writer.write("             \\item  " + operation.title() + "\r\n");
+                    writeStageStep(writer, operation);
                 }
                 writer.write("        \\end{enumerate}\r\n");
             }
@@ -139,12 +139,26 @@ public class TestResultsOutput {
                 writer.write("        \\item \\textbf{Expectations}\r\n");
                 writer.write("        \\begin{enumerate}\r\n");
                 for (TestRunStageStep expectation : stage.expectations()) {
-                    writer.write("             \\item  " + expectation.title() + "\r\n");
+                    writeStageStep(writer, expectation);
                 }
                 writer.write("        \\end{enumerate}\r\n");
             }
             writer.write("    \\end{itemize}\r\n");
         }
         writer.write("\\end{itemize}\r\n");
+    }
+
+    private static void writeStageStep(Writer writer, TestRunStageStep stageStep) throws IOException {
+        writer.write("        \\item  " + stageStep.title() + "\r\n");
+        if (stageStep.output().isEmpty()) {
+            return;
+        }
+
+        writer.write("        \\begin{lstlisting}[style=stageLog]\r\n");
+        for (String s : stageStep.output()) {
+            writer.write(s + "\r\n");
+        }
+        writer.write("        \\end{lstlisting}\r\n");
+
     }
 }

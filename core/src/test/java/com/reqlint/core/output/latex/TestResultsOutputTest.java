@@ -24,10 +24,6 @@ class TestResultsOutputTest {
     private static final String STAGE_1_TITLE = "The first stage";
     private static final String STAGE_1_OUTPUT = "The output of the first stage";
 
-    private static final String NO_FAILURE = "";
-    private static final String FAILURE = "Failure";
-
-
     private static final String TEST_RESULT_FILENAME = "test-results.tex";
     private static final String TEST_WARNINGS_FILENAME = "test-warnings.tex";
 
@@ -87,7 +83,10 @@ class TestResultsOutputTest {
                 "    \\begin{itemize}",
                 "        \\item \\textbf{Operations}",
                 "        \\begin{enumerate}",
-                "             \\item  XX",
+                "        \\item  XX",
+                "        \\begin{lstlisting}[style=stageLog]",
+                "The output of the first stage",
+                "        \\end{lstlisting}",
                 "        \\end{enumerate}",
                 "    \\end{itemize}",
                 "\\end{itemize}");
