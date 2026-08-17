@@ -1,12 +1,11 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.latex.loader.SpecificationTreeLoader;
-import com.reqlint.core.latex.parser.LatexReader;
-import com.reqlint.core.specification.SpecificationTree;
+import com.reqlint.core.input.latex.loader.SpecificationTreeLoader;
+import com.reqlint.core.input.latex.parser.LatexReader;
+import com.reqlint.core.model.specification.SpecificationTree;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

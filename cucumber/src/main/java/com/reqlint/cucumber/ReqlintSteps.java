@@ -1,6 +1,6 @@
 package com.reqlint.cucumber;
 
-import com.reqlint.core.surefire.report.LogPatternsAndFormats;
+import com.reqlint.core.input.surefire.LogPatternsAndFormats;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.java.AfterStep;
 import io.cucumber.java.Before;

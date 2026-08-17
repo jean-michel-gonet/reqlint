@@ -1,10 +1,10 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.latex.output.TestResultsOutput;
-import com.reqlint.core.specification.SpecificationTree;
-import com.reqlint.core.surefire.SurefireTestReport;
-import com.reqlint.core.surefire.TestReportsFinder;
-import com.reqlint.core.surefire.TestReportsLoader;
+import com.reqlint.core.output.latex.TestResultsOutput;
+import com.reqlint.core.model.specification.SpecificationTree;
+import com.reqlint.core.model.testreport.TestReport;
+import com.reqlint.core.input.surefire.SurefireReportsFinder;
+import com.reqlint.core.input.surefire.SurefireReportsLoader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -26,8 +26,8 @@ public class TestResultsMojo extends ReqlintMojo {
             LOGGER.info("Load specification tree");
             SpecificationTree specificationTree = readSpecificationTree();
             LOGGER.info("Loading surefire test reports");
-            SurefireTestReport surefireTestReport = readSurefireTestReport();
-            TestResultsOutput testResultsOutput = new TestResultsOutput(specificationTree, surefireTestReport);
+            TestReport testReport = readSurefireTestReport();
+            TestResultsOutput testResultsOutput = new TestResultsOutput(specificationTree, testReport);
             LOGGER.info("Writing test results output");
             writeTestResults(testResultsOutput);
             LOGGER.info("Writing test warnings output");
@@ -49,7 +49,7 @@ public class TestResultsMojo extends ReqlintMojo {
         }
     }
 
-    private SurefireTestReport readSurefireTestReport() throws IOException {
+    private TestReport readSurefireTestReport() throws IOException {
 
         List<File> surefireReportsFolders = session.getAllProjects().stream()
                 .map(project -> new File(project.getBuild().getDirectory(), "surefire-reports"))
@@ -57,17 +57,17 @@ public class TestResultsMojo extends ReqlintMojo {
                 .filter(File::isDirectory)
                 .toList();
 
-        TestReportsLoader testReportsLoader = new TestReportsLoader();
+        SurefireReportsLoader surefireReportsLoader = new SurefireReportsLoader();
         for (File surefireReportsFolder : surefireReportsFolders) {
             LOGGER.info("Loading surefire test reports from " + surefireReportsFolder.getAbsolutePath());
-            TestReportsFinder testReportsFinder = new TestReportsFinder(surefireReportsFolder);
-            for (File surefireTestReport : testReportsFinder.search()) {
-                testReportsLoader.loadReport(surefireTestReport);
+            SurefireReportsFinder surefireReportsFinder = new SurefireReportsFinder(surefireReportsFolder);
+            for (File surefireTestReport : surefireReportsFinder.search()) {
+                surefireReportsLoader.loadReport(surefireTestReport);
             }
         }
 
-        SurefireTestReport testReport = testReportsLoader.getTestReport();
+        TestReport testReport = surefireReportsLoader.getTestReport();
         LOGGER.info("Loaded " + testReport.numberOfReports() + " surefire test reports");
-        return testReportsLoader.getTestReport();
+        return surefireReportsLoader.getTestReport();
     }
 }
