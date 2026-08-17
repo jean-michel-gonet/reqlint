@@ -7,6 +7,7 @@ import com.reqlint.core.model.specification.items.TestStage;
 import com.reqlint.core.model.testreport.items.TestRunStage;
 import com.reqlint.core.model.testreport.TestReport;
 import com.reqlint.core.model.testreport.items.TestRun;
+import com.reqlint.core.model.testreport.items.TestRunStageStep;
 import com.reqlint.core.model.testreport.warnings.*;
 
 import java.io.IOException;
@@ -102,10 +103,41 @@ public class TestResultsOutput {
     }
 
     private void writeTestResult(Writer writer, TestRun test) throws IOException {
-        for (TestRunStage stageOutput : test.stages()) {
-            writer.write(String.format("\\stagetitle{Stage %d: %s}\r\n", stageOutput.ordinal(), stageOutput.title()));
-            writer.write("\\begin{lstlisting}[style=stageLog]\r\n");
-            writer.write("\\end{lstlisting}\r\n");
+        if (test.preparation() == null && test.stages().isEmpty()) {
+            writer.write("No preparation for " + test.title() + CRLF);
+            return;
         }
+
+        writer.write("\\begin{itemize}\r\n");
+        if (test.preparation() != null) {
+            writer.write("    \\item \\textbf{Preparation}\r\n");
+            writer.write("    \\begin{enumerate}\r\n");
+            for (TestRunStageStep operation : test.preparation().operations()) {
+                writer.write("        \\item  " + operation.title() + "\r\n");
+            }
+            writer.write("    \\end{enumerate}\r\n");
+        }
+        for (TestRunStage stage : test.stages()) {
+            writer.write("    \\item  \\textbf{Stage " + stage.ordinal() + "} -- " + stage.title() + "\r\n");
+            writer.write("    \\begin{itemize}\r\n");
+            if (!stage.operations().isEmpty()) {
+                writer.write("        \\item \\textbf{Operations}\r\n");
+                writer.write("        \\begin{enumerate}\r\n");
+                for (TestRunStageStep operation : stage.operations()) {
+                    writer.write("             \\item  " + operation.title() + "\r\n");
+                }
+                writer.write("        \\end{enumerate}\r\n");
+            }
+            if (!stage.expectations().isEmpty()) {
+                writer.write("        \\item \\textbf{Expectations}\r\n");
+                writer.write("        \\begin{enumerate}\r\n");
+                for (TestRunStageStep expectation : stage.expectations()) {
+                    writer.write("             \\item  " + expectation.title() + "\r\n");
+                }
+                writer.write("        \\end{enumerate}\r\n");
+            }
+            writer.write("    \\end{itemize}\r\n");
+        }
+        writer.write("\\end{itemize}\r\n");
     }
 }

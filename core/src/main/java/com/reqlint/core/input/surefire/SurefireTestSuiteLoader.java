@@ -19,8 +19,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
 
-public class SurefireReportsLoader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SurefireReportsLoader.class);
+public class SurefireTestSuiteLoader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SurefireTestSuiteLoader.class);
 
     private final TestReport testReport;
     private final DocumentBuilder documentBuilder;
@@ -28,7 +28,7 @@ public class SurefireReportsLoader {
     /**
      * Default class constructor.
      */
-    public SurefireReportsLoader() {
+    public SurefireTestSuiteLoader() {
         this(new TestReport());
     }
 
@@ -36,7 +36,7 @@ public class SurefireReportsLoader {
      * Use this class constructor if you want to continue building up an existing test report.
      * @param testReport The test report.
      */
-    public SurefireReportsLoader(TestReport testReport) {
+    public SurefireTestSuiteLoader(TestReport testReport) {
         this.testReport = testReport;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -103,10 +103,10 @@ public class SurefireReportsLoader {
             }
 
             LOGGER.debug("Loaded test report of: {} - {}", className, name);
-            testReport.addReportItem(new SurefireTestRunLoader()
+            testReport.addReportItem(new SurefireTestCaseLoader()
                     .output(testOutput)
                     .timeStamp(timestamp)
-                    .name(className + name)
+                    .name(className + " " + name)
                     .build());
         }
     }

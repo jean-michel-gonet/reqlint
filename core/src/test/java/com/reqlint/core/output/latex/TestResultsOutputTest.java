@@ -9,6 +9,7 @@ import com.reqlint.core.model.testreport.items.TestRunStageStep;
 import com.reqlint.core.testutils.TextFileContent;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
@@ -51,7 +52,7 @@ class TestResultsOutputTest {
         testWarningsFile = new File(temporaryFolder, TEST_WARNINGS_FILENAME);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void can_output_the_test_result() throws Exception {
         TestCase testCase = new TestCase(IDENTIFIER, TITLE);
         specificationTree.attach(testCase);
@@ -81,11 +82,18 @@ class TestResultsOutputTest {
                 "\\label{subsec:result-TC100}",
                 "\\childof{TC100}",
                 "",
-                "\\stagetitle{Stage 1: The first stage}",
-                "\\begin{lstlisting}[style=stageLog]",
-                "The output of the first stage\\end{lstlisting}");
+                "\\begin{itemize}",
+                "    \\item  \\textbf{Stage 1} -- The first stage",
+                "    \\begin{itemize}",
+                "        \\item \\textbf{Operations}",
+                "        \\begin{enumerate}",
+                "             \\item  XX",
+                "        \\end{enumerate}",
+                "    \\end{itemize}",
+                "\\end{itemize}");
     }
-    @org.junit.jupiter.api.Test
+
+    @Test
     public void can_output_the_test_result_when_there_is_none() throws Exception {
         TestCase testCase = new TestCase(IDENTIFIER, TITLE);
         specificationTree.attach(testCase);

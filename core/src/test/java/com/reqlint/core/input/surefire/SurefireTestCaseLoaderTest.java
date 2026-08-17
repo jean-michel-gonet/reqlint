@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-class SurefireTestRunLoaderTest {
+class SurefireTestCaseLoaderTest {
     private static final String TEST_NAME = "TEST_NAME";
     private static final LocalDateTime NOW = LocalDateTime.now();
     private static final String LEADING_STUFF = "2026-08-13 09:29:28,267 INFO  c.s.t.s.m.t.s.s.r.w.ClassName:666 - ";
@@ -42,11 +42,11 @@ class SurefireTestRunLoaderTest {
     private static final String AND = "And";
     private static final String STAR = "*";
 
-    private SurefireTestRunLoader underTest;
+    private SurefireTestCaseLoader underTest;
 
     @BeforeEach
     public void setUp() {
-        underTest = new SurefireTestRunLoader();
+        underTest = new SurefireTestCaseLoader();
     }
 
     @Test

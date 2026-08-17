@@ -1,7 +1,7 @@
 package com.reqlint.core.model.testreport;
 
 import com.reqlint.core.model.testreport.items.TestRun;
-import com.reqlint.core.input.surefire.SurefireReportsLoader;
+import com.reqlint.core.input.surefire.SurefireTestSuiteLoader;
 import com.reqlint.core.model.testreport.warnings.TestRunWarning;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 /**
  * Contains the surefire test report, in a more accessible form.
- * @see SurefireReportsLoader
+ * @see SurefireTestSuiteLoader
  */
 public class TestReport {
     private final List<TestRun> reportItems = new ArrayList<>();
@@ -44,7 +44,7 @@ public class TestReport {
      * @return A collection of reports.
      */
     public List<TestRun> reportsOfTestCase(String testCaseIdentifier) {
-        String testCaseIdentifierWithSafeChars = testCaseIdentifier.replace("-", "[-_]");
+        String testCaseIdentifierWithSafeChars = testCaseIdentifier.replaceAll("[-_]", "[-_]");
         String sPattern = String.format("(^|[@_\\s])(%s)($|[@_\\s])", testCaseIdentifierWithSafeChars);
         Pattern pattern = Pattern.compile(sPattern);
 

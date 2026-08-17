@@ -38,7 +38,12 @@
                 <artifactId>reqlint-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.reqlint</groupId>
+                <artifactId>reqlint-cucumber</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
             <!-- Dependencies to maven development -->
             <dependency>
                 <groupId>org.apache.maven</groupId>

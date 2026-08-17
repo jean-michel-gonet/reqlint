@@ -7,7 +7,11 @@ import com.reqlint.core.utils.FindMatchingLiteral;
 import com.reqlint.core.utils.MatchingLiteral;
 import org.apache.commons.lang3.StringUtils;
 
-public class SurefireTestRunLoader {
+/**
+ * Loads one test case from the surefire reports.
+ * @see SurefireTestSuiteLoader
+ */
+public class SurefireTestCaseLoader {
     private enum Status {
         CONTEXT_BUILD,
         PREPARATION,
@@ -22,7 +26,7 @@ public class SurefireTestRunLoader {
      * @param ignoreTrailing The sequence to ignore
      * @return This loader, for convenience.
      */
-    public SurefireTestRunLoader ignoreTrailing(String ignoreTrailing) {
+    public SurefireTestCaseLoader ignoreTrailing(String ignoreTrailing) {
         this.ignoreTrailing = ignoreTrailing;
         return this;
     }

@@ -3,8 +3,8 @@ package com.reqlint.plugin;
 import com.reqlint.core.output.latex.TestResultsOutput;
 import com.reqlint.core.model.specification.SpecificationTree;
 import com.reqlint.core.model.testreport.TestReport;
-import com.reqlint.core.input.surefire.SurefireReportsFinder;
-import com.reqlint.core.input.surefire.SurefireReportsLoader;
+import com.reqlint.core.input.surefire.SurefireTestSuiteFinder;
+import com.reqlint.core.input.surefire.SurefireTestSuiteLoader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -57,17 +57,17 @@ public class TestResultsMojo extends ReqlintMojo {
                 .filter(File::isDirectory)
                 .toList();
 
-        SurefireReportsLoader surefireReportsLoader = new SurefireReportsLoader();
+        SurefireTestSuiteLoader surefireTestSuiteLoader = new SurefireTestSuiteLoader();
         for (File surefireReportsFolder : surefireReportsFolders) {
             LOGGER.info("Loading surefire test reports from " + surefireReportsFolder.getAbsolutePath());
-            SurefireReportsFinder surefireReportsFinder = new SurefireReportsFinder(surefireReportsFolder);
-            for (File surefireTestReport : surefireReportsFinder.search()) {
-                surefireReportsLoader.loadReport(surefireTestReport);
+            SurefireTestSuiteFinder surefireTestSuiteFinder = new SurefireTestSuiteFinder(surefireReportsFolder);
+            for (File surefireTestReport : surefireTestSuiteFinder.search()) {
+                surefireTestSuiteLoader.loadReport(surefireTestReport);
             }
         }
 
-        TestReport testReport = surefireReportsLoader.getTestReport();
+        TestReport testReport = surefireTestSuiteLoader.getTestReport();
         LOGGER.info("Loaded " + testReport.numberOfReports() + " surefire test reports");
-        return surefireReportsLoader.getTestReport();
+        return surefireTestSuiteLoader.getTestReport();
     }
 }

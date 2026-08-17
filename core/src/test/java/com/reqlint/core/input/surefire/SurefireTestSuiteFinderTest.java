@@ -11,29 +11,29 @@ import java.util.List;
 
 import static com.reqlint.core.testutils.TextFileContent.createFileWithLines;
 
-class TestReportsFinderSurefire {
+class SurefireTestSuiteFinderTest {
     @TempDir
     public File tempDir;
 
-    private SurefireReportsFinder underTest;
+    private SurefireTestSuiteFinder underTest;
 
     @BeforeEach
     void setUp() throws Exception {
-        underTest = new SurefireReportsFinder(tempDir);
+        underTest = new SurefireTestSuiteFinder(tempDir);
     }
 
     @Test
     public void can_list_files() throws Exception {
-        File file1 = new File(tempDir, SurefireReportsFinder.PREFIX + "whatever1" + SurefireReportsFinder.EXTENSION);
+        File file1 = new File(tempDir, SurefireTestSuiteFinder.PREFIX + "whatever1" + SurefireTestSuiteFinder.EXTENSION);
         createFileWithLines(file1, List.of("Hello World!"));
-        File file2 = new File(tempDir, SurefireReportsFinder.PREFIX + "whatever2" + SurefireReportsFinder.EXTENSION);
+        File file2 = new File(tempDir, SurefireTestSuiteFinder.PREFIX + "whatever2" + SurefireTestSuiteFinder.EXTENSION);
         createFileWithLines(file2, List.of("Hello World!"));
-        File file3 = new File(tempDir, SurefireReportsFinder.PREFIX + "whatever3" + SurefireReportsFinder.EXTENSION);
+        File file3 = new File(tempDir, SurefireTestSuiteFinder.PREFIX + "whatever3" + SurefireTestSuiteFinder.EXTENSION);
         createFileWithLines(file3, List.of("Hello World!"));
 
-        File file4 = new File(tempDir, "whatever1" + SurefireReportsFinder.EXTENSION);
+        File file4 = new File(tempDir, "whatever1" + SurefireTestSuiteFinder.EXTENSION);
         createFileWithLines(file4, List.of("Hello World!"));
-        File file5 = new File(tempDir, SurefireReportsFinder.PREFIX + "whatever2.txt");
+        File file5 = new File(tempDir, SurefireTestSuiteFinder.PREFIX + "whatever2.txt");
         createFileWithLines(file5, List.of("Hello World!"));
 
         Assertions.assertThat(underTest.search()).containsExactlyInAnyOrder(file1, file2, file3);
@@ -47,7 +47,7 @@ class TestReportsFinderSurefire {
     @Test
     public void raises_an_exception_when_surefire_folder_does_not_exist() throws Exception {
         Assertions.assertThatExceptionOfType(FileNotFoundException.class)
-                .isThrownBy(() -> new SurefireReportsFinder(new File(tempDir, "i-dont-exist")).search())
+                .isThrownBy(() -> new SurefireTestSuiteFinder(new File(tempDir, "i-dont-exist")).search())
                 .withMessageContaining("i-dont-exist");
     }
     @Test
@@ -55,7 +55,7 @@ class TestReportsFinderSurefire {
         File file = new File(tempDir, "i-am-a-file.txt");
         createFileWithLines(file, List.of("Hello World!"));
         Assertions.assertThatExceptionOfType(FileNotFoundException.class)
-                .isThrownBy(() -> new SurefireReportsFinder(file).search())
+                .isThrownBy(() -> new SurefireTestSuiteFinder(file).search())
                 .withMessageContaining("i-am-a-file.txt");
     }
 }
