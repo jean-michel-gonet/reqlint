@@ -15,14 +15,14 @@ import java.util.List;
 import static com.reqlint.core.testutils.TextFileContent.createFileWithLines;
 import static com.reqlint.core.testutils.TextFileContent.readLinesFromFile;
 
-class ReplaceAutomatedTestProcedureTest {
+class ReplaceAutomatedTestDescriptionTest {
     private static final String TEST_CASE_ID = "TC-1101";
     private static final String CRLF = "\r\n";
 
     @TempDir
     private File temporaryFolder;
 
-    private ReplaceAutomatedTestProcedure underTest;
+    private ReplaceAutomatedTestDescription underTest;
 
     private TestReport testReport;
     private File rootFile;
@@ -30,7 +30,7 @@ class ReplaceAutomatedTestProcedureTest {
     @BeforeEach
     void setUp() {
         testReport = new TestReport();
-        underTest = new ReplaceAutomatedTestProcedure(testReport);
+        underTest = new ReplaceAutomatedTestDescription(testReport);
         rootFile = new File(temporaryFolder, "root.tex");
     }
 
@@ -76,7 +76,7 @@ class ReplaceAutomatedTestProcedureTest {
                                 .build())
                 .build());
 
-        underTest.doIt(rootFile);
+        underTest.replaceAutomatedTestDescriptions(rootFile);
 
         Assertions.assertThat(readLinesFromFile(file))
                 .containsExactly(

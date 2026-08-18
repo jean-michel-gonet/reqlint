@@ -117,7 +117,7 @@ public class TestResultsOutput {
         }
 
         writer.write("\\begin{itemize}\r\n");
-        if (test.preparation() != null) {
+        if (test.preparation() != null && !test.preparation().operations().isEmpty()) {
             writer.write("\\item \\textbf{Preparation}\r\n");
             writeStageSteps(writer, test.preparation().operations(), withLogs);
         }
@@ -138,6 +138,9 @@ public class TestResultsOutput {
     }
 
     private static void writeStageSteps(Writer writer, List<TestRunStageStep> stageSteps, boolean withLogs) throws IOException {
+        if (stageSteps.isEmpty()) {
+            return;
+        }
         writer.write("\\begin{enumerate}\r\n");
         for (TestRunStageStep stageStep : stageSteps) {
             writeStageStep(writer, stageStep, withLogs);

@@ -132,11 +132,11 @@
 
                     <!-- Retrieve test case descriptions from test results -->
                     <execution>
-                        <id>test-description</id>
+                        <id>automated-test-description</id>
                         <!-- To be executed after all integration tests -->
                         <phase>post-integration-test</phase>
                         <goals>
-                            <goal>test-description</goal>
+                            <goal>automated-test-description</goal>
                         </goals>
                         <configuration>
                             <latexDocument>${project.build.outputDirectory}/documentation/root.tex</latexDocument>
@@ -166,8 +166,6 @@
                             <bibTool>bibtex</bibTool>
                             <latexDocuments>
                                 <latexDocument>${project.build.outputDirectory}/documentation/root.tex</latexDocument>
-                                <latexDocument>${project.build.outputDirectory}/documentation/root-testresults.tex</latexDocument>
-                                <latexDocument>${project.build.outputDirectory}/documentation/root-traceability.tex</latexDocument>
                             </latexDocuments>
                         </configuration>
                     </execution>
@@ -189,16 +187,6 @@
                                     <file>${project.build.outputDirectory}/documentation/root.pdf</file>
                                     <type>pdf</type>
                                     <classifier>spec</classifier>
-                                </artifact>
-                                <artifact>
-                                    <file>${project.build.outputDirectory}/documentation/root-testresults.pdf</file>
-                                    <type>pdf</type>
-                                    <classifier>test</classifier>
-                                </artifact>
-                                <artifact>
-                                    <file>${project.build.outputDirectory}/documentation/root-traceability.pdf</file>
-                                    <type>pdf</type>
-                                    <classifier>trace</classifier>
                                 </artifact>
                             </artifacts>
                         </configuration>

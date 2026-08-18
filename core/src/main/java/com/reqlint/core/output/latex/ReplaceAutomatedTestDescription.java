@@ -19,7 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ReplaceAutomatedTestProcedure {
+public class ReplaceAutomatedTestDescription {
     private static final String COMMAND = "\\automatedtest";
 
     public enum Patterns implements AssociatedPattern {
@@ -41,11 +41,11 @@ public class ReplaceAutomatedTestProcedure {
 
     private final TestReport testReport;
 
-    public ReplaceAutomatedTestProcedure(TestReport testReport) {
+    public ReplaceAutomatedTestDescription(TestReport testReport) {
         this.testReport = testReport;
     }
 
-    public void doIt(File rootFile) throws IOException {
+    public void replaceAutomatedTestDescriptions(File rootFile) throws IOException {
         if (!rootFile.isFile()) {
             throw new IOException("File not found or not a file: " + rootFile.getAbsolutePath());
         }

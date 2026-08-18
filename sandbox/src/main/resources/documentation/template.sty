@@ -72,6 +72,9 @@
     before=\let\stage\item         % Map \stage to \item locally
 }
 
+% Define the automatedtest so it does not cause an error if not replaced
+\newcommand{\automatedtest}{Enable `automated-test-description' to replace this message with test description from cucumber}
+
 \lstdefinestyle{stageLog}{
     basicstyle=\ttfamily\small\color{black!85},
     backgroundcolor=\color{gray!6},
