@@ -19,8 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ReplaceTestProcedureFromSurefireReport {
-    private static final String COMMAND = "\\testprocedurefromsurefirereport";
+public class ReplaceAutomatedTestProcedure {
+    private static final String COMMAND = "\\automatedtest";
 
     public enum Patterns implements AssociatedPattern {
         OPEN_TEST_CASE(LatexPatterns.OPEN_TEST_CASE),
@@ -41,7 +41,7 @@ public class ReplaceTestProcedureFromSurefireReport {
 
     private final TestReport testReport;
 
-    public ReplaceTestProcedureFromSurefireReport(TestReport testReport) {
+    public ReplaceAutomatedTestProcedure(TestReport testReport) {
         this.testReport = testReport;
     }
 

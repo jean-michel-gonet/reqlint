@@ -15,14 +15,14 @@ import java.util.List;
 import static com.reqlint.core.testutils.TextFileContent.createFileWithLines;
 import static com.reqlint.core.testutils.TextFileContent.readLinesFromFile;
 
-class ReplaceTestProcedureFromSurefireReportTest {
+class ReplaceAutomatedTestProcedureTest {
     private static final String TEST_CASE_ID = "TC-1101";
     private static final String CRLF = "\r\n";
 
     @TempDir
     private File temporaryFolder;
 
-    private ReplaceTestProcedureFromSurefireReport underTest;
+    private ReplaceAutomatedTestProcedure underTest;
 
     private TestReport testReport;
     private File rootFile;
@@ -30,7 +30,7 @@ class ReplaceTestProcedureFromSurefireReportTest {
     @BeforeEach
     void setUp() {
         testReport = new TestReport();
-        underTest = new ReplaceTestProcedureFromSurefireReport(testReport);
+        underTest = new ReplaceAutomatedTestProcedure(testReport);
         rootFile = new File(temporaryFolder, "root.tex");
     }
 
@@ -40,7 +40,7 @@ class ReplaceTestProcedureFromSurefireReportTest {
         createFileWithLines(file, List.of(
                 String.format("\\begin{testcase}{%s}{A nice test case}", TEST_CASE_ID),
                 CRLF,
-                "\\testprocedurefromsurefirereport",
+                "\\automatedtest",
                 CRLF,
                 "\\end{testcase}"));
 
