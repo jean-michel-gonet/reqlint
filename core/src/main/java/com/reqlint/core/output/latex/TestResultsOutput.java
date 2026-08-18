@@ -77,7 +77,7 @@ public class TestResultsOutput {
         }
         TestRun testReportItem = matchingTestReports.getFirst();
 
-        writeTestResult(writer, testReportItem);
+        writeTestResult(writer, testReportItem, true);
         checkConsistency(testCase, testReportItem);
     }
 
@@ -106,10 +106,11 @@ public class TestResultsOutput {
      * Writes one test result to the specified writer.
      * @param writer The writer.
      * @param test The test result.
+     * @param withLogs Include or not the logs associated with the test run.
      * @throws IOException Hopefully not
      * TODO: Having this static method looks like a bad design...
      */
-    public static void writeTestResult(Writer writer, TestRun test) throws IOException {
+    public static void writeTestResult(Writer writer, TestRun test, boolean withLogs) throws IOException {
         if (test.preparation() == null && test.stages().isEmpty()) {
             writer.write("No description for " + test.title() + CRLF);
             return;
@@ -117,48 +118,44 @@ public class TestResultsOutput {
 
         writer.write("\\begin{itemize}\r\n");
         if (test.preparation() != null) {
-            writer.write("    \\item \\textbf{Preparation}\r\n");
-            writer.write("    \\begin{enumerate}\r\n");
-            for (TestRunStageStep operation : test.preparation().operations()) {
-                writeStageStep(writer, operation);
-            }
-            writer.write("    \\end{enumerate}\r\n");
+            writer.write("\\item \\textbf{Preparation}\r\n");
+            writeStageSteps(writer, test.preparation().operations(), withLogs);
         }
         for (TestRunStage stage : test.stages()) {
-            writer.write("    \\item  \\textbf{Stage " + stage.ordinal() + "} -- " + stage.title() + "\r\n");
-            writer.write("    \\begin{itemize}\r\n");
+            writer.write("\\item \\textbf{Stage " + stage.ordinal() + "} -- " + stage.title() + "\r\n");
+            writer.write("\\begin{itemize}\r\n");
             if (!stage.operations().isEmpty()) {
-                writer.write("        \\item \\textbf{Operations}\r\n");
-                writer.write("        \\begin{enumerate}\r\n");
-                for (TestRunStageStep operation : stage.operations()) {
-                    writeStageStep(writer, operation);
-                }
-                writer.write("        \\end{enumerate}\r\n");
+                writer.write("\\item \\textbf{Operations}\r\n");
+                writeStageSteps(writer, stage.operations(), withLogs);
             }
             if (!stage.expectations().isEmpty()) {
-                writer.write("        \\item \\textbf{Expectations}\r\n");
-                writer.write("        \\begin{enumerate}\r\n");
-                for (TestRunStageStep expectation : stage.expectations()) {
-                    writeStageStep(writer, expectation);
-                }
-                writer.write("        \\end{enumerate}\r\n");
+                writer.write("\\item \\textbf{Expectations}\r\n");
+                writeStageSteps(writer, stage.expectations(), withLogs);
             }
-            writer.write("    \\end{itemize}\r\n");
+            writer.write("\\end{itemize}\r\n");
         }
         writer.write("\\end{itemize}\r\n");
     }
 
-    private static void writeStageStep(Writer writer, TestRunStageStep stageStep) throws IOException {
-        writer.write("        \\item  " + stageStep.title() + "\r\n");
-        if (stageStep.output().isEmpty()) {
+    private static void writeStageSteps(Writer writer, List<TestRunStageStep> stageSteps, boolean withLogs) throws IOException {
+        writer.write("\\begin{enumerate}\r\n");
+        for (TestRunStageStep stageStep : stageSteps) {
+            writeStageStep(writer, stageStep, withLogs);
+        }
+        writer.write("\\end{enumerate}\r\n");
+    }
+
+    private static void writeStageStep(Writer writer, TestRunStageStep stageStep, boolean withLogs) throws IOException {
+        writer.write("\\item " + stageStep.title() + "\r\n");
+        if (stageStep.output().isEmpty() || !withLogs) {
             return;
         }
 
-        writer.write("        \\begin{lstlisting}[style=stageLog]\r\n");
+        writer.write("\\begin{lstlisting}[style=stageLog]\r\n");
         for (String s : stageStep.output()) {
             writer.write(s + "\r\n");
         }
-        writer.write("        \\end{lstlisting}\r\n");
+        writer.write("\\end{lstlisting}\r\n");
 
     }
 }

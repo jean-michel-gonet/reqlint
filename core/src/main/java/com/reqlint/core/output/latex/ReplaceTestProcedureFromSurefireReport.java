@@ -132,7 +132,7 @@ public class ReplaceTestProcedureFromSurefireReport {
         }
         TestRun testRun = testRuns.getFirst();
         StringWriter sw = new StringWriter();
-        TestResultsOutput.writeTestResult(sw, testRun);
+        TestResultsOutput.writeTestResult(sw, testRun, false);
         return Optional.of(sw.toString());
     }
 }
