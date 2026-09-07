@@ -1,5 +1,7 @@
 package com.reqlint.core.input.surefire;
 
+import com.reqlint.core.output.surefire.MarkDownFormatter;
+import com.reqlint.core.output.surefire.StepDescription;
 import com.reqlint.core.utils.AssociatedPattern;
 
 import java.util.regex.Matcher;
@@ -22,7 +24,9 @@ public enum LogPatternsAndFormats implements AssociatedPattern {
     THEN("#\\s+Step\\s+([0-9]+)\\s+-\\s+(Then)\\s+(.*)$",
             "# Step %d - Then %s"),
     STAR("#\\s+Step\\s+([0-9]+)\\s+-\\s+(\\*)\\s+(.*)$",
-            "# Step %d - * %s");
+            "# Step %d - * %s"),
+    DATATABLE_SEPARATOR("^\\|(-+\\|)+", ""),
+    DATATABLE("^\\|([^|]+\\|)+", "");
 
     private final Pattern pattern;
     private final String format;
@@ -36,15 +40,21 @@ public enum LogPatternsAndFormats implements AssociatedPattern {
         return String.format(PREPARE.format, feature, scenario);
     }
 
-    public static String stepOf(int stepNumber, String keyword, String description) {
-        return switch (keyword) {
-            case "Given" -> String.format(GIVEN.format, stepNumber, description);
-            case "When" -> String.format(WHEN.format, stepNumber, description);
-            case "Then" -> String.format(THEN.format, stepNumber, description);
-            case "And" -> String.format(AND.format, stepNumber, description);
-            case "*" -> String.format(STAR.format, stepNumber, description);
-            default -> throw new IllegalArgumentException("Invalid keyword: " + keyword);
+    public static String stepOf(StepDescription description) {
+        int stepNumber = description.number();
+        String stepDescription = description.text();
+        String line = switch (description.keyword()) {
+            case "Given" -> String.format(GIVEN.format, stepNumber, stepDescription);
+            case "When" -> String.format(WHEN.format, stepNumber, stepDescription);
+            case "Then" -> String.format(THEN.format, stepNumber, stepDescription);
+            case "And" -> String.format(AND.format, stepNumber, stepDescription);
+            case "*" -> String.format(STAR.format, stepNumber, stepDescription);
+            default -> throw new IllegalArgumentException("Invalid keyword: " + description.keyword());
         };
+        if (!description.cells().isEmpty()) {
+            return line + "\r\n" + new MarkDownFormatter<>(description.cells());
+        }
+        return line;
     }
 
     @Override

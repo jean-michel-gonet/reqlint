@@ -1,4 +1,4 @@
-package com.reqlint.sandbox.cucumber.renderers;
+package com.reqlint.core.output.surefire;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,6 @@ import java.util.List;
  */
 public class MarkDownFormatter<T> {
 
-    private final List<String> headers;
     private final List<List<String>> rows = new ArrayList<>();
 
     /**
@@ -21,10 +20,18 @@ public class MarkDownFormatter<T> {
      * @param tablifier The tablifier to use.
      */
     public MarkDownFormatter(List<T> data, Tablifier<T> tablifier) {
-        this.headers = tablifier.getHeaders();
+        this.rows.add(tablifier.getHeaders());
         for (T item : data) {
             this.rows.add(tablifier.getRow(item));
         }
+    }
+
+    /**
+     * Use this constructor if you don't need to use a {@link Tablifier} to format your data.
+     * @param rows The data to render.
+     */
+    public MarkDownFormatter(List<List<String>> rows) {
+        this.rows.addAll(rows);
     }
 
     /**
@@ -38,15 +45,12 @@ public class MarkDownFormatter<T> {
 
     @Override
     public String toString() {
-        if (headers == null || headers.isEmpty()) {
+        if (rows.isEmpty()) {
             return "";
         }
 
         // 1. Calculate optimal column widths
-        int[] colWidths = new int[headers.size()];
-        for (int i = 0; i < headers.size(); i++) {
-            colWidths[i] = headers.get(i).length();
-        }
+        int[] colWidths = new int[rows.getFirst().size()];
         for (List<String> row : rows) {
             for (int i = 0; i < row.size(); i++) {
                 String val = row.get(i) != null ? row.get(i) : "null";
@@ -57,7 +61,7 @@ public class MarkDownFormatter<T> {
         StringBuilder sb = new StringBuilder("\n");
 
         // 2. Render Header Row
-        appendRow(sb, headers, colWidths);
+        appendRow(sb, rows.getFirst(), colWidths);
 
         // 3. Render Markdown Separator Line (|---|---|)
         sb.append("|");
@@ -67,8 +71,11 @@ public class MarkDownFormatter<T> {
         sb.append("\n");
 
         // 4. Render Data Rows
-        for (List<String> row : rows) {
-            appendRow(sb, row, colWidths);
+        if (rows.size() > 1) {
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> row = rows.get(i);
+                appendRow(sb, row, colWidths);
+            }
         }
 
         return sb.toString();

@@ -1,10 +1,9 @@
 package com.reqlint.sandbox.cucumber.renderers;
 
+import com.reqlint.core.output.surefire.Tablifier;
 import com.reqlint.sandbox.cucumber.beans.DataTableTokenBucketResponse;
 import com.reqlint.sandbox.services.tokenbucket.TokenBucketResponse;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 

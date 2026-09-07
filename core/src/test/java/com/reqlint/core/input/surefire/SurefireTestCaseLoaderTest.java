@@ -3,6 +3,7 @@ package com.reqlint.core.input.surefire;
 import com.reqlint.core.model.testreport.items.TestRun;
 import com.reqlint.core.model.testreport.items.TestRunStage;
 import com.reqlint.core.model.testreport.items.TestRunStageStep;
+import com.reqlint.core.output.surefire.StepDescription;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,16 +51,46 @@ class SurefireTestCaseLoaderTest {
     }
 
     @Test
+    public void can_parse_a_test_with_datatable_in_preparation() {
+        List<List<String>> cells = List.of(
+                List.of("A", "B", "C"),
+                List.of("10", "200", "3000"));
+        TestRun testRun = underTest.output(
+                        LEADING_STUFF + "Some entries",
+                        LEADING_STUFF + "More entries",
+                        LEADING_STUFF + LogPatternsAndFormats.preparationOf("Feature", "Scenario"),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(1, GIVEN, STEP_1, cells)),
+                        LEADING_STUFF + LOG_ENTRY_1)
+                .timeStamp(NOW)
+                .name(TEST_NAME)
+                .build();
+
+        var expectedPreparation = new TestRunStage(
+                0,
+                "Preparation",
+                List.of(
+                        new TestRunStageStep(
+                                1,
+                                STEP_1,
+                                cells,
+                                List.of(LEADING_STUFF + LOG_ENTRY_1))),
+                Collections.emptyList());
+
+        Assertions.assertThat(testRun.preparation()).isEqualTo(expectedPreparation);
+        Assertions.assertThat(testRun.stages()).isEmpty();
+    }
+
+    @Test
     public void can_parse_a_test_with_only_preparation() {
         TestRun testRun = underTest.output(
                         LEADING_STUFF + "Some entries",
                         LEADING_STUFF + "More entries",
                         LEADING_STUFF + LogPatternsAndFormats.preparationOf("Feature", "Scenario"),
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(1, GIVEN, STEP_1),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(1, GIVEN, STEP_1)),
                         LEADING_STUFF + LOG_ENTRY_1,
                         LEADING_STUFF + LOG_ENTRY_2,
                         LEADING_STUFF + LOG_ENTRY_3,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(2, THEN, STEP_2),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(2, THEN, STEP_2)),
                         LEADING_STUFF + LOG_ENTRY_4,
                         LEADING_STUFF + LOG_ENTRY_5,
                         LEADING_STUFF + LOG_ENTRY_6)
@@ -94,10 +125,10 @@ class SurefireTestCaseLoaderTest {
         TestRun testRun = underTest.output(
                         LEADING_STUFF + "Some entries",
                         LEADING_STUFF + "More entries",
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(3, GIVEN, STAGE_1),
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(4, GIVEN, STEP_1),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(3, GIVEN, STAGE_1)),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(4, GIVEN, STEP_1)),
                         LEADING_STUFF + LOG_ENTRY_1,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(5, WHEN, STEP_2),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(5, WHEN, STEP_2)),
                         LEADING_STUFF + LOG_ENTRY_2)
                 .timeStamp(NOW)
                 .name(TEST_NAME)
@@ -129,19 +160,19 @@ class SurefireTestCaseLoaderTest {
         TestRun testRun = underTest.output(
                         LEADING_STUFF + "Some entries",
                         LEADING_STUFF + "More entries",
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(3, GIVEN, STAGE_1),
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(4, GIVEN, STEP_1),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(3, GIVEN, STAGE_1)),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(4, GIVEN, STEP_1)),
                         LEADING_STUFF + LOG_ENTRY_1,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(5, WHEN, STEP_2),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(5, WHEN, STEP_2)),
                         LEADING_STUFF + LOG_ENTRY_2,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(6, THEN, STEP_3),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(6, THEN, STEP_3)),
                         LEADING_STUFF + LOG_ENTRY_3,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(7, AND, STEP_4),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(7, AND, STEP_4)),
                         LEADING_STUFF + LOG_ENTRY_4,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(8, GIVEN, STAGE_2),
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(9, GIVEN, STEP_5),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(8, GIVEN, STAGE_2)),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(9, GIVEN, STEP_5)),
                         LEADING_STUFF + LOG_ENTRY_5,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(10, THEN, STEP_6),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(10, THEN, STEP_6)),
                         LEADING_STUFF + LOG_ENTRY_6)
                 .timeStamp(NOW)
                 .name(TEST_NAME)
@@ -232,18 +263,18 @@ class SurefireTestCaseLoaderTest {
                         LEADING_STUFF + "Some entries",
                         LEADING_STUFF + "More entries",
                         LEADING_STUFF + LogPatternsAndFormats.preparationOf("Feature", "Scenario") + TRAILING_STUFF,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(1, GIVEN, STEP_1 + TRAILING_STUFF),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(1, GIVEN, STEP_1 + TRAILING_STUFF)),
                         LEADING_STUFF + LOG_ENTRY_1 + TRAILING_STUFF,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(2, AND, STEP_2 + TRAILING_STUFF),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(2, AND, STEP_2 + TRAILING_STUFF)),
                         LEADING_STUFF + LOG_ENTRY_2 + TRAILING_STUFF,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(3, GIVEN, STAGE_1) + TRAILING_STUFF,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(4, GIVEN, STEP_3) + TRAILING_STUFF,
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(3, GIVEN, STAGE_1)) + TRAILING_STUFF,
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(4, GIVEN, STEP_3)) + TRAILING_STUFF,
                         LEADING_STUFF + LOG_ENTRY_3 + TRAILING_STUFF,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(5, WHEN, STEP_4) + TRAILING_STUFF,
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(5, WHEN, STEP_4)) + TRAILING_STUFF,
                         LEADING_STUFF + LOG_ENTRY_4 + TRAILING_STUFF,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(6, THEN, STEP_5) + TRAILING_STUFF,
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(6, THEN, STEP_5)) + TRAILING_STUFF,
                         LEADING_STUFF + LOG_ENTRY_5 + TRAILING_STUFF,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(7, AND, STEP_6) + TRAILING_STUFF,
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(7, AND, STEP_6)) + TRAILING_STUFF,
                         LEADING_STUFF + LOG_ENTRY_6 + TRAILING_STUFF)
                 .timeStamp(NOW)
                 .name(TEST_NAME)
@@ -298,19 +329,19 @@ class SurefireTestCaseLoaderTest {
                 .output(
                         LEADING_STUFF + "Some entries",
                         LEADING_STUFF + "More entries",
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(3, GIVEN, STAGE_1),
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(4, GIVEN, STEP_1),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(3, GIVEN, STAGE_1)),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(4, GIVEN, STEP_1)),
                         LEADING_STUFF + LOG_ENTRY_1,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(5, WHEN, STEP_2),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(5, WHEN, STEP_2)),
                         LEADING_STUFF + LOG_ENTRY_2,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(6, AND, STEP_3),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(6, AND, STEP_3)),
                         LEADING_STUFF + LOG_ENTRY_3,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(7, AND, STEP_4),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(7, AND, STEP_4)),
                         LEADING_STUFF + LOG_ENTRY_4,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(8, GIVEN, STAGE_2),
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(9, GIVEN, STEP_5),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(8, GIVEN, STAGE_2)),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(9, GIVEN, STEP_5)),
                         LEADING_STUFF + LOG_ENTRY_5,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(10, THEN, STEP_6),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(10, THEN, STEP_6)),
                         LEADING_STUFF + LOG_ENTRY_6)
                 .timeStamp(NOW)
                 .name(TEST_NAME)
@@ -368,19 +399,19 @@ class SurefireTestCaseLoaderTest {
                 .output(
                         LEADING_STUFF + "Some entries",
                         LEADING_STUFF + "More entries",
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(3, GIVEN, STAGE_1),
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(4, GIVEN, STEP_1),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(3, GIVEN, STAGE_1)),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(4, GIVEN, STEP_1)),
                         LEADING_STUFF + LOG_ENTRY_1,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(5, WHEN, STEP_2),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(5, WHEN, STEP_2)),
                         LEADING_STUFF + LOG_ENTRY_2,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(6, THEN, STEP_3),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(6, THEN, STEP_3)),
                         LEADING_STUFF + LOG_ENTRY_3,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(7, AND, STEP_4),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(7, AND, STEP_4)),
                         LEADING_STUFF + LOG_ENTRY_4,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(8, GIVEN, STAGE_2),
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(9, THEN, STEP_5),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(8, GIVEN, STAGE_2)),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(9, THEN, STEP_5)),
                         LEADING_STUFF + LOG_ENTRY_5,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(10, STAR, STEP_6),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(10, STAR, STEP_6)),
                         LEADING_STUFF + LOG_ENTRY_6)
                 .timeStamp(NOW)
                 .name(TEST_NAME)
@@ -438,18 +469,18 @@ class SurefireTestCaseLoaderTest {
                 .output(
                         LEADING_STUFF + "Some entries",
                         LEADING_STUFF + "More entries",
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(3, GIVEN, STAGE_1),
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(4, GIVEN, STEP_1),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(3, GIVEN, STAGE_1)),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(4, GIVEN, STEP_1)),
                         LEADING_STUFF + LOG_ENTRY_1,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(5, WHEN, STEP_2),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(5, WHEN, STEP_2)),
                         LEADING_STUFF + LOG_ENTRY_2,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(6, THEN, STEP_3),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(6, THEN, STEP_3)),
                         LEADING_STUFF + LOG_ENTRY_3,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(7, THEN, STEP_4),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(7, THEN, STEP_4)),
                         LEADING_STUFF + LOG_ENTRY_4,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(8, GIVEN, STEP_5),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(8, GIVEN, STEP_5)),
                         LEADING_STUFF + LOG_ENTRY_5,
-                        LEADING_STUFF + LogPatternsAndFormats.stepOf(9, THEN, STEP_6),
+                        LEADING_STUFF + LogPatternsAndFormats.stepOf(new StepDescription(9, THEN, STEP_6)),
                         LEADING_STUFF + LOG_ENTRY_6)
                 .timeStamp(NOW)
                 .name(TEST_NAME)

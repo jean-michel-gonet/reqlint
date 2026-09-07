@@ -1,4 +1,4 @@
-package com.reqlint.sandbox.cucumber.renderers;
+package com.reqlint.core.output.surefire;
 
 import java.util.List;
 

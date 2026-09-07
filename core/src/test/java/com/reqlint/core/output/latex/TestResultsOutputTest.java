@@ -2,9 +2,9 @@ package com.reqlint.core.output.latex;
 
 import com.reqlint.core.model.specification.SpecificationTree;
 import com.reqlint.core.model.specification.items.TestCase;
-import com.reqlint.core.model.testreport.items.TestRunStage;
 import com.reqlint.core.model.testreport.TestReport;
 import com.reqlint.core.model.testreport.items.TestRun;
+import com.reqlint.core.model.testreport.items.TestRunStage;
 import com.reqlint.core.model.testreport.items.TestRunStageStep;
 import com.reqlint.core.testutils.TextFileContent;
 import org.assertj.core.api.Assertions;
@@ -12,7 +12,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.OutputStreamWriter;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +28,6 @@ class TestResultsOutputTest {
     private static final String STAGE_1_OUTPUT = "The output of the first stage";
 
     private static final String TEST_RESULT_FILENAME = "test-results.tex";
-    private static final String TEST_WARNINGS_FILENAME = "test-warnings.tex";
 
     private TestResultsOutput underTest;
 
@@ -35,7 +37,6 @@ class TestResultsOutputTest {
     private SpecificationTree specificationTree;
     private TestReport testReport;
     private File testResultsFile;
-    private File testWarningsFile;
 
     @BeforeEach
     void setUp() {
@@ -45,7 +46,6 @@ class TestResultsOutputTest {
         underTest = new TestResultsOutput(specificationTree, testReport);
 
         testResultsFile = new File(temporaryFolder, TEST_RESULT_FILENAME);
-        testWarningsFile = new File(temporaryFolder, TEST_WARNINGS_FILENAME);
     }
 
     @Test
@@ -58,14 +58,14 @@ class TestResultsOutputTest {
                 IDENTIFIER,
                 null,
                 List.of(TestRunStage.builder()
-                                .ordinal(STAGE_1_NUMBER)
-                                .title(STAGE_1_TITLE)
-                                .addOperation(TestRunStageStep.builder()
-                                        .ordinal(0)
-                                        .title("XX")
-                                        .appendToOutput(STAGE_1_OUTPUT)
-                                        .build())
-                                .build())));
+                        .ordinal(STAGE_1_NUMBER)
+                        .title(STAGE_1_TITLE)
+                        .addOperation(TestRunStageStep.builder()
+                                .ordinal(0)
+                                .title("XX")
+                                .appendToOutput(STAGE_1_OUTPUT)
+                                .build())
+                        .build())));
 
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(testResultsFile));
         underTest.writeTestResults(writer);
@@ -86,6 +86,63 @@ class TestResultsOutputTest {
                 "\\item XX",
                 "\\begin{lstlisting}[style=stageLog]",
                 "The output of the first stage",
+                "\\end{lstlisting}",
+                "\\end{enumerate}",
+                "\\end{itemize}",
+                "\\end{itemize}");
+    }
+
+    @Test
+    public void can_output_the_test_result_with_argument() throws Exception {
+        TestCase testCase = new TestCase(IDENTIFIER, TITLE);
+        specificationTree.attach(testCase);
+
+        testReport.addReportItem(new TestRun(
+                TIMESTAMP,
+                IDENTIFIER,
+                null,
+                List.of(TestRunStage.builder()
+                                .ordinal(STAGE_1_NUMBER)
+                                .title(STAGE_1_TITLE)
+                                .addOperation(TestRunStageStep.builder()
+                                        .ordinal(0)
+                                        .title("XX")
+                                        .appendArgumentRow("THE_HUNDREDS", "THE_THOUSANDS", "THE_TENS_OF_THOUSANDS")
+                                        .appendArgumentRow("100", "2000", "30000")
+                                        .appendToOutput(STAGE_1_OUTPUT)
+                                        .appendToOutput("|1|2|3|")
+                                        .build())
+                                .build())));
+
+        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(testResultsFile));
+        underTest.writeTestResults(writer);
+        writer.close();
+
+        List<String> lines = TextFileContent.readLinesFromFile(new FileReader(testResultsFile));
+
+        Assertions.assertThat(lines).containsExactly(
+                "\\subsection{Test results for TC100}",
+                "\\label{subsec:result-TC100}",
+                "\\childof{TC100}",
+                "",
+                "\\begin{itemize}",
+                "\\item \\textbf{Stage 1} -- The first stage",
+                "\\begin{itemize}",
+                "\\item \\textbf{Operations}",
+                "\\begin{enumerate}",
+                "\\item XX",
+                "\\begin{xltabular}{\\linewidth}{@{} c c c  @{}}",
+                "\\toprule",
+                "The Hundreds & The Thousands & The Tens Of Thousands \\\\ ",
+                "\\midrule ",
+                "\\endhead ",
+                "\\bottomrule",
+                "\\endlastfoot",
+                "100 & 2000 & 30000 \\\\ ",
+                "\\end{xltabular} ",
+                "\\begin{lstlisting}[style=stageLog]",
+                "The output of the first stage",
+                "|1|2|3|",
                 "\\end{lstlisting}",
                 "\\end{enumerate}",
                 "\\end{itemize}",

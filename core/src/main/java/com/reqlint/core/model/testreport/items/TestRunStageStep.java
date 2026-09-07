@@ -1,6 +1,8 @@
 package com.reqlint.core.model.testreport.items;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -9,7 +11,11 @@ import java.util.List;
  * @param title Textual description.
  * @param output The logs entries associated to this step.
  */
-public record TestRunStageStep(int ordinal, String title, List<String> output) {
+public record TestRunStageStep(int ordinal, String title, List<List<String>> argument, List<String> output) {
+
+    public TestRunStageStep(int ordinal, String title, List<String> output) {
+        this(ordinal, title, Collections.emptyList(), output);
+    }
 
     /**
      * @return A builder, to create new instances.
@@ -24,6 +30,7 @@ public record TestRunStageStep(int ordinal, String title, List<String> output) {
     public static class Builder {
         private int ordinal;
         private String title;
+        private final List<List<String>> argument = new ArrayList<>();
         private final List<String> output = new ArrayList<>();
 
         /**
@@ -31,6 +38,10 @@ public record TestRunStageStep(int ordinal, String title, List<String> output) {
          */
         public TestRunStageStep build() {
             return new TestRunStageStep(this);
+        }
+
+        public boolean hasOutput() {
+            return !output.isEmpty();
         }
 
         /**
@@ -51,6 +62,13 @@ public record TestRunStageStep(int ordinal, String title, List<String> output) {
             return this;
         }
 
+        public Builder appendArgumentRow(String ... argumentRow) {
+            this.argument.add(Arrays.stream(argumentRow)
+                    .map(String::trim)
+                    .toList());
+            return this;
+        }
+
         /**
          * Adds a line to the output of the step.
          * @param output A new line.
@@ -68,7 +86,7 @@ public record TestRunStageStep(int ordinal, String title, List<String> output) {
      * @param builder A builder.
      */
     private TestRunStageStep(Builder builder) {
-        this(builder.ordinal, builder.title, builder.output);
+        this(builder.ordinal, builder.title, builder.argument, builder.output);
     }
 
     @Override

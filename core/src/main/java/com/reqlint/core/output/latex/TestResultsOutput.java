@@ -9,6 +9,7 @@ import com.reqlint.core.model.testreport.TestReport;
 import com.reqlint.core.model.testreport.items.TestRun;
 import com.reqlint.core.model.testreport.items.TestRunStageStep;
 import com.reqlint.core.model.testreport.warnings.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -150,6 +151,37 @@ public class TestResultsOutput {
 
     private static void writeStageStep(Writer writer, TestRunStageStep stageStep, boolean withLogs) throws IOException {
         writer.write("\\item " + stageStep.title() + "\r\n");
+        if (!stageStep.argument().isEmpty()) {
+            for(int rowNumber = 0; rowNumber < stageStep.argument().size(); rowNumber++) {
+                List<String> row =  stageStep.argument().get(rowNumber);
+                if (rowNumber == 0) {
+                    String h = StringUtils.repeat("c ", row.size());
+                    writer.write(String.format("\\begin{xltabular}{\\linewidth}{@{} %s @{}}\r\n", h));
+                    writer.write("\\toprule\r\n");
+                    for (int columnNumber = 0; columnNumber < row.size(); columnNumber++) {
+                        if (columnNumber > 0) {
+                            writer.write(" & ");
+                        }
+                        writer.write(screamingCaseToTitleCase(row.get(columnNumber)));
+                    }
+                    writer.write(" \\\\ \r\n");
+                    writer.write("\\midrule \r\n");
+                    writer.write("\\endhead \r\n");
+                    writer.write("\\bottomrule\r\n");
+                    writer.write("\\endlastfoot\r\n");
+                } else {
+                    for (int columnNumber = 0; columnNumber < row.size(); columnNumber++) {
+                        if (columnNumber > 0) {
+                            writer.write(" & ");
+                        }
+                        writer.write(row.get(columnNumber));
+                    }
+                    writer.write(" \\\\ \r\n");
+                }
+            }
+            writer.write("\\end{xltabular} \r\n");
+
+        }
         if (stageStep.output().isEmpty() || !withLogs) {
             return;
         }
@@ -160,5 +192,30 @@ public class TestResultsOutput {
         }
         writer.write("\\end{lstlisting}\r\n");
 
+    }
+
+    private static String screamingCaseToTitleCase(String input) {
+        if (input == null || input.isBlank()) {
+            return "";
+        }
+
+        String[] words = input.split("_+");
+        StringBuilder result = new StringBuilder();
+
+        for (String word : words) {
+            if (word.isEmpty()) {
+                continue;
+            }
+
+            if (!result.isEmpty()) {
+                result.append(" ");
+            }
+
+            // Capitalize first character, lowercase the remainder
+            result.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1).toLowerCase());
+        }
+
+        return result.toString();
     }
 }

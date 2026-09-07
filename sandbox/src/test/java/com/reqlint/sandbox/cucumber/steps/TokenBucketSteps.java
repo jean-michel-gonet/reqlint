@@ -2,7 +2,7 @@ package com.reqlint.sandbox.cucumber.steps;
 
 import com.reqlint.sandbox.cucumber.beans.DataTableNotEnoughTokensAvailableException;
 import com.reqlint.sandbox.cucumber.beans.DataTableTokenBucketResponse;
-import com.reqlint.sandbox.cucumber.renderers.MarkDownFormatter;
+import com.reqlint.core.output.surefire.MarkDownFormatter;
 import com.reqlint.sandbox.cucumber.renderers.NotEnoughTokensAvailableExceptionTablifier;
 import com.reqlint.sandbox.cucumber.renderers.TokenBucketResponseTablifier;
 import com.reqlint.sandbox.services.time.TimeService;

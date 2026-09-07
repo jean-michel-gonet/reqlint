@@ -1,15 +1,14 @@
 package com.reqlint.cucumber;
 
 import com.reqlint.core.input.surefire.LogPatternsAndFormats;
+import com.reqlint.core.output.surefire.StepDescription;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.java.AfterStep;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeStep;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Step;
-import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +39,7 @@ public class ReqlintSteps {
 
     @BeforeStep
     public void logStepName(Scenario scenario) throws Exception {
-        StepDescription stepDescription = extractStepDescription(scenario);
-        LOGGER.info(LogPatternsAndFormats.stepOf(stepDescription.number(), stepDescription.keyword(), stepDescription.text()));
+        LOGGER.info(LogPatternsAndFormats.stepOf(extractStepDescription(scenario)));
     }
 
     @Given("Stage {int}")
@@ -58,12 +56,6 @@ public class ReqlintSteps {
     public void nextStep(Scenario scenario) {
         cucumberStepNumber++;
     }
-
-    private record StepDescription(
-            int number,
-            String keyword,
-            String text
-    ) {}
 
     private StepDescription extractStepDescription(Scenario scenario) throws Exception {
         // Get the delegate from the scenario
@@ -84,6 +76,16 @@ public class ReqlintSteps {
 
         PickleStepTestStep pickle = testStepTitles.get(cucumberStepNumber);
         Step step = pickle.getStep();
-        return new StepDescription(cucumberStepNumber + 1, step.getKeyword().trim(), step.getText().trim());
+
+        int stepNumber = cucumberStepNumber + 1;
+        String keyword = step.getKeyword().trim();
+        String text = step.getText().trim();
+
+        StepArgument stepArgument = step.getArgument();
+        if (stepArgument instanceof DataTableArgument dataTableArgument) {
+            return new StepDescription(stepNumber, keyword, text, dataTableArgument.cells());
+        } else {
+            return new StepDescription(stepNumber, keyword, text);
+        }
     }
 }

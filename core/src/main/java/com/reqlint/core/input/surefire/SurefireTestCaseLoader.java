@@ -7,11 +7,16 @@ import com.reqlint.core.utils.FindMatchingLiteral;
 import com.reqlint.core.utils.MatchingLiteral;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.regex.Pattern;
+
 /**
  * Loads one test case from the surefire reports.
  * @see SurefireTestSuiteLoader
  */
 public class SurefireTestCaseLoader {
+    private static final Pattern DATATABLE_SEPARATOR = Pattern.compile("^\\|(-+\\|)+");
+    private static final Pattern DATATABLE = Pattern.compile("^\\|([^|]+\\|)+");
+
     private enum Status {
         CONTEXT_BUILD,
         PREPARATION,
@@ -32,14 +37,6 @@ public class SurefireTestCaseLoader {
     }
 
     /**
-     * @param output The raw output logs captured during the test.
-     * @return The loaded test run.
-     */
-    public TestRun.Builder output(String output) {
-        return output(output.split("(\\r\\n|\\r|\\n)"));
-    }
-
-    /**
      * @param outputs The raw output logs captured during the test.
      * @return The loaded test run.
      */
@@ -50,94 +47,110 @@ public class SurefireTestCaseLoader {
         var stageBuilder = TestRunStage.builder();
         Status status = Status.CONTEXT_BUILD;
 
-        for(String line: outputs) {
-            // Check for delimiting patterns in the line:
-            MatchingLiteral<LogPatternsAndFormats> matchingLiteral = FindMatchingLiteral.findClosestMatch(LogPatternsAndFormats.class, line);
+        for(String multiLines: outputs) {
+            String[] lines = multiLines.split("[\\r\\n]+");
+            for (String line : lines) {
+                // Check for delimiting patterns in the line:
+                MatchingLiteral<LogPatternsAndFormats> matchingLiteral = FindMatchingLiteral.findClosestMatch(LogPatternsAndFormats.class, line);
 
-            // If none:
-            if (matchingLiteral == null) {
-                // Add the line as output to the current step:
-                if (stepBuilder!=null) {
-                    stepBuilder.appendToOutput(line);
-                }
-
-                // Fetch the next line:
-                continue;
-            }
-
-            // Depending on the delimiting pattern found:
-            switch (matchingLiteral.literal()) {
-                case PREPARE -> {
-                    // Open next stage:
-                    stageBuilder = TestRunStage.builder();
-                    stageBuilder.ordinal(0);
-                    stageBuilder.title("Preparation");
-
-                    // Open next step:
-                    stepBuilder = null;
-
-                    // Sets the section:
-                    status = Status.PREPARATION;
-                }
-
-                case STAGE -> {
-                    // Close current step and stage:
-                    switch (status) {
-                        case PREPARATION -> {
-                            stageBuilder.addOperation(stepBuilder);
-                            testRunBuilder.preparation(stageBuilder.build());
-                        }
-                        case OPERATION -> {
-                            stageBuilder.addOperation(stepBuilder);
-                            testRunBuilder.addStage(stageBuilder);
-                        }
-                        case EXPECTATION -> {
-                            stageBuilder.addExpectation(stepBuilder);
-                            testRunBuilder.addStage(stageBuilder);
-                        }
+                // If none:
+                if (matchingLiteral == null) {
+                    // Add the line as output to the current step:
+                    if (stepBuilder != null) {
+                        stepBuilder.appendToOutput(line);
                     }
 
-                    // Open next step
-                    stepBuilder = null;
-
-                    // Open next stage:
-                    stageBuilder = TestRunStage.builder();
-                    stageBuilder.ordinal(Integer.parseInt(matchingLiteral.group(3)));
-                    stageBuilder.title(trim(matchingLiteral.group(4)));
-
-                    // Sets the section:
-                    status = Status.OPERATION;
+                    // Fetch the next line:
+                    continue;
                 }
 
-                case GIVEN, WHEN, AND, STAR -> {
-                    switch (status) {
-                        case PREPARATION, OPERATION -> stageBuilder.addOperation(stepBuilder);
-                        case EXPECTATION -> stageBuilder.addExpectation(stepBuilder);
+                // If data table:
+                if (matchingLiteral.literal() == LogPatternsAndFormats.DATATABLE) {
+                    if (stepBuilder != null) {
+                        if (stepBuilder.hasOutput()) {
+                            stepBuilder.appendToOutput(line);
+                        } else {
+                            String[] cellRow = line.substring(1).split("\\s*\\|\\s*");
+                            stepBuilder.appendArgumentRow(cellRow);
+                        }
                     }
-
-                    // Open next step:
-                    stepBuilder = TestRunStageStep.builder();
-                    stepBuilder.ordinal(Integer.parseInt(matchingLiteral.group(1)));
-                    stepBuilder.title(trim(matchingLiteral.group(3)));
+                    continue;
                 }
 
-                case THEN -> {
-                    switch (status) {
-                        case PREPARATION -> {
-                            stageBuilder.addOperation(stepBuilder);
-                        }
-                        case OPERATION -> {
-                            stageBuilder.addOperation(stepBuilder);
-                            status = Status.EXPECTATION;
-                        }
-                        case EXPECTATION -> {
-                            stageBuilder.addExpectation(stepBuilder);
-                        }
+                // Depending on the delimiting pattern found:
+                switch (matchingLiteral.literal()) {
+                    case PREPARE -> {
+                        // Open next stage:
+                        stageBuilder = TestRunStage.builder();
+                        stageBuilder.ordinal(0);
+                        stageBuilder.title("Preparation");
+
+                        // Open next step:
+                        stepBuilder = null;
+
+                        // Sets the section:
+                        status = Status.PREPARATION;
                     }
 
-                    stepBuilder = TestRunStageStep.builder();
-                    stepBuilder.ordinal(Integer.parseInt(matchingLiteral.group(1)));
-                    stepBuilder.title(trim(matchingLiteral.group(3)));
+                    case STAGE -> {
+                        // Close current step and stage:
+                        switch (status) {
+                            case PREPARATION -> {
+                                stageBuilder.addOperation(stepBuilder);
+                                testRunBuilder.preparation(stageBuilder.build());
+                            }
+                            case OPERATION -> {
+                                stageBuilder.addOperation(stepBuilder);
+                                testRunBuilder.addStage(stageBuilder);
+                            }
+                            case EXPECTATION -> {
+                                stageBuilder.addExpectation(stepBuilder);
+                                testRunBuilder.addStage(stageBuilder);
+                            }
+                        }
+
+                        // Open next step
+                        stepBuilder = null;
+
+                        // Open next stage:
+                        stageBuilder = TestRunStage.builder();
+                        stageBuilder.ordinal(Integer.parseInt(matchingLiteral.group(3)));
+                        stageBuilder.title(trim(matchingLiteral.group(4)));
+
+                        // Sets the section:
+                        status = Status.OPERATION;
+                    }
+
+                    case GIVEN, WHEN, AND, STAR -> {
+                        switch (status) {
+                            case PREPARATION, OPERATION -> stageBuilder.addOperation(stepBuilder);
+                            case EXPECTATION -> stageBuilder.addExpectation(stepBuilder);
+                        }
+
+                        // Open next step:
+                        stepBuilder = TestRunStageStep.builder();
+                        stepBuilder.ordinal(Integer.parseInt(matchingLiteral.group(1)));
+                        stepBuilder.title(trim(matchingLiteral.group(3)));
+                    }
+
+                    case THEN -> {
+                        switch (status) {
+                            case PREPARATION -> {
+                                stageBuilder.addOperation(stepBuilder);
+                            }
+                            case OPERATION -> {
+                                stageBuilder.addOperation(stepBuilder);
+                                status = Status.EXPECTATION;
+                            }
+                            case EXPECTATION -> {
+                                stageBuilder.addExpectation(stepBuilder);
+                            }
+                        }
+
+                        stepBuilder = TestRunStageStep.builder();
+                        stepBuilder.ordinal(Integer.parseInt(matchingLiteral.group(1)));
+                        stepBuilder.title(trim(matchingLiteral.group(3)));
+                    }
                 }
             }
         }
