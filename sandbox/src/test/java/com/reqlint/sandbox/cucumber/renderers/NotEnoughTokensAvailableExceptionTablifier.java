@@ -1,12 +1,10 @@
 package com.reqlint.sandbox.cucumber.renderers;
 
+import com.reqlint.core.output.surefire.Tablifier;
 import com.reqlint.sandbox.cucumber.beans.DataTableNotEnoughTokensAvailableException;
-import com.reqlint.sandbox.cucumber.beans.DataTableTokenBucketResponse;
 import com.reqlint.sandbox.services.tokenbucket.exceptions.NotEnoughTokensAvailableException;
-import io.cucumber.java.bs.A;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class NotEnoughTokensAvailableExceptionTablifier implements Tablifier<NotEnoughTokensAvailableException> {

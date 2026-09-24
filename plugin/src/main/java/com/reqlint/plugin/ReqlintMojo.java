@@ -1,11 +1,14 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.latex.loader.SpecificationTreeLoader;
-import com.reqlint.core.latex.parser.LatexReader;
-import com.reqlint.core.specification.SpecificationTree;
+import com.reqlint.core.input.latex.loader.SpecificationTreeLoader;
+import com.reqlint.core.input.latex.parser.LatexReader;
+import com.reqlint.core.input.surefire.SurefireTestSuiteFinder;
+import com.reqlint.core.input.surefire.SurefireTestSuiteLoader;
+import com.reqlint.core.model.specification.SpecificationTree;
+import com.reqlint.core.model.testreport.TestReport;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +22,8 @@ import java.util.List;
 public abstract class ReqlintMojo extends AbstractMojo {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReqlintMojo.class);
 
-    @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
-    protected List<MavenProject> allProjects;
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
 
     /**
      * The latex main files where the software requirements specification is documented.
@@ -68,4 +71,27 @@ public abstract class ReqlintMojo extends AbstractMojo {
 
         return new OutputStreamWriter(new FileOutputStream(file));
     }
+
+    protected TestReport readSurefireTestReport() throws IOException {
+
+        List<File> surefireReportsFolders = session.getAllProjects().stream()
+                .map(project -> new File(project.getBuild().getDirectory(), "surefire-reports"))
+                .filter(File::exists)
+                .filter(File::isDirectory)
+                .toList();
+
+        SurefireTestSuiteLoader surefireTestSuiteLoader = new SurefireTestSuiteLoader();
+        for (File surefireReportsFolder : surefireReportsFolders) {
+            LOGGER.info("Loading surefire test reports from " + surefireReportsFolder.getAbsolutePath());
+            SurefireTestSuiteFinder surefireTestSuiteFinder = new SurefireTestSuiteFinder(surefireReportsFolder);
+            for (File surefireTestReport : surefireTestSuiteFinder.search()) {
+                surefireTestSuiteLoader.loadReport(surefireTestReport);
+            }
+        }
+
+        TestReport testReport = surefireTestSuiteLoader.getTestReport();
+        LOGGER.info("Loaded " + testReport.numberOfReports() + " surefire test reports");
+        return surefireTestSuiteLoader.getTestReport();
+    }
+
 }

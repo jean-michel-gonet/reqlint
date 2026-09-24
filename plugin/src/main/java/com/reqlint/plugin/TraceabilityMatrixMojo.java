@@ -1,7 +1,7 @@
 package com.reqlint.plugin;
 
-import com.reqlint.core.latex.output.TraceabilityMatrixOutput;
-import com.reqlint.core.specification.SpecificationTree;
+import com.reqlint.core.output.latex.TraceabilityMatrixOutput;
+import com.reqlint.core.model.specification.SpecificationTree;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -48,6 +48,7 @@ public class TraceabilityMatrixMojo extends ReqlintMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
+        LOGGER.info("traceability-matrix goal started");
         try {
             SpecificationTree specificationTree = readSpecificationTree();
             specificationTree.verify();

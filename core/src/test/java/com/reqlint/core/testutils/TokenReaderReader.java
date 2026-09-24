@@ -1,6 +1,6 @@
 package com.reqlint.core.testutils;
 
-import com.reqlint.core.latex.parser.TokenReader;
+import com.reqlint.core.input.latex.parser.TokenReader;
 
 import java.io.IOException;
 import java.io.Reader;

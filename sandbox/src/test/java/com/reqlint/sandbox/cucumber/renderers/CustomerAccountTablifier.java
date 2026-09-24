@@ -1,5 +1,6 @@
 package com.reqlint.sandbox.cucumber.renderers;
 
+import com.reqlint.core.output.surefire.Tablifier;
 import com.reqlint.sandbox.cucumber.beans.DataTableCustomerAccountProperties;
 import com.reqlint.sandbox.services.customer.CustomerAccount;
 

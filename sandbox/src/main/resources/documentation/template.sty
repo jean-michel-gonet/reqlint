@@ -13,6 +13,7 @@
 \RequirePackage{listings}
 \RequirePackage{amssymb}
 \RequirePackage[export]{adjustbox}
+\RequirePackage{underscore}  % So that we can use '_' without escaping it.
 
 % -----------------------------------------------------------
 % --                Configure bibliography                 --
@@ -70,6 +71,9 @@
     leftmargin=*,                  % Clean indentation align
     before=\let\stage\item         % Map \stage to \item locally
 }
+
+% Define the automatedtest so it does not cause an error if not replaced
+\newcommand{\automatedtest}{Enable `automated-test-description' to replace this message with test description from cucumber}
 
 \lstdefinestyle{stageLog}{
     basicstyle=\ttfamily\small\color{black!85},
